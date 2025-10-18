@@ -1,0 +1,7 @@
+{
+  "name": "access-mobile-web",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
