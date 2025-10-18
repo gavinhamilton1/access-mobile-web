@@ -1,0 +1,749 @@
+/* ============================================
+   GLOBAL STYLES - REUSABLE ACROSS ALL COMPONENTS
+   ============================================ */
+
+/* ============================================
+   LIGHT THEME DEFAULTS
+   ============================================ */
+/* Global light styling for all Ionic components */
+ion-app {
+  --background: white;
+  --color: #333;
+}
+
+/* Light styling for all form controls */
+ion-input, ion-textarea, ion-datetime, ion-range {
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+/* Light styling for all modals and overlays */
+ion-modal, ion-popover, ion-alert, ion-action-sheet {
+  --background: white;
+  --color: #333;
+}
+
+/* Light styling for all lists */
+ion-list, ion-item {
+  --background: white;
+  --color: #333;
+  --border-color: #e0e0e0;
+}
+
+ion-item:hover {
+  --background: #f8f9fa;
+}
+
+/* Fix active/focused states */
+ion-item.item-activated {
+  --background: #f8f9fa;
+  --color: #333;
+}
+
+ion-item.item-focused {
+  --background: #f8f9fa;
+  --color: #333;
+}
+
+/* Fix top and bottom edges */
+ion-content {
+  --background: #f5f5f5;
+  --color: #333;
+}
+
+ion-page {
+  --background: #f5f5f5;
+  --color: #333;
+}
+
+/* Fix any remaining dark elements */
+ion-toolbar::part(native) {
+  background: white;
+  color: #333;
+}
+
+ion-header::part(native) {
+  background: white;
+  color: #333;
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.flex-center-large {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* ============================================
+   SPACING UTILITIES
+   ============================================ */
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.p-16 {
+  padding: 16px;
+}
+
+.px-16 {
+  padding: 0 16px;
+}
+
+.py-12 {
+  padding: 12px 0;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.text-bold {
+  font-weight: bold;
+  color: #333;
+}
+
+/* Override Ionic default card content styling */
+.card-content-md {
+  font-size: 1.125rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Override Ionic default h2 styling in card content */
+.card-content-md h2 {
+  font-size: 2rem !important;
+  color: #333 !important;
+  margin: 0 !important;
+}
+
+/* Make decimal part smaller */
+.card-content-md h2 .decimal-part {
+  font-size: 1rem !important;
+}
+
+/* Override all text elements in card content */
+.card-content-md p,
+.card-content-md span,
+.card-content-md div {
+  font-size: 1rem !important;
+}
+
+/* Specific overrides for balance labels */
+.card-content-md .text-small {
+  font-size: 1.125rem !important;
+}
+
+/* Override any remaining small text */
+.card-content-md * {
+  font-size: 1.125rem !important;
+}
+
+/* ============================================
+   ICONS
+   ============================================ */
+.icon-small {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-medium {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #007bff;
+  border-radius: 50%;
+}
+
+.status-icon-green {
+  filter: brightness(0) saturate(100%) invert(40%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(100%) contrast(130%);
+}
+
+.status-icon-red {
+  filter: brightness(0) saturate(100%) invert(10%) sepia(94%) saturate(7151%) hue-rotate(2deg) brightness(85%) contrast(130%);
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --background: white;
+  --color: #333;
+}
+
+ion-card {
+  --background: white;
+  --color: #333;
+}
+
+ion-card-content {
+  --background: white;
+  --color: #333;
+}
+
+ion-card-header {
+  --background: white;
+  --color: #333;
+}
+
+.card-content {
+  padding: 16px;
+}
+
+.card-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.card-item {
+  flex: 1;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-action-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-action-item:last-child {
+  border-bottom: none;
+}
+
+.card-action-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ============================================
+   STATUS ITEMS
+   ============================================ */
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.status-item:last-child {
+  border-bottom: none;
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-count {
+  --background: #e3f2fd;
+  --color: #1976d2;
+  font-weight: bold;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn-primary {
+  --background: #137e96;
+  --color: white;
+  --border-radius: 50px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-weight: bold;
+  --ion-color-base: #137e96 !important;
+  --ion-color-contrast: #fff !important;
+}
+
+.btn-primary::part(native) {
+  background: #137e96 !important;
+  color: white !important;
+}
+
+.btn-primary img {
+  filter: brightness(0) invert(1);
+}
+
+/* Floating Capture Button */
+.floating-capture-button {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 90%;
+  max-width: 300px;
+}
+
+.floating-btn {
+  width: 100%;
+  --background: transparent;
+}
+
+.btn-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+/* Light styling for all buttons */
+ion-button {
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+ion-button:hover {
+  --background: #e9ecef;
+  --color: #333;
+}
+
+/* ============================================
+   FORMS
+   ============================================ */
+.form-select {
+  --padding-start: 8px;
+  --padding-end: 8px;
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+/* Light styling for all form elements */
+ion-select {
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+ion-select::part(icon) {
+  color: #666;
+}
+
+ion-select::part(text) {
+  color: #333;
+}
+
+/* Fix radio button checked state in select popover */
+.item-radio-checked.sc-ion-select-popover-md {
+  --background: white !important;
+  --color: #007bff !important;
+  background: white !important;
+  color: #007bff !important;
+  font-weight: bold !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Alternative selector for radio checked state */
+ion-select-popover .item-radio-checked {
+  --background: white !important;
+  --color: #007bff !important;
+  background: white !important;
+  color: #007bff !important;
+  font-weight: bold !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove any borders from selected items */
+ion-select-popover .item-radio-checked::part(native) {
+  background: white !important;
+  color: #007bff !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Remove any visual indicators except text color */
+ion-select-popover .item-radio-checked::before,
+ion-select-popover .item-radio-checked::after {
+  display: none !important;
+}
+
+/* Remove borders from all select popover items */
+ion-select-popover ion-item {
+  --border-width: 0 !important;
+  --border-color: transparent !important;
+  border: none !important;
+  --background: white !important;
+  --background-hover: #f8f9fa !important;
+  --background-activated: #f8f9fa !important;
+  --background-focused: #f8f9fa !important;
+  --background-selected: white !important;
+}
+
+ion-select-popover ion-item::part(native) {
+  border: none !important;
+  background: white !important;
+}
+
+ion-select-popover ion-item::part(native):hover {
+  background: #f8f9fa !important;
+}
+
+/* Remove any pseudo-element backgrounds */
+ion-select-popover ion-item::before,
+ion-select-popover ion-item::after {
+  display: none !important;
+  background: none !important;
+}
+
+/* Remove any inner element backgrounds */
+ion-select-popover ion-item * {
+  background: transparent !important;
+}
+
+ion-select-popover ion-item:hover * {
+  background: transparent !important;
+}
+
+/* Fix any select popover styling */
+ion-select-popover {
+  --background: white !important;
+  --color: #333 !important;
+  background: white !important;
+  color: #333 !important;
+}
+
+ion-select-popover::part(native) {
+  background: white !important;
+  color: #333 !important;
+}
+
+ion-select-popover ion-item {
+  --background: white !important;
+  --color: #333 !important;
+  background: white !important;
+  color: #333 !important;
+}
+
+ion-select-popover ion-item:hover {
+  --background: #f8f9fa !important;
+  --color: #333 !important;
+  background: #f8f9fa !important;
+  color: #333 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+ion-select-popover ion-item:hover::part(native) {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Force light styling on all select popover elements */
+ion-select-popover * {
+  background: white !important;
+  color: #333 !important;
+}
+
+ion-select-popover ion-list {
+  --background: white !important;
+  background: white !important;
+}
+
+ion-select-popover ion-content {
+  --background: white !important;
+  background: white !important;
+}
+
+/* ============================================
+   HEADER COMPONENTS
+   ============================================ */
+.header-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  position: relative;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  right: 16px;
+}
+
+.welcome-section {
+  text-align: center;
+}
+
+.welcome-section p {
+  color: #333 !important;
+  font-size: 1.125rem !important;
+  font-weight: bold !important;
+}
+
+/* Header background */
+ion-header {
+  --background: white;
+  --color: #333;
+}
+
+ion-toolbar {
+  --background: white;
+  --color: #333;
+  --border-color: #e0e0e0;
+}
+
+/* Fix header parts */
+ion-toolbar::part(native) {
+  background: white !important;
+  color: #333 !important;
+}
+
+ion-header::part(native) {
+  background: white !important;
+  color: #333 !important;
+}
+
+/* Fix any dark borders or edges */
+ion-toolbar::part(border) {
+  border-color: #e0e0e0;
+}
+
+ion-header::part(border) {
+  border-color: #e0e0e0;
+}
+
+/* ============================================
+   PAGE CONTENT
+   ============================================ */
+.page-content {
+  padding: 16px;
+  background-color: #f5f5f5;
+  min-height: 100%;
+}
+
+/* ============================================
+   BALANCE COMPONENTS
+   ============================================ */
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.balance-label-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.balance-amount-section {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.balance-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+}
+
+.currency-select-inline {
+  --padding-start: 4px;
+  --padding-end: 4px;
+  min-width: 60px;
+  --background: transparent;
+  --color: #137e96;
+  --border-radius: 6px;
+  --border-color: transparent;
+  --border-width: 0px;
+  --border-style: none;
+}
+
+.currency-select-inline::part(icon) {
+  color: #137e96;
+}
+
+.currency-select-inline::part(text) {
+  color: #137e96;
+}
+
+.credit-debit-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   TRANSMISSION COMPONENTS
+   ============================================ */
+.transmission-status {
+  margin-bottom: 24px;
+}
+
+.capture-section {
+  text-align: center;
+}
+
+/* ============================================
+   TAB BAR STYLING
+   ============================================ */
+ion-tab-bar {
+  --background: white;
+  --border: 1px solid #e0e0e0;
+  --color: #666;
+  --color-selected: #007bff;
+}
+
+ion-tab-button {
+  --color: #666;
+  --color-selected: #007bff;
+  --background-selected: #e3f2fd;
+  --background: white;
+}
+
+ion-tab-button:hover {
+  --background: #f8f9fa;
+  --color: #333;
+}
+
+ion-tab-button.tab-selected {
+  --color: #007bff;
+  --background: #e3f2fd;
+}
+
+/* Fix tab bar parts */
+ion-tab-bar::part(native) {
+  background: white !important;
+  color: #666 !important;
+}
+
+ion-tab-button::part(native) {
+  background: white !important;
+  color: #666 !important;
+}
+
+ion-tab-button.tab-selected::part(native) {
+  background: #e3f2fd !important;
+  color: #007bff !important;
+}
+
+/* Tab Icons */
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Hover effect for tab icons */
+ion-tab-button:hover .tab-icon {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(96%) saturate(1456%) hue-rotate(201deg) brightness(97%) contrast(101%);
+}
+
+/* Selected state for tab icons */
+ion-tab-button.tab-selected .tab-icon {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(96%) saturate(1456%) hue-rotate(201deg) brightness(97%) contrast(101%);
+}
+
+/* ============================================
+   SPECIFIC COMPONENT STYLES
+   ============================================ */
+/* These are specific to certain components but still reusable */
+
+/* Home Page Specific */
+.home-content {
+  padding: 16px;
+  background-color: #f5f5f5;
+  min-height: 100%;
+}
+
+/* Balance Card Specific */
+.balance-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Payment Actions Card Specific */
+.payment-actions-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* File Transmissions Card Specific */
+.file-transmissions-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-transmissions-card ion-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+}

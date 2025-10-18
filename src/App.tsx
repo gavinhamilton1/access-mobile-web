@@ -10,8 +10,8 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
+// Using custom SVG icons from public/images directory
+import Home from './pages/Home';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
 
@@ -45,6 +45,9 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 
+/* Global styles */
+import './styles.css';
+
 setupIonicReact();
 
 const App: React.FC = () => (
@@ -52,13 +55,19 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
-          </Route>
+            <Route exact path="/tab1">
+              <Home />
+            </Route>
           <Route exact path="/tab2">
             <Tab2 />
           </Route>
-          <Route path="/tab3">
+          <Route exact path="/tab3">
+            <Tab3 />
+          </Route>
+          <Route exact path="/tab4">
+            <Tab2 />
+          </Route>
+          <Route exact path="/tab5">
             <Tab3 />
           </Route>
           <Route exact path="/">
@@ -67,16 +76,24 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon aria-hidden="true" icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
+            <img src="/images/Home.svg" alt="Home" className="tab-icon" />
+            <IonLabel>Home</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon aria-hidden="true" icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
+            <img src="/images/Accounts.svg" alt="Accounts" className="tab-icon" />
+            <IonLabel>Accounts</IonLabel>
           </IonTabButton>
           <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon aria-hidden="true" icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+            <img src="/images/Payments.svg" alt="Payments" className="tab-icon" />
+            <IonLabel>Payments</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab4" href="/tab4">
+            <img src="/images/Deposits.svg" alt="Deposits" className="tab-icon" />
+            <IonLabel>Deposits</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab5" href="/tab5">
+            <img src="/images/Profile.svg" alt="Profile" className="tab-icon" />
+            <IonLabel>Profile</IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
