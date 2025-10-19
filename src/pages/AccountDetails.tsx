@@ -197,19 +197,21 @@ const AccountDetails: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
+
+<IonHeader className="standard-header">
         <IonToolbar>
-          <div className="account-details-header-layout">
-            <div className="back-button-column">
-              <IonButton fill="clear" className="back-button" onClick={handleBackClick}>
+          <div className="header-content">
+            <div className="header-left">
+            <IonButton fill="clear" className="back-button" onClick={handleBackClick}>
                 <img src="/images/ArrowUp.svg" alt="Back" className="icon-small" style={{transform: 'rotate(-90deg)'}} />
                 <span>Back</span>
               </IonButton>
+
             </div>
-            <div className="title-column">
-              <IonTitle>{account.name}</IonTitle>
-              <IonList>
-  <IonItem>
+            <div className="header-center">
+              <IonTitle>
+                <div className="account-title-constrained">{account.name}</div>
+              </IonTitle>
               <IonSelect
                 value="Current day"
                 interface="popover"
@@ -219,15 +221,17 @@ const AccountDetails: React.FC = () => {
                 <IonSelectOption value="Prior day">Prior day</IonSelectOption>
                 <IonSelectOption value="Last week">Last week</IonSelectOption>
               </IonSelect>
-              </IonItem>
-              </IonList>
             </div>
-            <div className="empty-column">
-              {/* Empty for balance */}
+            <div className="header-right">
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
+
+
+
+
+
 
       <IonContent fullscreen>
         <div className="page-content">

@@ -190,6 +190,9 @@ ion-header::part(native) {
 .icon-medium {
   width: 24px;
   height: 24px;
+  position: relative;
+  z-index: 101;
+  pointer-events: auto;
 }
 
 .icon-dot {
@@ -979,6 +982,16 @@ ion-toolbar {
   padding: 0;
 }
 
+.account-title-constrained {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+}
+
 /* Standard page title styling - consistent across all pages */
 ion-title {
   color: #333 !important;
@@ -990,6 +1003,11 @@ ion-title {
   text-align: center !important;
   margin: 18px auto !important;
   padding: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Header layout for three-column design */
@@ -1042,6 +1060,8 @@ ion-title {
   justify-content: flex-end;
   min-width: 100px;
   padding-left: 20px;
+  position: relative;
+  z-index: 100;
 }
 
 /* Header buttons */
