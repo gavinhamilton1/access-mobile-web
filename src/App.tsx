@@ -25,6 +25,7 @@ import ChooseSummary from './pages/ChooseSummary';
 import CaptureCheck from './pages/CaptureCheck';
 import CaptureSummary from './pages/CaptureSummary';
 import Tab3 from './pages/Tab3';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -135,6 +136,7 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
+      <PWAInstallPrompt />
     </IonReactRouter>
   </IonApp>
 );

@@ -1,21 +1,54 @@
 {
-  "short_name": "Ionic App",
-  "name": "My Ionic App",
+  "short_name": "Access Mobile",
+  "name": "JPMC Access Mobile Banking",
+  "description": "Mobile banking app for check capture and remote deposits",
   "icons": [
     {
-      "src": "assets/icon/favicon.png",
+      "src": "/favicon.png",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/png"
     },
     {
-      "src": "assets/icon/icon.png",
+      "src": "/images/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "orientation": "portrait",
+  "theme_color": "#007bff",
+  "background_color": "#ffffff",
+  "categories": ["finance", "business"],
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Capture Deposit",
+      "short_name": "Capture",
+      "description": "Quick access to deposit capture",
+      "url": "/deposit-to",
+      "icons": [
+        {
+          "src": "/images/Camera.svg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
 }

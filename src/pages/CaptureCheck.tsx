@@ -8,10 +8,18 @@ import {
   IonButton,
   IonText,
   IonIcon,
-  IonFab,
-  IonFabButton
+  IonSpinner
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
+
+// TypeScript declarations for external libraries
+declare global {
+  interface Window {
+    cv: any;
+    Tesseract: any;
+    onOpenCvReady: () => void;
+  }
+}
 
 interface LocationState {
   captureType?: string;
@@ -34,6 +42,18 @@ const CaptureCheck: React.FC = () => {
   const [backImage, setBackImage] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
+  
+  // Auto-detection and OCR states
+  const [isAutoDetecting, setIsAutoDetecting] = useState(false);
+  const [detectionStatus, setDetectionStatus] = useState<string>('');
+  const [isProcessingOCR, setIsProcessingOCR] = useState(false);
+  const [extractedText, setExtractedText] = useState<string>('');
+  const [checkDetails, setCheckDetails] = useState<{
+    amount?: string;
+    date?: string;
+    payee?: string;
+    memo?: string;
+  }>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -114,6 +134,26 @@ const CaptureCheck: React.FC = () => {
       }, 1000); // Give a moment for the user to see the final state
     }
   }, [currentStep]);
+
+  // Auto-detection interval
+  useEffect(() => {
+    if (!isCameraReady || currentStep === 'complete') return;
+
+    const detectionInterval = setInterval(() => {
+      if (!isAutoDetecting && !isProcessingOCR) {
+        handleAutoCapture();
+      }
+    }, 2000); // Check every 2 seconds
+
+    return () => clearInterval(detectionInterval);
+  }, [isCameraReady, currentStep, isAutoDetecting, isProcessingOCR]);
+
+  // Initialize OpenCV
+  useEffect(() => {
+    window.onOpenCvReady = () => {
+      console.log('OpenCV.js is ready');
+    };
+  }, []);
 
   // Handle page visibility change (when user switches tabs or minimizes browser)
   useEffect(() => {
@@ -255,7 +295,7 @@ const CaptureCheck: React.FC = () => {
     history.push('/deposits');
   };
 
-  const captureImage = () => {
+  const captureImage = async () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -271,6 +311,15 @@ const CaptureCheck: React.FC = () => {
         
         // Convert canvas to image data
         const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Process OCR if this is the front of a check
+        if (isCheckCapture && currentStep === 'front') {
+          setDetectionStatus('Processing check details...');
+          const extractedText = await extractTextFromImage(imageData);
+          if (extractedText) {
+            parseCheckDetails(extractedText);
+          }
+        }
         
         if (currentStep === 'front') {
           setFrontImage(imageData);
@@ -334,6 +383,181 @@ const CaptureCheck: React.FC = () => {
     return canvas.toDataURL('image/jpeg', 0.8);
   };
 
+  // Auto-detection using OpenCV.js
+  const detectDocument = async (videoElement: HTMLVideoElement): Promise<boolean> => {
+    if (!window.cv) {
+      console.log('OpenCV not ready yet');
+      return false;
+    }
+
+    try {
+      // Create canvas to capture video frame
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return false;
+
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      ctx.drawImage(videoElement, 0, 0);
+
+      // Convert to OpenCV Mat
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const src = window.cv.matFromImageData(imgData);
+      const gray = new window.cv.Mat();
+      const edges = new window.cv.Mat();
+      const contours = new window.cv.MatVector();
+      const hierarchy = new window.cv.Mat();
+
+      // Convert to grayscale
+      window.cv.cvtColor(src, gray, window.cv.COLOR_RGBA2GRAY);
+      
+      // Apply Gaussian blur
+      const blurred = new window.cv.Mat();
+      window.cv.GaussianBlur(gray, blurred, new window.cv.Size(5, 5), 0);
+      
+      // Edge detection
+      window.cv.Canny(blurred, edges, 50, 150);
+      
+      // Find contours
+      window.cv.findContours(edges, contours, hierarchy, window.cv.RETR_EXTERNAL, window.cv.CHAIN_APPROX_SIMPLE);
+      
+      let largestArea = 0;
+      let bestContour = null;
+      
+      // Find the largest rectangular contour
+      for (let i = 0; i < contours.size(); i++) {
+        const contour = contours.get(i);
+        const area = window.cv.contourArea(contour);
+        
+        if (area > largestArea) {
+          // Check if contour is roughly rectangular
+          const epsilon = 0.02 * window.cv.arcLength(contour, true);
+          const approx = new window.cv.Mat();
+          window.cv.approxPolyDP(contour, approx, epsilon, true);
+          
+          if (approx.rows === 4) {
+            largestArea = area;
+            bestContour = approx;
+          }
+          approx.delete();
+        }
+        contour.delete();
+      }
+
+      // Clean up
+      src.delete();
+      gray.delete();
+      edges.delete();
+      blurred.delete();
+      contours.delete();
+      hierarchy.delete();
+
+      // Check if we found a good document contour
+      const minArea = canvas.width * canvas.height * 0.1; // At least 10% of frame
+      return largestArea > minArea && bestContour !== null;
+      
+    } catch (error) {
+      console.error('Document detection error:', error);
+      return false;
+    }
+  };
+
+  // OCR text extraction using Tesseract.js
+  const extractTextFromImage = async (imageData: string): Promise<string> => {
+    if (!window.Tesseract) {
+      console.log('Tesseract not ready yet');
+      return '';
+    }
+
+    try {
+      setIsProcessingOCR(true);
+      setDetectionStatus('Extracting text...');
+      
+      const { data: { text } } = await window.Tesseract.recognize(
+        imageData,
+        'eng',
+        {
+          logger: (m: any) => {
+            if (m.status === 'recognizing text') {
+              setDetectionStatus(`OCR Progress: ${Math.round(m.progress * 100)}%`);
+            }
+          }
+        }
+      );
+      
+      setExtractedText(text);
+      return text;
+    } catch (error) {
+      console.error('OCR error:', error);
+      return '';
+    } finally {
+      setIsProcessingOCR(false);
+    }
+  };
+
+  // Parse check details from extracted text
+  const parseCheckDetails = (text: string) => {
+    const details: any = {};
+    
+    // Extract amount (look for $X,XXX.XX pattern)
+    const amountMatch = text.match(/\$[\d,]+\.?\d*/);
+    if (amountMatch) {
+      details.amount = amountMatch[0];
+    }
+    
+    // Extract date (various date formats)
+    const dateMatch = text.match(/(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|(\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2})/);
+    if (dateMatch) {
+      details.date = dateMatch[0];
+    }
+    
+    // Extract payee (look for "Pay to" or "Pay" patterns)
+    const payeeMatch = text.match(/(?:Pay\s+to|Pay)\s*:?\s*([A-Za-z\s]+)/i);
+    if (payeeMatch) {
+      details.payee = payeeMatch[1].trim();
+    }
+    
+    // Extract memo (look for "Memo" or "For" patterns)
+    const memoMatch = text.match(/(?:Memo|For)\s*:?\s*([A-Za-z0-9\s]+)/i);
+    if (memoMatch) {
+      details.memo = memoMatch[1].trim();
+    }
+    
+    setCheckDetails(details);
+    return details;
+  };
+
+  // Auto-capture when document is detected
+  const handleAutoCapture = async () => {
+    if (!videoRef.current || !isCameraReady) return;
+    
+    setIsAutoDetecting(true);
+    setDetectionStatus('Detecting document...');
+    
+    try {
+      const isDocumentDetected = await detectDocument(videoRef.current);
+      
+      if (isDocumentDetected) {
+        setDetectionStatus('Document detected! Capturing...');
+        
+        // Small delay to show detection feedback
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Capture the image
+        await captureImage();
+        
+        setDetectionStatus('Document captured successfully!');
+      } else {
+        setDetectionStatus('Position document within frame');
+      }
+    } catch (error) {
+      console.error('Auto-capture error:', error);
+      setDetectionStatus('Detection failed, try manual capture');
+    } finally {
+      setIsAutoDetecting(false);
+    }
+  };
+
   const handleContinue = () => {
     if (currentStep === 'complete') {
       // Stop camera before navigating
@@ -358,14 +582,6 @@ const CaptureCheck: React.FC = () => {
     return 'Capture document';
   };
 
-  const getStepDescription = () => {
-    if (isCheckCapture) {
-      return currentStep === 'front' 
-        ? 'Position the front of the check within the frame'
-        : 'Position the back of the check within the frame';
-    }
-    return 'Position the document within the frame';
-  };
 
   return (
     <IonPage>
@@ -391,74 +607,105 @@ const CaptureCheck: React.FC = () => {
 
       <IonContent fullscreen className="capture-content">
         <div className="capture-container">
-          {/* Camera View */}
-          <div className="camera-view">
-            {/* Always render video element */}
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              webkit-playsinline="true"
-              className="camera-video"
-              style={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover',
-                backgroundColor: '#000',
-                border: '2px solid red' // Debug border
-              }}
-              onLoadStart={() => console.log('Video load started')}
-              onLoadedData={() => console.log('Video data loaded')}
-              onCanPlay={() => console.log('Video can play')}
-            />
-            
-            {/* Loading overlay */}
-            {!isCameraReady && (
-              <div className="camera-loading">
-                <IonText>
-                  <p className="loading-text">Initializing camera...</p>
-                </IonText>
-              </div>
-            )}
-            
-            {/* Debug info */}
-            <div style={{ 
-              position: 'absolute', 
-              top: '10px', 
-              left: '10px', 
-              background: 'rgba(0,0,0,0.7)', 
-              color: 'white', 
-              padding: '5px',
-              fontSize: '12px',
-              zIndex: 10
-            }}>
-              Camera Ready: {isCameraReady ? 'Yes' : 'No'}
-            </div>
-            
-            {/* Capture Overlay */}
-            <div className="capture-overlay">
-              <div className="overlay-top"></div>
-              <div className="overlay-middle">
-                <div className="overlay-left"></div>
-                <div className="capture-frame">
-                  <div className="frame-corners">
-                    <div className="corner top-left"></div>
-                    <div className="corner top-right"></div>
-                    <div className="corner bottom-left"></div>
-                    <div className="corner bottom-right"></div>
-                  </div>
-                </div>
-                <div className="overlay-right"></div>
-              </div>
-              <div className="overlay-bottom"></div>
-            </div>
 
-            {/* Instructions */}
-            <div className="capture-instructions">
+          {/* Detection Status */}
+          {detectionStatus && (
+            <div className="detection-status">
               <IonText>
-                <p className="instruction-text">{getStepDescription()}</p>
+                <p className="status-text">
+                  {isAutoDetecting && <IonSpinner name="crescent" />}
+                  {isProcessingOCR && <IonSpinner name="crescent" />}
+                  {detectionStatus}
+                </p>
               </IonText>
+            </div>
+          )}
+
+          {/* Extracted Check Details */}
+          {Object.keys(checkDetails).length > 0 && (
+            <div className="check-details">
+              <IonText>
+                <h3 className="details-title">Extracted Check Details:</h3>
+              </IonText>
+              <div className="details-grid">
+                {checkDetails.amount && (
+                  <div className="detail-item">
+                    <span className="detail-label">Amount:</span>
+                    <span className="detail-value">{checkDetails.amount}</span>
+                  </div>
+                )}
+                {checkDetails.date && (
+                  <div className="detail-item">
+                    <span className="detail-label">Date:</span>
+                    <span className="detail-value">{checkDetails.date}</span>
+                  </div>
+                )}
+                {checkDetails.payee && (
+                  <div className="detail-item">
+                    <span className="detail-label">Payee:</span>
+                    <span className="detail-value">{checkDetails.payee}</span>
+                  </div>
+                )}
+                {checkDetails.memo && (
+                  <div className="detail-item">
+                    <span className="detail-label">Memo:</span>
+                    <span className="detail-value">{checkDetails.memo}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Camera Preview Pane */}
+          <div className="camera-preview-pane">
+            <div className="camera-view">
+              {/* Always render video element */}
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                webkit-playsinline="true"
+                className="camera-video"
+                onLoadStart={() => console.log('Video load started')}
+                onLoadedData={() => console.log('Video data loaded')}
+                onCanPlay={() => console.log('Video can play')}
+              />
+              
+              {/* Loading overlay */}
+              {!isCameraReady && (
+                <div className="camera-loading">
+                  <IonText>
+                    <p className="loading-text">Initializing camera...</p>
+                  </IonText>
+                </div>
+              )}
+              
+              {/* Framing Mask */}
+              <div className="framing-mask">
+                <div className="mask-overlay">
+                  <div className="mask-top"></div>
+                  <div className="mask-middle">
+                    <div className="mask-left"></div>
+                    <div className="capture-frame">
+                      <div className="frame-corners">
+                        <div className="corner top-left"></div>
+                        <div className="corner top-right"></div>
+                        <div className="corner bottom-left"></div>
+                        <div className="corner bottom-right"></div>
+                      </div>
+                      <div className="frame-guidelines">
+                        <div className="guideline horizontal top"></div>
+                        <div className="guideline horizontal bottom"></div>
+                        <div className="guideline vertical left"></div>
+                        <div className="guideline vertical right"></div>
+                      </div>
+                    </div>
+                    <div className="mask-right"></div>
+                  </div>
+                  <div className="mask-bottom"></div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -484,15 +731,9 @@ const CaptureCheck: React.FC = () => {
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="capture-actions">
-            {currentStep !== 'complete' ? (
-              <IonFab vertical="bottom" horizontal="center" slot="fixed">
-                <IonFabButton onClick={captureImage} className="capture-button">
-                  <IonIcon name="camera" />
-                </IonFabButton>
-              </IonFab>
-            ) : (
+          {/* Continue Button - only show when capture is complete */}
+          {currentStep === 'complete' && (
+            <div className="continue-section">
               <IonButton 
                 expand="block" 
                 className="continue-button"
@@ -500,8 +741,8 @@ const CaptureCheck: React.FC = () => {
               >
                 Continue
               </IonButton>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Hidden canvas for image capture */}

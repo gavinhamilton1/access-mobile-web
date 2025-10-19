@@ -7,9 +7,7 @@ import {
   IonToolbar,
   IonButton,
   IonText,
-  IonIcon,
-  IonCard,
-  IonCardContent
+  IonIcon
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -88,31 +86,46 @@ const ChooseSummary: React.FC = () => {
         <div className="page-content">
           <div className="summary-container">
             {/* Deposit to Card */}
-            <IonCard className="summary-card" onClick={handleEditDepositTo}>
-              <IonCardContent className="summary-card-content">
-                <div className="summary-label">Deposit to</div>
-                <div className="summary-value">{selectedProgram} {programName}</div>
-                <IonIcon name="chevron-forward" className="summary-arrow" />
-              </IonCardContent>
-            </IonCard>
+            <div className="summary-option" onClick={handleEditDepositTo}>
+              <div className="summary-content">
+                <div className="summary-info">
+                  <div className="summary-label">Deposit to</div>
+                  <div className="summary-value">{selectedProgram} {programName}</div>
+                </div>
+                <IonIcon 
+                  icon="/images/ArrowForward.svg" 
+                  className="summary-arrow"
+                />
+              </div>
+            </div>
 
             {/* Capture Type Card */}
-            <IonCard className="summary-card" onClick={handleEditCaptureType}>
-              <IonCardContent className="summary-card-content">
-                <div className="summary-label">Capture Type</div>
-                <div className="summary-value">{captureType}</div>
-                <IonIcon name="chevron-forward" className="summary-arrow" />
-              </IonCardContent>
-            </IonCard>
+            <div className="summary-option" onClick={handleEditCaptureType}>
+              <div className="summary-content">
+                <div className="summary-info">
+                  <div className="summary-label">Capture Type</div>
+                  <div className="summary-value">{captureType}</div>
+                </div>
+                <IonIcon 
+                  icon="/images/ArrowForward.svg" 
+                  className="summary-arrow"
+                />
+              </div>
+            </div>
 
             {/* Group Card */}
-            <IonCard className="summary-card" onClick={handleEditGroup}>
-              <IonCardContent className="summary-card-content">
-                <div className="summary-label">Group</div>
-                <div className="summary-value">{selectedGroup}</div>
-                <IonIcon name="chevron-forward" className="summary-arrow" />
-              </IonCardContent>
-            </IonCard>
+            <div className="summary-option" onClick={handleEditGroup}>
+              <div className="summary-content">
+                <div className="summary-info">
+                  <div className="summary-label">Group</div>
+                  <div className="summary-value">{selectedGroup}</div>
+                </div>
+                <IonIcon 
+                  icon="/images/ArrowForward.svg" 
+                  className="summary-arrow"
+                />
+              </div>
+            </div>
 
             {/* Start Capture Button */}
             <div className="start-capture-container">

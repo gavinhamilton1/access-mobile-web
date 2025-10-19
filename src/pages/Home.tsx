@@ -21,8 +21,15 @@ import {
   IonText
 } from '@ionic/react';
 import { notifications, chevronDown, checkmark, document, informationCircle, closeCircle, camera } from 'ionicons/icons';
+import { useHistory } from 'react-router-dom';
 
 const Tab1: React.FC = () => {
+  const history = useHistory();
+
+  const handleCaptureDeposit = () => {
+    history.push('/deposit-to');
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -168,6 +175,7 @@ const Tab1: React.FC = () => {
           <IonButton 
             className="btn-primary floating-btn"
             color="tertiary"
+            onClick={handleCaptureDeposit}
           >
             <img src="/images/Camera.svg" alt="Camera" className="btn-icon" />
             Capture deposit
