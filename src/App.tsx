@@ -12,7 +12,8 @@ import {
 import { IonReactRouter } from '@ionic/react-router';
 // Using custom SVG icons from public/images directory
 import Home from './pages/Home';
-import Tab2 from './pages/Tab2';
+import Accounts from './pages/Accounts';
+import AccountDetails from './pages/AccountDetails';
 import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
@@ -55,43 +56,46 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-            <Route exact path="/tab1">
+            <Route exact path="/home">
               <Home />
             </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
+          <Route exact path="/accounts">
+            <Accounts />
           </Route>
-          <Route exact path="/tab3">
-            <Tab3 />
+          <Route path="/accounts/account-details/:accountId">
+            <AccountDetails />
           </Route>
-          <Route exact path="/tab4">
-            <Tab2 />
+          <Route exact path="/home">
+            <Home />
           </Route>
-          <Route exact path="/tab5">
-            <Tab3 />
+          <Route exact path="/home">
+            <Home />
+          </Route>
+          <Route exact path="/home">
+            <Home />
           </Route>
           <Route exact path="/">
-            <Redirect to="/tab1" />
+            <Redirect to="/home" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
+          <IonTabButton tab="home" href="/home">
             <img src="/images/Home.svg" alt="Home" className="tab-icon" />
             <IonLabel>Home</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
+          <IonTabButton tab="accounts" href="/accounts">
             <img src="/images/Accounts.svg" alt="Accounts" className="tab-icon" />
             <IonLabel>Accounts</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
+          <IonTabButton tab="payments" href="/payments">
             <img src="/images/Payments.svg" alt="Payments" className="tab-icon" />
             <IonLabel>Payments</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab4" href="/tab4">
+          <IonTabButton tab="deposits" href="/deposits">
             <img src="/images/Deposits.svg" alt="Deposits" className="tab-icon" />
             <IonLabel>Deposits</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab5" href="/tab5">
+          <IonTabButton tab="profile" href="/profile">
             <img src="/images/Profile.svg" alt="Profile" className="tab-icon" />
             <IonLabel>Profile</IonLabel>
           </IonTabButton>

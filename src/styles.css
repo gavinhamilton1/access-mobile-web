@@ -203,9 +203,10 @@ ion-header::part(native) {
    CARDS
    ============================================ */
 .card {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
   --background: white;
   --color: #333;
 }
@@ -613,13 +614,19 @@ ion-header::part(border) {
 .currency-select-inline {
   --padding-start: 4px;
   --padding-end: 4px;
-  min-width: 60px;
   --background: transparent;
   --color: #137e96;
   --border-radius: 6px;
   --border-color: transparent;
   --border-width: 0px;
   --border-style: none;
+}
+
+ion-select {
+  --placeholder-color: #971e49;
+  --placeholder-opacity: 1;
+  width: 100%;
+  justify-content: center;
 }
 
 .currency-select-inline::part(icon) {
@@ -630,10 +637,309 @@ ion-header::part(border) {
   color: #137e96;
 }
 
+
+.select-wrapper {
+  justify-content: center !important;
+}
+
+/* Override IonList background in header */
+.list-md {
+  background: transparent !important;
+  --background: transparent !important;
+  padding: 0 !important;
+  --padding-top: 0!important;
+  --padding-bottom: 0 !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+}
+
+.list-md ion-item {
+  --background: transparent !important;
+  background: transparent !important;
+  --border-width: 0 !important;
+  --border-color: transparent !important;
+  --background-hover: transparent !important;
+  --background-activated: transparent !important;
+  --background-focused: transparent !important;
+  --background-selected: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-height: 40px !important;
+  --min-height: 40px !important;
+  height: auto !important;
+  --height: auto !important;
+}
+
+.list-md ion-item:hover {
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+.list-md ion-item:active {
+  --background: transparent !important;
+  background: transparent !important;
+}
+
+
+
+/* Override global ion-toolbar with higher specificity */
+ion-toolbar {
+  --background: #f5f5f5 !important;
+  --color: #333 !important;
+  --border-color: transparent !important;
+}
+
+/* Standard header - page background color for all pages except home */
+.standard-header {
+  --background: #f5f5f5 !important;
+  background: #f5f5f5 !important;
+}
+
+.standard-header ion-toolbar {
+    --background: #f5f5f5 !important;
+  background: #f5f5f5 !important;
+}
+
+.standard-header ion-toolbar::part(native) {
+  background: #f5f5f5 !important;
+}
+
+.standard-header ion-header::part(native) {
+  background: #f5f5f5 !important;
+}
+
+.standard-header.header-md {
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.standard-header ion-toolbar.header-md {
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Align sort icon with card right border */
+.standard-header .header-actions:last-child {
+  margin-right: 30px;
+}
+
+/* Account details header layout - three separate columns */
+.account-details-header-layout {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.back-button-column {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 80px;
+  padding-left: 25px; /* Align with card padding */
+}
+
+.title-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.title-column ion-title {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.title-column .currency-select-inline {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.empty-column {
+  flex: 0 0 auto;
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .credit-debit-left {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* ============================================
+   ACCOUNTS PAGE COMPONENTS
+   ============================================ */
+.accounts-section {
+  margin-top: 24px;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #137e96;
+  margin: 0 0 16px 0;
+  padding: 0 16px;
+}
+
+.accounts-list-card {
+  margin-bottom: 0;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0;
+}
+
+.account-details {
+  flex: 1;
+  text-align: left;
+}
+
+.account-details h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #137e96;
+}
+
+.account-details p {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.account-star {
+  flex-shrink: 0;
+}
+
+.account-balance {
+  color: #333;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  font-weight: normal;
+}
+
+.account-number {
+  color: #666;
+  font-weight: normal;
+  margin-left: 4px;
+}
+
+/* ============================================
+   ACCOUNT DETAILS PAGE
+   ============================================ */
+.back-button {
+  --color: #333;
+  --background: transparent;
+  --padding-start: 0;
+  --padding-end: 0;
+  --border-width: 0 !important;
+  --border-color: transparent !important;
+  color: #333 !important;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none !important;
+}
+
+/* Override Ionic's toolbar button color */
+.back-button::part(native) {
+  color: #333 !important;
+}
+
+/* Override the specific selector you mentioned */
+:host(.in-toolbar:not(.ion-color):not(.in-toolbar-color)) .back-button .button-native {
+  color: #333 !important;
+}
+
+.transaction-search-section {
+  margin-top: 24px;
+}
+
+.search-handle {
+  width: 40px;
+  height: 4px;
+  background-color: #ccc;
+  border-radius: 2px;
+  margin: 0 auto 16px auto;
+}
+
+.search-card {
+  margin-bottom: 0;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.search-input {
+  flex: 1;
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+  --padding-start: 40px;
+  --padding-end: 40px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #666;
+}
+
+.filter-icon {
+  position: absolute;
+  right: 12px;
+  color: #666;
+}
+
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+
+/* Custom scrollbar styling to match page background */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b8b8b8;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d0d0d0 #f5f5f5;
 }
 
 /* ============================================
