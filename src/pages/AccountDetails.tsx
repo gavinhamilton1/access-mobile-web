@@ -312,12 +312,12 @@ const AccountDetails: React.FC = () => {
             <IonCard className="card search-card">
               <IonCardContent className="card-content">
                 <div className="search-container">
+                  <img src="/images/Search.svg" alt="Search" className="search-icon" />
                   <IonInput
                     placeholder="Search transactions"
                     className="search-input"
                   />
-                  <img src="/images/Search.svg" alt="Search" className="icon-small search-icon" />
-                  <img src="/images/ArrowDown.svg" alt="Filter" className="icon-small filter-icon" />
+                  <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
                 </div>
               </IonCardContent>
             </IonCard>
