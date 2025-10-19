@@ -14,6 +14,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import Accounts from './pages/Accounts';
 import AccountDetails from './pages/AccountDetails';
+import Payments from './pages/Payments';
 import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
@@ -56,23 +57,23 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-            <Route exact path="/home">
-              <Home />
-            </Route>
+          <Route exact path="/home">
+            <Home />
+          </Route>
           <Route exact path="/accounts">
             <Accounts />
           </Route>
           <Route path="/accounts/account-details/:accountId">
             <AccountDetails />
           </Route>
-          <Route exact path="/home">
-            <Home />
+          <Route exact path="/payments">
+            <Payments />
           </Route>
-          <Route exact path="/home">
-            <Home />
+          <Route exact path="/deposits">
+            <Tab3 />
           </Route>
-          <Route exact path="/home">
-            <Home />
+          <Route exact path="/profile">
+            <Tab3 />
           </Route>
           <Route exact path="/">
             <Redirect to="/home" />

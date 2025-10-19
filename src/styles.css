@@ -1,4 +1,12 @@
 /* ============================================
+   CSS CUSTOM PROPERTIES (TOKENS)
+   ============================================ */
+:root {
+  --teal-primary: #137e96;
+  --teal-primary-rgb: 19, 126, 150;
+}
+
+/* ============================================
    GLOBAL STYLES - REUSABLE ACROSS ALL COMPONENTS
    ============================================ */
 
@@ -294,18 +302,18 @@ ion-card-header {
    BUTTONS
    ============================================ */
 .btn-primary {
-  --background: #137e96;
+  --background: var(--teal-primary);
   --color: white;
   --border-radius: 50px;
   --padding-top: 16px;
   --padding-bottom: 16px;
   font-weight: bold;
-  --ion-color-base: #137e96 !important;
+  --ion-color-base: var(--teal-primary) !important;
   --ion-color-contrast: #fff !important;
 }
 
 .btn-primary::part(native) {
-  background: #137e96 !important;
+  background: var(--teal-primary) !important;
   color: white !important;
 }
 
@@ -576,7 +584,7 @@ ion-header::part(border) {
    PAGE CONTENT
    ============================================ */
 .page-content {
-  padding: 16px;
+  padding: 0;
   background-color: #f5f5f5;
   min-height: 100%;
 }
@@ -615,7 +623,7 @@ ion-header::part(border) {
   --padding-start: 4px;
   --padding-end: 4px;
   --background: transparent;
-  --color: #137e96;
+  --color: var(--teal-primary);
   --border-radius: 6px;
   --border-color: transparent;
   --border-width: 0px;
@@ -630,11 +638,11 @@ ion-select {
 }
 
 .currency-select-inline::part(icon) {
-  color: #137e96;
+  color: var(--teal-primary);
 }
 
 .currency-select-inline::part(text) {
-  color: #137e96;
+  color: var(--teal-primary);
 }
 
 
@@ -785,7 +793,7 @@ ion-toolbar {
 .section-title {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #137e96;
+  color: var(--teal-primary);
   margin: 0 0 16px 0;
   padding: 0 16px;
 }
@@ -811,7 +819,7 @@ ion-toolbar {
   margin: 0 0 4px 0;
   font-size: 1rem;
   font-weight: bold;
-  color: #137e96;
+  color: var(--teal-primary);
 }
 
 .account-details p {
@@ -881,14 +889,23 @@ ion-toolbar {
   margin-bottom: 0;
 }
 
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .search-container {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 0 16px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  flex: 1;
+  height: 48px;
 }
 
 .search-input {
@@ -917,11 +934,243 @@ ion-toolbar {
 }
 
 .filter-icon {
-  width: 20px;
-  height: 20px;
-  color: #007bff;
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(160deg) brightness(104%) contrast(97%);
 }
 
+
+/* ============================================
+   PAYMENTS PAGE STYLING
+   ============================================ */
+
+/* Payments header layout */
+.payments-header-layout {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.header-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 80px;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.header-center ion-title {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.header-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 80px;
+}
+
+/* Header buttons */
+.header-button {
+  --color: #333;
+  --border-width: 0px;
+  --border-style: none;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.header-button::part(native) {
+  border: none;
+}
+
+/* Payments tabs in header */
+.payments-tabs-header {
+  padding: 0 16px 8px;
+  background: #f5f5f5;
+}
+
+/* Search section in header */
+.payments-search-header {
+  padding: 0 16px 16px;
+  background: #f5f5f5;
+}
+
+.payments-segment {
+  --background: transparent;
+  --color: #333;
+}
+
+.payment-tab {
+  --color: #333;
+  --color-checked: #007bff;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.payment-tab::part(indicator) {
+  background: #007bff;
+  height: 3px;
+}
+
+/* Payment list */
+.payments-list {
+  margin: 0 0 80px;
+}
+
+.payment-group {
+  margin-bottom: 24px;
+}
+
+.cutoff-date-header {
+  background: #f5f5f5;
+  padding: 8px 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.cutoff-date-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Payment cards */
+.payment-card {
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.payment-card .card-content {
+  padding: 16px;
+  margin: 0;
+}
+
+.payment-item {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.payment-select {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.payment-checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--teal-primary);
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.payment-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-id {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  color: #333;
+}
+
+.payment-from {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #666;
+}
+
+.payment-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.payment-type-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-type {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.payment-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.payment-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.warning-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(25deg) brightness(110%) contrast(110%);
+}
+
+.status-text {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #ff6b35;
+  font-weight: 500;
+}
+
+/* Filter button */
+.filter-button {
+  --background: transparent;
+  --color: var(--teal-primary);
+  --border-radius: 8px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  width: 48px;
+  height: 48px;
+}
+
+.filter-button::part(native) {
+  border-radius: 8px;
+  border: 1px solid var(--teal-primary);
+}
 
 /* ============================================
    SCROLLBAR STYLING
