@@ -4,24 +4,24 @@
   "description": "Mobile banking app for check capture and remote deposits",
   "icons": [
     {
-      "src": "/favicon.png",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "src": "/favicon.ico",
+      "sizes": "32x32 24x24 16x16",
       "type": "image/png"
     },
     {
-      "src": "/images/icon-192.png",
+      "src": "/images/Access192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "/images/icon-512.png",
+      "src": "/images/Access512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "/images/icon-512.png",
+      "src": "/images/Access512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"

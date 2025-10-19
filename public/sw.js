@@ -1,13 +1,21 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'access-mobile-v1';
+const CACHE_NAME = 'access-mobile-v2'; // Increment version to force cache refresh
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
   '/static/css/main.css',
   '/manifest.json',
+  '/favicon.ico',
+  '/images/Access192.png',
+  '/images/Access512.png'
+];
+
+// Files that should always be fetched fresh (no cache)
+const noCacheFiles = [
   '/favicon.png',
-  '/images/icon-192.png',
-  '/images/icon-512.png'
+  '/favicon.ico',
+  '/manifest.json',
+  '/sw.js'
 ];
 
 // Install event - cache resources
@@ -39,6 +47,15 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Clear favicon and manifest from all caches
+      return caches.open(CACHE_NAME).then(cache => {
+        return Promise.all([
+          cache.delete('/favicon.ico'),
+          cache.delete('/favicon.png'),
+          cache.delete('/manifest.json')
+        ]);
+      });
     })
   );
   self.clients.claim();
@@ -46,6 +63,26 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache when offline
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  const pathname = url.pathname;
+  
+  // Check if this is a no-cache file
+  const shouldNotCache = noCacheFiles.some(file => pathname.includes(file));
+  
+  if (shouldNotCache) {
+    // Always fetch fresh for favicon, manifest, and service worker
+    event.respondWith(
+      fetch(event.request).then(response => {
+        console.log('Fresh fetch for:', event.request.url);
+        return response;
+      }).catch(() => {
+        // Fallback to cache if network fails
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+  
   event.respondWith(
     caches.match(event.request)
       .then((response) => {

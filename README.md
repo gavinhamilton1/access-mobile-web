@@ -112,9 +112,54 @@ The deployment includes security headers:
 - **Deployment Status**: Real-time deployment tracking
 - **Custom Domain**: Support for custom domains
 
+## Cache Issues & Troubleshooting
+
+### Favicon Not Updating?
+This is a common PWA caching issue. Here's how to fix it:
+
+1. **Clear Browser Cache**:
+   - Hard refresh: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
+   - Or open DevTools → Application → Storage → Clear storage
+
+2. **Clear Service Worker Cache**:
+   - Open DevTools → Application → Service Workers
+   - Click "Unregister" for your domain
+   - Or run the clear-cache script: `/clear-cache.js`
+
+3. **Force Cache Refresh**:
+   - The service worker now has cache-busting for favicon and manifest
+   - Version incremented to `v2` to force refresh
+   - Added `?v=2` parameters to favicon links
+
+### Development Cache Clearing
+
+```javascript
+// Run in browser console to clear all caches
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+
+if ('caches' in window) {
+  caches.keys().then(function(cacheNames) {
+    return Promise.all(
+      cacheNames.map(function(cacheName) {
+        return caches.delete(cacheName);
+      })
+    );
+  }).then(function() {
+    window.location.reload(true);
+  });
+}
+```
+
 ## Support
 
 For deployment issues:
 1. Check Render build logs
 2. Verify all dependencies are in package.json
 3. Ensure build command works locally: `npm run build`
+4. Clear service worker cache if favicon not updating

@@ -16,10 +16,16 @@ services:
         value: strict-origin-when-cross-origin
       - path: /sw.js
         name: Cache-Control
-        value: no-cache
+        value: no-cache, no-store, must-revalidate
       - path: /manifest.json
         name: Cache-Control
-        value: no-cache
+        value: no-cache, no-store, must-revalidate
+      - path: /favicon.ico
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
+      - path: /favicon.png
+        name: Cache-Control
+        value: no-cache, no-store, must-revalidate
       - path: /*
         name: Cache-Control
         value: public, max-age=31536000
