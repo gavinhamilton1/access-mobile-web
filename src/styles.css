@@ -2228,7 +2228,7 @@ ion-tab-button.tab-selected .tab-icon {
 .capture-content {
   --background: #f5f5f5;
   --color: #333;
-  --overflow: hidden;
+  --overflow: auto;
 }
 
 .capture-container {
@@ -2238,6 +2238,7 @@ ion-tab-button.tab-selected .tab-icon {
   flex-direction: column;
   padding-bottom: 20px;
   background-color: #f5f5f5;
+  overflow-y: auto;
 }
 
 /* Camera Preview Pane */
@@ -2598,32 +2599,86 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .captured-preview {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  position: relative;
+  margin: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
 }
 
-.preview-item {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 8px;
-  border-radius: 8px;
+.preview-title {
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
   text-align: center;
 }
 
-.preview-label {
+.preview-item {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.action-button {
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  min-width: 80px;
+  height: 36px;
   font-size: 12px;
-  margin: 0 0 4px 0;
+}
+
+.retake-button {
+  --color: #007bff;
+  --border-color: #007bff;
+}
+
+.retake-button:hover {
+  --background: rgba(0, 123, 255, 0.1);
+}
+
+.retake-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.preview-label {
+  font-size: 14px;
+  margin: 0;
   color: #333;
+  font-weight: 600;
 }
 
 .preview-image {
-  width: 80px;
-  height: 50px;
+  width: 120px;
+  height: 80px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 2px solid #007bff;
 }
 
 

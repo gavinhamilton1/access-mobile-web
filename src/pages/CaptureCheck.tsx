@@ -140,7 +140,7 @@ const CaptureCheck: React.FC = () => {
     if (!isCameraReady || currentStep === 'complete') return;
 
     const detectionInterval = setInterval(() => {
-      if (!isAutoDetecting && !isProcessingOCR) {
+      if (!isAutoDetecting && !isProcessingOCR && (currentStep === 'front' || currentStep === 'back')) {
         handleAutoCapture();
       }
     }, 2000); // Check every 2 seconds
@@ -575,6 +575,53 @@ const CaptureCheck: React.FC = () => {
     }
   };
 
+  const handleRetakeCapture = async (imageType: 'front' | 'back') => {
+    console.log(`Retaking ${imageType} capture`);
+    
+    // Stop current camera first
+    stopCamera();
+    
+    if (imageType === 'front') {
+      setFrontImage(null);
+      setCurrentStep('front');
+    } else if (imageType === 'back') {
+      setBackImage(null);
+      setCurrentStep('back');
+    }
+    
+    // Reset detection status
+    setDetectionStatus('Position document in frame');
+    setIsAutoDetecting(false);
+    setIsProcessingOCR(false);
+    
+    // Force detection to restart by clearing any existing detection state
+    setDetectionStatus('');
+    
+    // Clear any existing check details
+    setCheckDetails({});
+    setExtractedText('');
+    
+    // Reinitialize camera after a short delay
+    setTimeout(async () => {
+      try {
+        console.log('Reinitializing camera for retake...');
+        await initializeCamera();
+        // Set detection status after camera is ready
+        setDetectionStatus('Position document in frame');
+        // Force detection to start by triggering a manual detection check
+        setTimeout(() => {
+          if (isCameraReady && (currentStep === 'front' || currentStep === 'back')) {
+            console.log('Triggering manual detection after retake...');
+            handleAutoCapture();
+          }
+        }, 500);
+      } catch (error) {
+        console.error('Error reinitializing camera:', error);
+        // Continue anyway - user can still see the interface
+      }
+    }, 100);
+  };
+
   const getStepTitle = () => {
     if (isCheckCapture) {
       return currentStep === 'front' ? 'Capture check front' : 'Capture check back';
@@ -618,41 +665,6 @@ const CaptureCheck: React.FC = () => {
                   {detectionStatus}
                 </p>
               </IonText>
-            </div>
-          )}
-
-          {/* Extracted Check Details */}
-          {Object.keys(checkDetails).length > 0 && (
-            <div className="check-details">
-              <IonText>
-                <h3 className="details-title">Extracted Check Details:</h3>
-              </IonText>
-              <div className="details-grid">
-                {checkDetails.amount && (
-                  <div className="detail-item">
-                    <span className="detail-label">Amount:</span>
-                    <span className="detail-value">{checkDetails.amount}</span>
-                  </div>
-                )}
-                {checkDetails.date && (
-                  <div className="detail-item">
-                    <span className="detail-label">Date:</span>
-                    <span className="detail-value">{checkDetails.date}</span>
-                  </div>
-                )}
-                {checkDetails.payee && (
-                  <div className="detail-item">
-                    <span className="detail-label">Payee:</span>
-                    <span className="detail-value">{checkDetails.payee}</span>
-                  </div>
-                )}
-                {checkDetails.memo && (
-                  <div className="detail-item">
-                    <span className="detail-label">Memo:</span>
-                    <span className="detail-value">{checkDetails.memo}</span>
-                  </div>
-                )}
-              </div>
             </div>
           )}
 
@@ -712,20 +724,84 @@ const CaptureCheck: React.FC = () => {
           {/* Captured Images Preview */}
           {(frontImage || backImage) && (
             <div className="captured-preview">
+              <IonText>
+                <h3 className="preview-title">Captured Images</h3>
+              </IonText>
               {frontImage && (
                 <div className="preview-item">
-                  <IonText>
-                    <p className="preview-label">Front</p>
-                  </IonText>
+                  <div className="preview-header">
+                    <IonText>
+                      <p className="preview-label">Front</p>
+                    </IonText>
+                    <div className="preview-actions">
+                      <IonButton 
+                        fill="outline" 
+                        size="small" 
+                        className="action-button retake-button"
+                        onClick={() => handleRetakeCapture('front')}
+                      >
+                        <img src="/images/Retake.svg" alt="Retake" className="retake-icon" slot="start" />
+                        Retake
+                      </IonButton>
+                    </div>
+                  </div>
                   <img src={frontImage} alt="Front" className="preview-image" />
                 </div>
               )}
               {backImage && (
                 <div className="preview-item">
-                  <IonText>
-                    <p className="preview-label">Back</p>
-                  </IonText>
+                  <div className="preview-header">
+                    <IonText>
+                      <p className="preview-label">Back</p>
+                    </IonText>
+                    <div className="preview-actions">
+                      <IonButton 
+                        fill="outline" 
+                        size="small" 
+                        className="action-button retake-button"
+                        onClick={() => handleRetakeCapture('back')}
+                      >
+                        <img src="/images/Retake.svg" alt="Retake" className="retake-icon" slot="start" />
+                        Retake
+                      </IonButton>
+                    </div>
+                  </div>
                   <img src={backImage} alt="Back" className="preview-image" />
+                </div>
+              )}
+              
+              {/* Extracted Check Details - Only show below captured images */}
+              {(frontImage || backImage) && Object.keys(checkDetails).length > 0 && (
+                <div className="check-details">
+                  <IonText>
+                    <h3 className="details-title">Extracted Check Details:</h3>
+                  </IonText>
+                  <div className="details-grid">
+                    {checkDetails.amount && (
+                      <div className="detail-item">
+                        <span className="detail-label">Amount:</span>
+                        <span className="detail-value">{checkDetails.amount}</span>
+                      </div>
+                    )}
+                    {checkDetails.date && (
+                      <div className="detail-item">
+                        <span className="detail-label">Date:</span>
+                        <span className="detail-value">{checkDetails.date}</span>
+                      </div>
+                    )}
+                    {checkDetails.payee && (
+                      <div className="detail-item">
+                        <span className="detail-label">Payee:</span>
+                        <span className="detail-value">{checkDetails.payee}</span>
+                      </div>
+                    )}
+                    {checkDetails.memo && (
+                      <div className="detail-item">
+                        <span className="detail-label">Memo:</span>
+                        <span className="detail-value">{checkDetails.memo}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
