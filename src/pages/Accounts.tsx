@@ -17,7 +17,9 @@ import {
   IonList
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
+import { accountsData } from '../data/accountsData';
 
+// Note: accountsData is now available globally for use in other pages
 // Mock account data (same as AccountDetails)
 const mockAccounts = {
   'ACCT-0016710022006603': {
@@ -246,15 +248,14 @@ const Accounts: React.FC = () => {
 
   return (
     <IonPage>
+
       <IonHeader className="standard-header">
         <IonToolbar>
           <div className="header-content">
-            <div className="header-actions">
+            <div className="header-left">
             </div>
-            <div className="welcome-section">
+            <div className="header-center">
               <IonTitle>Accounts</IonTitle>
-              <IonList>
-  <IonItem>
               <IonSelect
                 value="Current day"
                 interface="popover"
@@ -264,10 +265,8 @@ const Accounts: React.FC = () => {
                 <IonSelectOption value="Prior day">Prior day</IonSelectOption>
                 <IonSelectOption value="Last week">Last week</IonSelectOption>
               </IonSelect>
-              </IonItem>
-              </IonList>
             </div>
-            <div className="header-actions">
+            <div className="header-right">
               <img 
                 src={sortOrder === 'asc' ? "/images/SortDown.svg" : "/images/SortUp.svg"} 
                 alt="Sort" 
@@ -279,6 +278,8 @@ const Accounts: React.FC = () => {
           </div>
         </IonToolbar>
       </IonHeader>
+
+
 
       <IonContent fullscreen>
         <div className="page-content">

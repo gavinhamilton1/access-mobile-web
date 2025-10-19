@@ -15,6 +15,10 @@ import Home from './pages/Home';
 import Accounts from './pages/Accounts';
 import AccountDetails from './pages/AccountDetails';
 import Payments from './pages/Payments';
+import ApproveRelease from './pages/ApproveRelease';
+import Deposits from './pages/Deposits';
+import RemoteCaptureType from './pages/RemoteCaptureType';
+import ChooseGroup from './pages/ChooseGroup';
 import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
@@ -69,8 +73,17 @@ const App: React.FC = () => (
           <Route exact path="/payments">
             <Payments />
           </Route>
+          <Route exact path="/approve-release">
+            <ApproveRelease />
+          </Route>
           <Route exact path="/deposits">
-            <Tab3 />
+            <Deposits />
+          </Route>
+          <Route exact path="/remote-capture-type">
+            <RemoteCaptureType />
+          </Route>
+          <Route exact path="/choose-group">
+            <ChooseGroup />
           </Route>
           <Route exact path="/profile">
             <Tab3 />

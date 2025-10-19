@@ -14,6 +14,7 @@ import {
   IonText,
   IonButton
 } from '@ionic/react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 // Mock payment data
 const mockPayments = {
@@ -96,6 +97,8 @@ const mockPayments = {
 };
 
 const Payments: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'approve' | 'release'>('approve');
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
@@ -137,6 +140,24 @@ const Payments: React.FC = () => {
       newSelected.add(paymentId);
     }
     setSelectedItems(newSelected);
+  };
+
+  const getSelectedPaymentItems = () => {
+    const currentPayments = activeTab === 'approve' ? mockPayments.approve : mockPayments.release;
+    return currentPayments.filter(payment => selectedItems.has(payment.id));
+  };
+
+  const handleActionClick = (actionType: 'approve' | 'release') => {
+    const selectedPaymentItems = getSelectedPaymentItems();
+    
+    // Cancel selection mode before navigating
+    setIsSelectMode(false);
+    setSelectedItems(new Set());
+    
+    history.push('/approve-release', {
+      selectedItems: selectedPaymentItems,
+      actionType: actionType
+    });
   };
 
   return (
@@ -215,11 +236,15 @@ const Payments: React.FC = () => {
                 </div>
                 
                 {group.payments.map((payment, paymentIndex) => (
-                  <IonCard key={paymentIndex} className="card payment-card">
+                  <IonCard 
+                    key={paymentIndex} 
+                    className={`card payment-card ${isSelectMode ? 'selectable-card' : ''}`}
+                    onClick={isSelectMode ? () => handleItemSelect(payment.id) : undefined}
+                  >
                     <IonCardContent className="card-content">
                       <div className="payment-item">
                         {isSelectMode && (
-                          <div className="payment-select" onClick={() => handleItemSelect(payment.id)}>
+                          <div className="payment-select">
                             <input 
                               type="checkbox"
                               checked={selectedItems.has(payment.id)}
@@ -279,7 +304,7 @@ const Payments: React.FC = () => {
           <IonButton 
             fill="solid" 
             className="action-button primary-button"
-            onClick={() => console.log(`${activeTab === 'approve' ? 'Approve' : 'Release'} selected items`)}
+            onClick={() => handleActionClick(activeTab)}
           >
             {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
           </IonButton>
