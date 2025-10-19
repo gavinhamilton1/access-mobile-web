@@ -19,6 +19,11 @@ import ApproveRelease from './pages/ApproveRelease';
 import Deposits from './pages/Deposits';
 import RemoteCaptureType from './pages/RemoteCaptureType';
 import ChooseGroup from './pages/ChooseGroup';
+import DepositTo from './pages/DepositTo';
+import CaptureBestPractices from './pages/CaptureBestPractices';
+import ChooseSummary from './pages/ChooseSummary';
+import CaptureCheck from './pages/CaptureCheck';
+import CaptureSummary from './pages/CaptureSummary';
 import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
@@ -79,11 +84,26 @@ const App: React.FC = () => (
           <Route exact path="/deposits">
             <Deposits />
           </Route>
+          <Route exact path="/deposit-to">
+            <DepositTo />
+          </Route>
           <Route exact path="/remote-capture-type">
             <RemoteCaptureType />
           </Route>
           <Route exact path="/choose-group">
             <ChooseGroup />
+          </Route>
+          <Route exact path="/capture-best-practices">
+            <CaptureBestPractices />
+          </Route>
+          <Route exact path="/choose-summary">
+            <ChooseSummary />
+          </Route>
+          <Route exact path="/capture-check">
+            <CaptureCheck />
+          </Route>
+          <Route exact path="/capture-summary">
+            <CaptureSummary />
           </Route>
           <Route exact path="/profile">
             <Tab3 />

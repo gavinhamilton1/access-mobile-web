@@ -9,10 +9,19 @@ import {
   IonText,
   IonIcon
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
+
+interface LocationState {
+  selectedProgram?: string;
+  programName?: string;
+}
 
 const RemoteCaptureType: React.FC = () => {
   const history = useHistory();
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const selectedProgram = state?.selectedProgram || '';
+  const programName = state?.programName || '';
 
   const handleBack = () => {
     history.goBack();
@@ -24,19 +33,25 @@ const RemoteCaptureType: React.FC = () => {
 
   const handleCheckAndDocuments = () => {
     history.push('/choose-group', {
-      captureType: 'Check and document(s)'
+      captureType: 'Check and document(s)',
+      selectedProgram: selectedProgram,
+      programName: programName
     });
   };
 
   const handleCheckOnly = () => {
     history.push('/choose-group', {
-      captureType: 'Check only'
+      captureType: 'Check only',
+      selectedProgram: selectedProgram,
+      programName: programName
     });
   };
 
   const handleDocumentsOnly = () => {
     history.push('/choose-group', {
-      captureType: 'Document(s) only'
+      captureType: 'Document(s) only',
+      selectedProgram: selectedProgram,
+      programName: programName
     });
   };
 

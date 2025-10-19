@@ -179,7 +179,7 @@ const AccountDetails: React.FC = () => {
   const account = accounts[accountId as keyof typeof accounts] || accounts['ACCT-0016710022006603'];
 
   const handleBackClick = () => {
-    history.push('/accounts');
+    history.goBack();
   };
 
   const handleStarClick = (event: React.MouseEvent) => {

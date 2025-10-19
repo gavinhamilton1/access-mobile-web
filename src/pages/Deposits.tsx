@@ -24,7 +24,7 @@ const Deposits: React.FC = () => {
   };
 
   const handleRemoteCapture = () => {
-    history.push('/remote-capture-type');
+    history.push('/deposit-to');
   };
 
   return (

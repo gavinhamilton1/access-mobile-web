@@ -16,6 +16,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 interface LocationState {
   captureType?: string;
+  selectedProgram?: string;
+  programName?: string;
 }
 
 const ChooseGroup: React.FC = () => {
@@ -23,6 +25,8 @@ const ChooseGroup: React.FC = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [captureType, setCaptureType] = useState<string>('');
+  const [selectedProgram, setSelectedProgram] = useState<string>('');
+  const [programName, setProgramName] = useState<string>('');
 
   // Mock group data - only first three groups
   const mockGroups = [
@@ -31,11 +35,17 @@ const ChooseGroup: React.FC = () => {
     'Store Receipts'
   ];
 
-  // Get capture type from navigation state
+  // Get data from navigation state
   React.useEffect(() => {
     const state = location.state as LocationState;
     if (state?.captureType) {
       setCaptureType(state.captureType);
+    }
+    if (state?.selectedProgram) {
+      setSelectedProgram(state.selectedProgram);
+    }
+    if (state?.programName) {
+      setProgramName(state.programName);
     }
   }, [location.state]);
 
@@ -49,10 +59,12 @@ const ChooseGroup: React.FC = () => {
 
   const handleGroupSelect = (groupName: string) => {
     console.log(`Selected group: ${groupName} for capture type: ${captureType}`);
-    // Navigate to next step with both capture type and selected group
-    history.push('/capture-details', {
+    // Navigate to capture best practices with all data
+    history.push('/capture-best-practices', {
       captureType: captureType,
-      selectedGroup: groupName
+      selectedGroup: groupName,
+      selectedProgram: selectedProgram,
+      programName: programName
     });
   };
 
