@@ -958,6 +958,8 @@ ion-toolbar {
   align-items: center;
   justify-content: flex-start;
   min-width: 80px;
+  position: relative;
+  z-index: 1;
 }
 
 .header-center {
@@ -989,10 +991,14 @@ ion-toolbar {
   --border-style: none;
   font-weight: bold;
   font-size: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 .header-button::part(native) {
   border: none;
+  position: relative;
+  z-index: 10;
 }
 
 /* Payments tabs in header */
@@ -1014,19 +1020,30 @@ ion-toolbar {
 
 .payment-tab {
   --color: #333;
-  --color-checked: #007bff;
+  --color-checked: var(--teal-primary);
   font-weight: bold;
   font-size: 1rem;
 }
 
+.payment-tab {
+  --color: #333;
+  --color-checked: var(--teal-primary);
+  --indicator-color: #137e96 !important;
+  font-weight: bold;
+  font-size: 1rem;
+  padding-bottom: 8px;
+}
+
 .payment-tab::part(indicator) {
-  background: #007bff;
+  background: #137e96 !important;
   height: 3px;
+  bottom: 0;
+  top: auto;
 }
 
 /* Payment list */
 .payments-list {
-  margin: 0 0 80px;
+  margin: 0 0 100px;
 }
 
 .payment-group {
@@ -1049,6 +1066,7 @@ ion-toolbar {
 /* Payment cards */
 .payment-card {
   margin-bottom: 0;
+  margin-top: 5px;
   border: none;
   border-bottom: 1px solid #f0f0f0;
   border-radius: 0;
@@ -1066,26 +1084,69 @@ ion-toolbar {
   display: flex;
   flex-direction: row;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .payment-select {
   display: flex;
   align-items: center;
-  margin-top: 4px;
+  justify-content: center;
+  height: 100%;
+  min-height: 60px;
+  cursor: pointer;
+  padding: 8px;
 }
 
-.payment-checkbox {
+.payment-radio {
   width: 20px;
   height: 20px;
-  accent-color: var(--teal-primary);
+  appearance: none;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.payment-radio:checked {
+  border: 2px solid var(--teal-primary);
+  background: white;
+}
+
+.payment-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal-primary);
+  transform: translate(-50%, -50%);
 }
 
 .payment-details {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
   flex: 1;
+  gap: 16px;
+}
+
+.payment-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.payment-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  text-align: right;
 }
 
 .payment-header {
@@ -1107,17 +1168,12 @@ ion-toolbar {
   color: #666;
 }
 
-.payment-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-}
-
 .payment-type-section {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  align-items: flex-end;
+  text-align: right;
 }
 
 .payment-type {
@@ -1170,6 +1226,42 @@ ion-toolbar {
 .filter-button::part(native) {
   border-radius: 8px;
   border: 1px solid var(--teal-primary);
+}
+
+/* ============================================
+   ACTION BUTTONS
+   ============================================ */
+.action-buttons-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.action-button {
+  flex: 1;
+  height: 48px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.reject-button {
+  --background: transparent;
+  --color: var(--teal-primary);
+  --border-color: var(--teal-primary);
+  --border-width: 2px;
+  --border-style: solid;
+}
+
+.primary-button {
+  --background: var(--teal-primary);
+  --color: white;
 }
 
 /* ============================================

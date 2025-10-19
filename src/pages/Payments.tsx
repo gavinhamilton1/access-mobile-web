@@ -119,9 +119,13 @@ const Payments: React.FC = () => {
   const groupedPayments = getPaymentsByCutOffDate(currentPayments);
 
   const handleSelectToggle = () => {
-    setIsSelectMode(!isSelectMode);
     if (isSelectMode) {
+      // Cancel: exit select mode and clear selections
+      setIsSelectMode(false);
       setSelectedItems(new Set());
+    } else {
+      // Enter select mode
+      setIsSelectMode(true);
     }
   };
 
@@ -141,7 +145,7 @@ const Payments: React.FC = () => {
         <IonToolbar>
           <div className="payments-header-layout">
             <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleSelectToggle}>
+            <IonButton fill="clear" className="header-button" onClick={handleSelectToggle}>
                 <IonText>{isSelectMode ? 'Cancel' : 'Select'}</IonText>
               </IonButton>
             </div>
@@ -174,7 +178,14 @@ const Payments: React.FC = () => {
         <div className="payments-tabs-header">
           <IonSegment 
             value={activeTab} 
-            onIonChange={e => setActiveTab(e.detail.value as 'approve' | 'release')}
+            onIonChange={e => {
+              // Cancel selection mode when switching tabs
+              if (isSelectMode) {
+                setIsSelectMode(false);
+                setSelectedItems(new Set());
+              }
+              setActiveTab(e.detail.value as 'approve' | 'release');
+            }}
             className="payments-segment"
           >
             <IonSegmentButton value="approve" className="payment-tab">
@@ -208,17 +219,17 @@ const Payments: React.FC = () => {
                     <IonCardContent className="card-content">
                       <div className="payment-item">
                         {isSelectMode && (
-                          <div className="payment-select">
+                          <div className="payment-select" onClick={() => handleItemSelect(payment.id)}>
                             <input 
                               type="checkbox"
                               checked={selectedItems.has(payment.id)}
                               onChange={() => handleItemSelect(payment.id)}
-                              className="payment-checkbox"
+                              className="payment-radio"
                             />
                           </div>
                         )}
                         <div className="payment-details">
-                          <div className="payment-header">
+                          <div className="payment-left">
                             <IonText>
                               <h3 className="payment-id">{payment.id}</h3>
                             </IonText>
@@ -227,7 +238,7 @@ const Payments: React.FC = () => {
                             </IonText>
                           </div>
                           
-                          <div className="payment-info">
+                          <div className="payment-right">
                             <div className="payment-type-section">
                               <IonText color="medium">
                                 <p className="payment-type">{payment.type} <img src="/images/ArrowForward.svg" alt="Arrow" className="icon-small" /></p>
@@ -254,6 +265,26 @@ const Payments: React.FC = () => {
           </div>
         </div>
       </IonContent>
+      
+      {/* Action Buttons - Only show when items are selected */}
+      {selectedItems.size > 0 && (
+        <div className="action-buttons-container">
+          <IonButton 
+            fill="outline" 
+            className="action-button reject-button"
+            onClick={() => console.log('Reject selected items')}
+          >
+            Reject ({selectedItems.size})
+          </IonButton>
+          <IonButton 
+            fill="solid" 
+            className="action-button primary-button"
+            onClick={() => console.log(`${activeTab === 'approve' ? 'Approve' : 'Release'} selected items`)}
+          >
+            {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
+          </IonButton>
+        </div>
+      )}
     </IonPage>
   );
 };
