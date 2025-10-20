@@ -55,6 +55,10 @@ const CaptureCheck: React.FC = () => {
   const [isVideoFrozen, setIsVideoFrozen] = useState(false);
   const [frozenFrameData, setFrozenFrameData] = useState<string | null>(null);
   const countdownActiveRef = useRef<boolean>(false);
+  
+  // Document size requirements
+  const MIN_DOCUMENT_SIZE_PERCENTAGE = 0.45; // 45% of frame area
+  const [documentSizePercentage, setDocumentSizePercentage] = useState<number>(0);
   const countdownIntervalRef = useRef<number | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
   const [isCountingDown, setIsCountingDown] = useState(false);
@@ -379,18 +383,18 @@ const CaptureCheck: React.FC = () => {
 
   // removed mock image generator
 
-  // Auto-detection using OpenCV.js
-  const detectDocument = async (videoElement: HTMLVideoElement): Promise<boolean> => {
+  // Auto-detection using OpenCV.js with size requirements
+  const detectDocument = async (videoElement: HTMLVideoElement): Promise<{detected: boolean, sizePercentage: number}> => {
     if (!window.cv) {
       console.log('OpenCV not ready yet, skipping detection');
-      return false;
+      return {detected: false, sizePercentage: 0};
     }
 
     try {
       // Create canvas to capture video frame
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      if (!ctx) return false;
+      if (!ctx) return {detected: false, sizePercentage: 0};
 
       canvas.width = videoElement.videoWidth;
       canvas.height = videoElement.videoHeight;
@@ -440,6 +444,13 @@ const CaptureCheck: React.FC = () => {
         contour.delete();
       }
 
+      // Calculate size percentage
+      const totalFrameArea = canvas.width * canvas.height;
+      const sizePercentage = largestArea / totalFrameArea;
+      
+      // Update size percentage for UI feedback
+      setDocumentSizePercentage(sizePercentage);
+
       // Clean up
       src.delete();
       gray.delete();
@@ -448,13 +459,15 @@ const CaptureCheck: React.FC = () => {
       contours.delete();
       hierarchy.delete();
 
-      // Check if we found a good document contour
-      const minArea = canvas.width * canvas.height * 0.1; // At least 10% of frame
-      return largestArea > minArea && bestContour !== null;
+      // Check if we found a good document contour with sufficient size
+      const minArea = totalFrameArea * MIN_DOCUMENT_SIZE_PERCENTAGE;
+      const detected = largestArea > minArea && bestContour !== null;
+      
+      return {detected, sizePercentage};
       
     } catch (error) {
       console.error('Document detection error:', error);
-      return false;
+      return {detected: false, sizePercentage: 0};
     }
   };
 
@@ -766,24 +779,30 @@ const CaptureCheck: React.FC = () => {
     
     try {
       // Try OpenCV detection first
-      let isDocumentDetected = false;
+      let detectionResult = {detected: false, sizePercentage: 0};
       
       if (window.cv) {
-        isDocumentDetected = await detectDocument(videoRef.current);
+        detectionResult = await detectDocument(videoRef.current);
       } else {
         console.log('OpenCV not available');
-        isDocumentDetected = false;
+        detectionResult = {detected: false, sizePercentage: 0};
       }
       
-      if (isDocumentDetected && !countdownActiveRef.current && !isCountingDown) {
+      if (detectionResult.detected && !countdownActiveRef.current && !isCountingDown) {
         // Show hold-still status during countdown
         setDetectionStatus('Please hold still');
         // Start a faster countdown immediately
         startCountdown();
       } else {
-        // Keep showing positioning guidance when not detected
+        // Show size-specific guidance when not detected
         if (!isCountingDown) {
-          setDetectionStatus('Position document within frame');
+          if (detectionResult.sizePercentage > 0 && detectionResult.sizePercentage < MIN_DOCUMENT_SIZE_PERCENTAGE) {
+            const percentage = Math.round(detectionResult.sizePercentage * 100);
+            const required = Math.round(MIN_DOCUMENT_SIZE_PERCENTAGE * 100);
+            setDetectionStatus(`Move closer - document is ${percentage}% of frame (need ${required}%)`);
+          } else {
+            setDetectionStatus('Position document within frame');
+          }
         }
       }
     } catch (error) {
