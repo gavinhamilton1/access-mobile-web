@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -11,8 +11,11 @@ import {
   IonItem,
   IonLabel,
   IonCard,
-  IonCardContent
+  IonCardContent,
+  IonModal,
+  IonIcon
 } from '@ionic/react';
+import { copyOutline, eyeOutline } from 'ionicons/icons';
 import { useHistory, useLocation } from 'react-router-dom';
 
 interface LocationState {
@@ -22,6 +25,24 @@ interface LocationState {
   programName?: string;
   frontImage?: string;
   backImage?: string;
+  frontCheckDetails?: {
+    routingNumber?: string;
+    accountNumber?: string;
+    checkNumber?: string;
+    amount?: string;
+    date?: string;
+    payee?: string;
+    memo?: string;
+  };
+  backCheckDetails?: {
+    routingNumber?: string;
+    accountNumber?: string;
+    checkNumber?: string;
+    amount?: string;
+    date?: string;
+    payee?: string;
+    memo?: string;
+  };
 }
 
 const CaptureSummary: React.FC = () => {
@@ -34,6 +55,8 @@ const CaptureSummary: React.FC = () => {
   const programName = state?.programName || 'AUTOAL1 RDC PROGRAM 1 GROUPS';
   const frontImage = state?.frontImage;
   const backImage = state?.backImage;
+  const frontCheckDetails = state?.frontCheckDetails;
+  const backCheckDetails = state?.backCheckDetails;
 
   const [amount, setAmount] = useState('3 000 000,00');
   const [paymentNumber, setPaymentNumber] = useState('');
@@ -41,8 +64,26 @@ const CaptureSummary: React.FC = () => {
   const [accountNumber, setAccountNumber] = useState('');
   const [controlNumber, setControlNumber] = useState('');
   const [isAmountConfirmed, setIsAmountConfirmed] = useState(false);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
   const isCheckCapture = captureType.includes('Check');
+
+  // Auto-populate fields from extracted check details
+  useEffect(() => {
+    if (frontCheckDetails) {
+      if (frontCheckDetails.routingNumber) {
+        setRoutingNumber(frontCheckDetails.routingNumber);
+      }
+      if (frontCheckDetails.accountNumber) {
+        setAccountNumber(frontCheckDetails.accountNumber);
+      }
+      if (frontCheckDetails.amount) {
+        setAmount(frontCheckDetails.amount);
+      }
+    }
+  }, [frontCheckDetails]);
 
   const handleBack = () => {
     history.goBack();
@@ -54,6 +95,21 @@ const CaptureSummary: React.FC = () => {
 
   const handleAmountConfirmation = (confirmed: boolean) => {
     setIsAmountConfirmed(confirmed);
+  };
+
+  const handleCopyToClipboard = async (text: string, fieldName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopySuccess(fieldName);
+      setTimeout(() => setCopySuccess(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const handleImagePreview = (imageSrc: string) => {
+    setPreviewImage(imageSrc);
+    setIsPreviewModalOpen(true);
   };
 
   const handleSubmit = () => {
@@ -135,8 +191,11 @@ const CaptureSummary: React.FC = () => {
                   <IonText>
                     <h3 className="image-label">Front</h3>
                   </IonText>
-                  <div className="image-container">
+                  <div className="image-container" onClick={() => handleImagePreview(frontImage)}>
                     <img src={frontImage} alt="Check Front" className="check-image" />
+                    <div className="image-overlay">
+                      <IonIcon icon={eyeOutline} className="preview-icon" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -146,8 +205,11 @@ const CaptureSummary: React.FC = () => {
                   <IonText>
                     <h3 className="image-label">Back</h3>
                   </IonText>
-                  <div className="image-container">
+                  <div className="image-container" onClick={() => handleImagePreview(backImage)}>
                     <img src={backImage} alt="Check Back" className="check-image" />
+                    <div className="image-overlay">
+                      <IonIcon icon={eyeOutline} className="preview-icon" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -196,6 +258,17 @@ const CaptureSummary: React.FC = () => {
                   onIonInput={(e) => setRoutingNumber(e.detail.value!)}
                   placeholder="Enter routing number"
                 />
+                {frontCheckDetails?.routingNumber && (
+                  <IonButton 
+                    fill="clear" 
+                    size="small" 
+                    onClick={() => handleCopyToClipboard(frontCheckDetails.routingNumber!, 'routing')}
+                    className="copy-button"
+                  >
+                    <IonIcon icon={copyOutline} />
+                    {copySuccess === 'routing' ? 'Copied!' : 'Copy'}
+                  </IonButton>
+                )}
               </IonItem>
 
               <IonItem className="input-item">
@@ -205,6 +278,17 @@ const CaptureSummary: React.FC = () => {
                   onIonInput={(e) => setAccountNumber(e.detail.value!)}
                   placeholder="Enter account number"
                 />
+                {frontCheckDetails?.accountNumber && (
+                  <IonButton 
+                    fill="clear" 
+                    size="small" 
+                    onClick={() => handleCopyToClipboard(frontCheckDetails.accountNumber!, 'account')}
+                    className="copy-button"
+                  >
+                    <IonIcon icon={copyOutline} />
+                    {copySuccess === 'account' ? 'Copied!' : 'Copy'}
+                  </IonButton>
+                )}
               </IonItem>
 
               <IonItem className="input-item">
@@ -229,6 +313,32 @@ const CaptureSummary: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Image Preview Modal */}
+        <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)} className="image-preview-modal">
+          <IonHeader className="standard-header">
+            <IonToolbar>
+              <div className="header-content">
+                <div className="header-left">
+                  <IonButton fill="clear" className="header-button" onClick={() => setIsPreviewModalOpen(false)}>
+                    <IonText>Close</IonText>
+                  </IonButton>
+                </div>
+                <div className="header-center">
+                  <IonTitle>Image Preview</IonTitle>
+                </div>
+                <div className="header-right"></div>
+              </div>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="image-preview-content">
+            {previewImage && (
+              <div className="image-preview-wrapper">
+                <img src={previewImage} alt="Preview" className="image-preview-full" />
+              </div>
+            )}
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

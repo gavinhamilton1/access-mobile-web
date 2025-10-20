@@ -35,6 +35,14 @@
     <link rel="shortcut icon" href="/favicon.ico?v=2" />
     
     <!-- OpenCV.js for document detection -->
+    <script>
+      function onOpenCvReady() {
+        console.log('OpenCV.js loaded successfully');
+        if (window.onOpenCvReady) {
+          window.onOpenCvReady();
+        }
+      }
+    </script>
     <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     
     <!-- Tesseract.js for OCR -->

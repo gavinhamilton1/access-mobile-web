@@ -2243,9 +2243,9 @@ ion-tab-button.tab-selected .tab-icon {
 
 /* Camera Preview Pane */
 .camera-preview-pane {
-  width: 100%;
-  max-width: 400px;
-  height: 300px;
+  width: 90%;
+  max-width: 480px;
+  height: 200px;
   margin: 20px auto;
   border-radius: 12px;
   overflow: hidden;
@@ -2270,6 +2270,17 @@ ion-tab-button.tab-selected .tab-icon {
   object-fit: cover !important;
   background-color: #000 !important;
   display: block !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.camera-video-frozen {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  background-color: #000 !important;
   position: absolute;
   top: 0;
   left: 0;
@@ -2324,7 +2335,7 @@ ion-tab-button.tab-selected .tab-icon {
 
 .mask-middle {
   display: flex;
-  height: 200px;
+  height: 150px;
 }
 
 .mask-left,
@@ -2351,13 +2362,13 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .capture-frame {
-  width: 280px;
-  height: 180px;
+  width: 360px;
+  height: 150px;
   position: relative;
-  border: 3px solid #00ff00;
-  border-radius: 8px;
+  border: none;
+  border-radius: 12px;
   background: transparent;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  box-shadow: none;
 }
 
 .frame-corners {
@@ -2375,74 +2386,188 @@ ion-tab-button.tab-selected .tab-icon {
   right: 0;
   bottom: 0;
   pointer-events: none;
-}
-
-.guideline {
-  position: absolute;
-  background: rgba(0, 255, 0, 0.5);
-}
-
-.guideline.horizontal {
-  width: 100%;
-  height: 1px;
-}
-
-.guideline.horizontal.top {
-  top: 33%;
-}
-
-.guideline.horizontal.bottom {
-  top: 66%;
-}
-
-.guideline.vertical {
-  height: 100%;
-  width: 1px;
-}
-
-.guideline.vertical.left {
-  left: 33%;
-}
-
-.guideline.vertical.right {
-  left: 66%;
+  display: none;
 }
 
 .corner {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border: 3px solid #00ff00;
+  width: 30px;
+  height: 30px;
+  background: transparent;
 }
 
 .corner.top-left {
-  top: -3px;
-  left: -3px;
-  border-right: none;
-  border-bottom: none;
+  top: -2px;
+  left: -2px;
+}
+
+.corner.top-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 20px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.corner.top-left::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 3px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
 
 .corner.top-right {
-  top: -3px;
-  right: -3px;
-  border-left: none;
-  border-bottom: none;
+  top: -2px;
+  right: -2px;
+}
+
+.corner.top-right::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  height: 20px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.corner.top-right::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 3px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
 
 .corner.bottom-left {
-  bottom: -3px;
-  left: -3px;
-  border-right: none;
-  border-top: none;
+  bottom: -2px;
+  left: -2px;
+}
+
+.corner.bottom-left::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  height: 20px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.corner.bottom-left::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20px;
+  height: 3px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
 
 .corner.bottom-right {
-  bottom: -3px;
-  right: -3px;
-  border-left: none;
-  border-top: none;
+  bottom: -2px;
+  right: -2px;
 }
 
+.corner.bottom-right::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 3px;
+  height: 20px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+.corner.bottom-right::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 3px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Image Preview and Copy Functionality */
+.image-container {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.image-container:hover {
+  transform: scale(1.02);
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.image-container:hover .image-overlay {
+  opacity: 1;
+}
+
+.preview-icon {
+  color: white;
+  font-size: 24px;
+}
+
+.copy-button {
+  --color: var(--teal-primary);
+  margin-left: 8px;
+  font-size: 12px;
+}
+
+.copy-button ion-icon {
+  margin-right: 4px;
+}
+
+/* Image Preview Modal */
+.image-preview-modal .image-preview-content {
+  --background: #000;
+}
+
+.image-preview-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 20px;
+}
+
+.image-preview-full {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
 
 /* Detection Status */
 .detection-status {
@@ -2453,6 +2578,39 @@ ion-tab-button.tab-selected .tab-icon {
   border-radius: 8px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview-modal .image-preview-content {
+  --background: #000;
+}
+
+.image-preview-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+
+.image-preview-full {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 56px);
+  object-fit: contain;
+}
+.countdown-display {
+  display: inline-block;
+  background: #ff6b35;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  min-width: 24px;
+  text-align: center;
 }
 
 .status-text {
@@ -2480,6 +2638,18 @@ ion-tab-button.tab-selected .tab-icon {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 12px 0;
+}
+
+/* Front OCR section */
+.front-ocr-details {
+  border-left: 4px solid #007bff;
+  background: rgba(0, 123, 255, 0.05);
+}
+
+/* Back OCR section */
+.back-ocr-details {
+  border-left: 4px solid #28a745;
+  background: rgba(40, 167, 69, 0.05);
 }
 
 .details-grid {
@@ -2577,18 +2747,6 @@ ion-tab-button.tab-selected .tab-icon {
   height: 44px;
 }
 
-/* Continue Section */
-.continue-section {
-  padding: 20px;
-  margin-top: 20px;
-  flex-shrink: 0;
-  background: white;
-  border-radius: 8px;
-  margin-left: 20px;
-  margin-right: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e0e0e0;
-}
 
 .continue-button {
   --background: var(--teal-primary);
