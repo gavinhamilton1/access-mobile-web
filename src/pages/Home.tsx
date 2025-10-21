@@ -168,13 +168,15 @@ const Tab1: React.FC = () => {
               </div>
             </IonCardContent>
           </IonCard>
+          
+          {/* Bottom spacer to allow scrolling past fixed button */}
+          <div className="bottom-spacer">
+          </div>
         </div>
-        
         {/* Fixed Floating Capture Button */}
         <div className="floating-capture-button">
           <IonButton 
             className="btn-primary floating-btn"
-            color="tertiary"
             onClick={handleCaptureDeposit}
           >
             <img src="/images/Camera.svg" alt="Camera" className="btn-icon" />

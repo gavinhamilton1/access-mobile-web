@@ -58,7 +58,7 @@ const DepositTo: React.FC = () => {
           <div className="header-content">
             <div className="header-left">
               <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>← Back</IonText>
+                <IonText>Back</IonText>
               </IonButton>
             </div>
             <div className="header-center">

@@ -172,17 +172,33 @@ const CaptureCheck: React.FC = () => {
     return () => clearInterval(detectionInterval);
   }, [isCameraReady, currentStep, isAutoDetecting, isProcessingOCR]);
 
-  // Initialize OpenCV
+  // Initialize OpenCV with proper guards
   useEffect(() => {
-    window.onOpenCvReady = () => {
-      console.log('OpenCV.js is ready');
-      // OpenCV is now available as window.cv
-    };
-    
+    // Use global flag to prevent multiple initializations
+    if ((window as any).openCVInitialized) {
+      console.log('OpenCV already initialized globally');
+      return;
+    }
+
     // Check if OpenCV is already loaded
     if (window.cv) {
       console.log('OpenCV already loaded');
+      (window as any).openCVInitialized = true;
+      return;
     }
+
+    // Check if callback is already set to prevent multiple assignments
+    if (typeof window.onOpenCvReady === 'function') {
+      console.log('OpenCV callback already set');
+      return;
+    }
+
+    // Set the callback only once
+    window.onOpenCvReady = () => {
+      console.log('OpenCV.js loaded successfully');
+      (window as any).openCVInitialized = true;
+      // Don't call onOpenCvReady again to prevent recursion
+    };
   }, []);
 
   // Handle page visibility change (when user switches tabs or minimizes browser)
@@ -385,7 +401,7 @@ const CaptureCheck: React.FC = () => {
 
   // Auto-detection using OpenCV.js with size requirements
   const detectDocument = async (videoElement: HTMLVideoElement): Promise<{detected: boolean, sizePercentage: number}> => {
-    if (!window.cv) {
+    if (!window.cv || !(window as any).openCVInitialized) {
       console.log('OpenCV not ready yet, skipping detection');
       return {detected: false, sizePercentage: 0};
     }
@@ -473,7 +489,7 @@ const CaptureCheck: React.FC = () => {
 
   // Crop image to document boundaries using OpenCV
   const cropImageToDocument = async (imageData: string): Promise<string> => {
-    if (!window.cv) {
+    if (!window.cv || !(window as any).openCVInitialized) {
       console.log('OpenCV not available for cropping, returning original image');
       return imageData;
     }
@@ -781,12 +797,12 @@ const CaptureCheck: React.FC = () => {
       // Try OpenCV detection first
       let detectionResult = {detected: false, sizePercentage: 0};
       
-      if (window.cv) {
-        detectionResult = await detectDocument(videoRef.current);
-      } else {
-        console.log('OpenCV not available');
-        detectionResult = {detected: false, sizePercentage: 0};
-      }
+        if (window.cv && (window as any).openCVInitialized) {
+          detectionResult = await detectDocument(videoRef.current);
+        } else {
+          console.log('OpenCV not available');
+          detectionResult = {detected: false, sizePercentage: 0};
+        }
       
       if (detectionResult.detected && !countdownActiveRef.current && !isCountingDown) {
         // Show hold-still status during countdown
@@ -915,7 +931,7 @@ const CaptureCheck: React.FC = () => {
           <div className="header-content">
             <div className="header-left">
               <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>← Back</IonText>
+                <IonText>Back</IonText>
               </IonButton>
             </div>
             <div className="header-center">

@@ -313,7 +313,6 @@ const AccountDetails: React.FC = () => {
           {/* Transaction Search Section */}
           <div className="transaction-search-section">
             <div className="search-handle"></div>
-            <IonCard className="card search-card">
               <IonCardContent className="card-content">
                 <div className="search-container">
                   <img src="/images/Search.svg" alt="Search" className="search-icon" />
@@ -324,7 +323,6 @@ const AccountDetails: React.FC = () => {
                   <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
                 </div>
               </IonCardContent>
-            </IonCard>
           </div>
         </div>
       </IonContent>

@@ -38,9 +38,8 @@
     <script>
       function onOpenCvReady() {
         console.log('OpenCV.js loaded successfully');
-        if (window.onOpenCvReady) {
-          window.onOpenCvReady();
-        }
+        // Don't call window.onOpenCvReady() to prevent recursion
+        // The component will handle the callback
       }
     </script>
     <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>

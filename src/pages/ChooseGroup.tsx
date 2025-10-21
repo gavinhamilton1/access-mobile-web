@@ -59,8 +59,8 @@ const ChooseGroup: React.FC = () => {
 
   const handleGroupSelect = (groupName: string) => {
     console.log(`Selected group: ${groupName} for capture type: ${captureType}`);
-    // Navigate to capture best practices with all data
-    history.push('/capture-best-practices', {
+    // Navigate to choose summary with all data
+    history.push('/choose-summary', {
       captureType: captureType,
       selectedGroup: groupName,
       selectedProgram: selectedProgram,
@@ -80,7 +80,7 @@ const ChooseGroup: React.FC = () => {
           <div className="choose-group-header">
             <div className="header-left">
               <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>← Back</IonText>
+                <IonText>Back</IonText>
               </IonButton>
             </div>
             <div className="header-center">

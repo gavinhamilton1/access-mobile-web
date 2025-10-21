@@ -94,11 +94,11 @@ const App: React.FC = () => (
           <Route exact path="/choose-group">
             <ChooseGroup />
           </Route>
-          <Route exact path="/capture-best-practices">
-            <CaptureBestPractices />
-          </Route>
           <Route exact path="/choose-summary">
             <ChooseSummary />
+          </Route>
+          <Route exact path="/capture-best-practices">
+            <CaptureBestPractices />
           </Route>
           <Route exact path="/capture-check">
             <CaptureCheck />

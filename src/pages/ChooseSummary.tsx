@@ -36,8 +36,8 @@ const ChooseSummary: React.FC = () => {
   };
 
   const handleStartCapture = () => {
-    // Navigate to capture flow
-    history.push('/capture-check', {
+    // Navigate to capture best practices
+    history.push('/capture-best-practices', {
       captureType: captureType,
       selectedGroup: selectedGroup,
       selectedProgram: selectedProgram,
@@ -67,7 +67,7 @@ const ChooseSummary: React.FC = () => {
           <div className="header-content">
             <div className="header-left">
               <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>← Back</IonText>
+                <IonText>Back</IonText>
               </IonButton>
             </div>
             <div className="header-center">
@@ -134,7 +134,7 @@ const ChooseSummary: React.FC = () => {
                 className="start-capture-button"
                 onClick={handleStartCapture}
               >
-                Start capture
+                Continue
               </IonButton>
             </div>
           </div>

@@ -3,7 +3,9 @@
    ============================================ */
 :root {
   --teal-primary: #137e96;
+  --teal-primary-active: #83c2d0;
   --teal-primary-rgb: 19, 126, 150;
+  --background-color: #f5f5f5;
 }
 
 /* ============================================
@@ -152,7 +154,7 @@ ion-header::part(native) {
 
 /* Override Ionic default h2 styling in card content */
 .card-content-md h2 {
-  font-size: 2rem !important;
+  font-size: 24px !important;
   color: #333 !important;
   margin: 0 !important;
 }
@@ -340,15 +342,34 @@ ion-card-header {
   --background: transparent;
 }
 
+/* Ion-button specific active and focus states with teal theme */
+ion-button {
+  --background-activated: var(--teal-primary-active) !important;
+  --background-focused: var(--teal-primary-active) !important;
+  --background-hover: var(--teal-primary-active) !important;
+  --background-activated-opacity: 1 !important;
+  --background-focused-opacity: 1 !important;
+  --background-hover-opacity: 1 !important;
+  --color-activated: var(--teal-primary) !important;
+  --color-focused: var(--teal-primary) !important;
+  --color-hover: var(--teal-primary) !important;
+}
+
 .btn-icon {
   width: 24px;
   height: 24px;
   margin-right: 8px;
 }
 
+/* Bottom spacer to allow scrolling past fixed button */
+.bottom-spacer {
+  height: 80px; /* Enough space to scroll past the fixed button */
+  width: 100%;
+}
+
 /* Light styling for all buttons */
 ion-button {
-  --background: #f8f9fa;
+  --background: var(--background-color)
   --color: #333;
   --border-radius: 6px;
   --border-color: #e0e0e0;
@@ -357,7 +378,7 @@ ion-button {
 }
 
 ion-button:hover {
-  --background: #e9ecef;
+  --background: var(--background-color);
   --color: #333;
 }
 
@@ -634,6 +655,7 @@ ion-header::part(border) {
   --border-color: transparent;
   --border-width: 0px;
   --border-style: none;
+  min-height: 30px !important;
 }
 
 ion-select {
@@ -887,12 +909,9 @@ ion-toolbar {
   height: 4px;
   background-color: #ccc;
   border-radius: 2px;
-  margin: 0 auto 16px auto;
+  margin: 0 auto 0px auto;
 }
 
-.search-card {
-  margin-bottom: 0;
-}
 
 .search-wrapper {
   display: flex;
@@ -994,7 +1013,7 @@ ion-toolbar {
 /* Standard page title styling - consistent across all pages */
 ion-title {
   color: #333 !important;
-  font-size: 1.25rem !important;
+  font-size: 1rem !important;
   font-weight: 600 !important;
   display: block !important;
   visibility: visible !important;
@@ -1129,13 +1148,12 @@ ion-title {
 }
 
 .payment-group {
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .cutoff-date-header {
   background: #f5f5f5;
   padding: 8px 16px;
-  margin-bottom: 8px;
   border-radius: 4px;
 }
 
@@ -1303,7 +1321,7 @@ ion-title {
   filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(25deg) brightness(110%) contrast(110%);
 }
 
-.status-text {
+.status-text-warning {
   font-size: 0.875rem;
   margin: 0;
   color: #ff6b35;
@@ -1568,6 +1586,8 @@ ion-title {
 
 .deposit-icon {
   font-size: 40px;
+  width: 50px;
+  height: 50px;
   color: var(--teal-primary);
   filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(160deg) brightness(104%) contrast(97%);
 }
@@ -1580,7 +1600,7 @@ ion-title {
 }
 
 .deposit-title {
-  font-size: 1.35rem !important;
+  font-size: 24px !important;
   font-weight: 600;
   margin: 0;
   color: #333;
@@ -1862,9 +1882,6 @@ ion-title {
 /* ============================================
    TRANSMISSION COMPONENTS
    ============================================ */
-.transmission-status {
-  margin-bottom: 24px;
-}
 
 .capture-section {
   text-align: center;

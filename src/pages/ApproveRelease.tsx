@@ -65,7 +65,7 @@ const ApproveRelease: React.FC = () => {
           <div className="approve-release-header">
             <div className="header-left">
               <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>← Back</IonText>
+                <IonText>Back</IonText>
               </IonButton>
             </div>
             <div className="header-center">

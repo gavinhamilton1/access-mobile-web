@@ -276,7 +276,7 @@ const Payments: React.FC = () => {
                             <div className="payment-status">
                               <img src="/images/Warning.svg" alt="Warning" className="warning-icon" />
                               <IonText color="warning">
-                                <p className="status-text">{payment.status}</p>
+                                <p className="status-text-warning">{payment.status}</p>
                               </IonText>
                             </div>
                           </div>
