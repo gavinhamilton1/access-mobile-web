@@ -1983,6 +1983,7 @@ ion-tab-button.tab-selected .tab-icon {
 /* Balance Card Specific */
 .balance-card {
   margin-bottom: 16px;
+  margin-top: 10px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -2081,8 +2082,8 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .camera-icon {
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   color: var(--teal-primary);
 }
 
@@ -2091,7 +2092,7 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .main-heading {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   color: #333;
   margin: 0;
@@ -2109,7 +2110,7 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .tip-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #333;
   margin: 0 0 8px 0;
@@ -2117,7 +2118,7 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .tip-description {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
   color: #666;
   margin: 0;
@@ -3273,8 +3274,8 @@ ion-tab-button.tab-selected .tab-icon {
 }
 
 .user-avatar {
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   color: #666;
 }
 
