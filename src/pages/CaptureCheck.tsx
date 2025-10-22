@@ -57,7 +57,7 @@ const CaptureCheck: React.FC = () => {
   const countdownActiveRef = useRef<boolean>(false);
   
   // Document size requirements
-  const MIN_DOCUMENT_SIZE_PERCENTAGE = 0.45; // 45% of frame area
+  const MIN_DOCUMENT_SIZE_PERCENTAGE = 0.15; // 30% of frame area
   const [documentSizePercentage, setDocumentSizePercentage] = useState<number>(0);
   const countdownIntervalRef = useRef<number | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
@@ -429,10 +429,10 @@ const CaptureCheck: React.FC = () => {
       
       // Apply Gaussian blur
       const blurred = new window.cv.Mat();
-      window.cv.GaussianBlur(gray, blurred, new window.cv.Size(5, 5), 0);
+      window.cv.GaussianBlur(gray, blurred, new window.cv.Size(3, 3), 0);
       
-      // Edge detection
-      window.cv.Canny(blurred, edges, 50, 150);
+      // Edge detection with more sensitive parameters
+      window.cv.Canny(blurred, edges, 30, 100);
       
       // Find contours
       window.cv.findContours(edges, contours, hierarchy, window.cv.RETR_EXTERNAL, window.cv.CHAIN_APPROX_SIMPLE);
@@ -446,14 +446,22 @@ const CaptureCheck: React.FC = () => {
         const area = window.cv.contourArea(contour);
         
         if (area > largestArea) {
-          // Check if contour is roughly rectangular
-          const epsilon = 0.02 * window.cv.arcLength(contour, true);
+          // Check if contour is roughly rectangular (more flexible)
+          const epsilon = 0.03 * window.cv.arcLength(contour, true);
           const approx = new window.cv.Mat();
           window.cv.approxPolyDP(contour, approx, epsilon, true);
           
-          if (approx.rows === 4) {
-            largestArea = area;
-            bestContour = approx;
+          // Accept contours with 4-6 vertices (more flexible for document shapes)
+          if (approx.rows >= 4 && approx.rows <= 6) {
+            // Additional check: ensure the contour has reasonable aspect ratio
+            const rect = window.cv.boundingRect(contour);
+            const aspectRatio = rect.width / rect.height;
+            
+            // Accept documents with aspect ratio between 0.5 and 2.0 (typical for checks/documents)
+            if (aspectRatio >= 0.5 && aspectRatio <= 2.0) {
+              largestArea = area;
+              bestContour = approx;
+            }
           }
           approx.delete();
         }
