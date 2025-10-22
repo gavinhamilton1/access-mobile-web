@@ -918,7 +918,7 @@ const CaptureCheck: React.FC = () => {
 
   const getStepTitle = () => {
     if (isCheckCapture) {
-      return currentStep === 'front' ? 'Capture check front' : 'Capture check back';
+      return currentStep === 'front' ? 'Capture check' : 'Capture check';
     }
     return 'Capture document';
   };

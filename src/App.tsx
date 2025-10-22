@@ -24,7 +24,10 @@ import CaptureBestPractices from './pages/CaptureBestPractices';
 import ChooseSummary from './pages/ChooseSummary';
 import CaptureCheck from './pages/CaptureCheck';
 import CaptureSummary from './pages/CaptureSummary';
-import Tab3 from './pages/Tab3';
+import CaptureHistory from './pages/CaptureHistory';
+import DailySummary from './pages/DailySummary';
+import DepositSuccess from './pages/DepositSuccess';
+import Profile from './pages/Profile';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 /* Core CSS required for Ionic components to work properly */
@@ -67,6 +70,9 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
+        <Route exact path="/">
+            <Home />
+          </Route>
           <Route exact path="/home">
             <Home />
           </Route>
@@ -106,11 +112,17 @@ const App: React.FC = () => (
           <Route exact path="/capture-summary">
             <CaptureSummary />
           </Route>
-          <Route exact path="/profile">
-            <Tab3 />
+          <Route exact path="/capture-history">
+            <CaptureHistory />
           </Route>
-          <Route exact path="/">
-            <Redirect to="/home" />
+          <Route exact path="/daily-summary">
+            <DailySummary />
+          </Route>
+          <Route exact path="/deposit-success">
+            <DepositSuccess />
+          </Route>
+          <Route exact path="/profile">
+            <Profile />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">

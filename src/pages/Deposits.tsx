@@ -16,11 +16,11 @@ const Deposits: React.FC = () => {
   const history = useHistory();
 
   const handleCaptureHistory = () => {
-    console.log('Navigate to Capture History');
+    history.push('/capture-history');
   };
 
   const handleDailySummary = () => {
-    console.log('Navigate to Daily Summary');
+    history.push('/daily-summary');
   };
 
   const handleRemoteCapture = () => {

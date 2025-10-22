@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 
 // Register service worker for PWA functionality
-// DISABLED FOR TESTING - Uncomment when ready for production
-/*
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
@@ -14,17 +12,6 @@ if ('serviceWorker' in navigator) {
       .catch((registrationError) => {
         console.log('SW registration failed: ', registrationError);
       });
-  });
-}
-*/
-
-// Unregister any existing service workers for testing
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    for (let registration of registrations) {
-      console.log('Unregistering service worker:', registration);
-      registration.unregister();
-    }
   });
 }
 

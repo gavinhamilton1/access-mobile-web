@@ -1,120 +1,49 @@
-// Service Worker for PWA functionality
-const CACHE_NAME = 'access-mobile-v2'; // Increment version to force cache refresh
-const urlsToCache = [
-  '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json',
-  '/favicon.ico',
-  '/images/Access192.png',
-  '/images/Access512.png'
-];
+// Service Worker for PWA functionality - NO CACHING VERSION
+// This service worker provides PWA functionality without caching to avoid testing issues
 
-// Files that should always be fetched fresh (no cache)
-const noCacheFiles = [
-  '/favicon.png',
-  '/favicon.ico',
-  '/manifest.json',
-  '/sw.js'
-];
-
-// Install event - cache resources
+// Install event - minimal setup
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch((error) => {
-        console.log('Cache failed:', error);
-      })
-  );
+  console.log('Service Worker installing (no caching)...');
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate event - clear all caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker activating...');
+  console.log('Service Worker activating (clearing all caches)...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+          console.log('Deleting cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
     }).then(() => {
-      // Clear favicon and manifest from all caches
-      return caches.open(CACHE_NAME).then(cache => {
-        return Promise.all([
-          cache.delete('/favicon.ico'),
-          cache.delete('/favicon.png'),
-          cache.delete('/manifest.json')
-        ]);
-      });
+      console.log('All caches cleared');
     })
   );
   self.clients.claim();
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - always fetch fresh, no caching
 self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-  const pathname = url.pathname;
-  
-  // Check if this is a no-cache file
-  const shouldNotCache = noCacheFiles.some(file => pathname.includes(file));
-  
-  if (shouldNotCache) {
-    // Always fetch fresh for favicon, manifest, and service worker
-    event.respondWith(
-      fetch(event.request).then(response => {
-        console.log('Fresh fetch for:', event.request.url);
-        return response;
-      }).catch(() => {
-        // Fallback to cache if network fails
-        return caches.match(event.request);
-      })
-    );
-    return;
-  }
-  
+  // Always fetch from network, never cache
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
-        if (response) {
-          console.log('Serving from cache:', event.request.url);
-          return response;
-        }
-        
-        console.log('Fetching from network:', event.request.url);
-        return fetch(event.request).then((response) => {
-          // Don't cache if not a valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-          
-          // Clone the response
-          const responseToCache = response.clone();
-          
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-          
-          return response;
-        });
+        console.log('Fresh fetch from network:', event.request.url);
+        return response;
       })
-      .catch(() => {
-        // Return offline page for navigation requests
+      .catch((error) => {
+        console.log('Network fetch failed:', event.request.url, error);
+        // For navigation requests, return a basic offline page
         if (event.request.mode === 'navigate') {
-          return caches.match('/');
+          return new Response(
+            '<html><body><h1>Offline</h1><p>Please check your internet connection.</p></body></html>',
+            { headers: { 'Content-Type': 'text/html' } }
+          );
         }
+        throw error;
       })
   );
 });

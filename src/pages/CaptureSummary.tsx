@@ -124,8 +124,14 @@ const CaptureSummary: React.FC = () => {
       selectedProgram,
       programName
     });
-    // Navigate to success page or back to deposits
-    history.push('/deposits');
+    // Navigate to success page with deposit details
+    history.push('/deposit-success', {
+      captureType,
+      selectedGroup,
+      selectedProgram,
+      programName,
+      amount
+    });
   };
 
   return (

@@ -744,10 +744,7 @@ ion-toolbar {
   background: #f5f5f5 !important;
 }
 
-.standard-header.header-md {
-  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-}
+
 
 .standard-header ion-toolbar.header-md {
   -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
@@ -1255,6 +1252,29 @@ ion-title {
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  min-width: 0; /* Allow shrinking */
+}
+
+/* When in selection mode, make payment-left shrink and payment-right maintain size */
+.selectable-card .payment-left {
+  flex: 0 1 auto; /* Allow shrinking but don't grow */
+  min-width: 0;
+}
+
+.selectable-card .payment-left .payment-id {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectable-card .payment-left .payment-from {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectable-card .payment-right {
+  flex: 0 0 auto; /* Don't shrink, maintain size */
 }
 
 .payment-right {
@@ -2994,4 +3014,468 @@ ion-tab-button.tab-selected .tab-icon {
   font-size: 16px;
   font-weight: 600;
   --border-radius: 8px;
+}
+
+/* Capture History Styles */
+.history-container {
+  padding: 0;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.history-search {
+  --background: #fff;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+  padding: 0;
+}
+
+.history-list {
+  background: transparent;
+  padding: 0;
+}
+
+.back-button {
+  --color: #333;
+  --padding-start: 0;
+  --padding-end: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.back-button ion-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.status-text-success {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #28a745;
+}
+
+/* Daily Summary Styles */
+.daily-summary-container {
+  padding: 0;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.daily-summary-list {
+  background: transparent;
+  padding: 0;
+}
+
+.daily-summary-card {
+  margin-bottom: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.daily-summary-card .card-content {
+  padding: 16px;
+  margin: 0;
+}
+
+.daily-summary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.daily-summary-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.daily-summary-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.daily-summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.deposits-label,
+.total-value-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.deposits-count,
+.total-value-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.summary-date {
+  font-size: 0.875rem;
+  color: #333;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.summary-arrow {
+  width: 16px;
+  height: 16px;
+  color: #999;
+}
+
+/* Deposit Success Styles */
+.success-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.success-message {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+}
+
+.check-icon {
+  width: 40px;
+  height: 40px;
+  color: white;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(80%) contrast(100%);
+}
+
+.success-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.deposit-details {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 40px;
+}
+
+.detail-card {
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.detail-card-content {
+  padding: 16px;
+  margin: 0;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  gap: 1px;
+}
+
+.detail-row ion-text {
+  display: flex;
+}
+
+.detail-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  text-align: left;
+  flex: 1;
+}
+
+.action-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.capture-another-button {
+  --border-color: var(--teal-primary);
+  --color: var(--teal-primary);
+  --border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+}
+
+/* Profile Page Styles */
+.profile-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info-section {
+  margin-bottom: 20px;
+}
+
+.user-info-card {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.user-info-content {
+  padding: 0;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  color: #666;
+}
+
+.user-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.profile-options {
+  margin-bottom: 30px;
+}
+
+.profile-option-card {
+  margin-bottom: 0;
+  margin-top: 5px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.profile-option-card .profile-option-content {
+  padding: 16px;
+  margin: 0;
+}
+
+.profile-option-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --background: transparent;
+  --border-color: transparent;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+}
+
+.option-icon {
+  width: 20px;
+  height: 20px;
+  color: #666;
+  margin-right: 16px;
+}
+
+.option-arrow {
+  width: 16px;
+  height: 16px;
+  color: #999;
+}
+
+.last-login-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.last-login-label {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 4px 0;
+}
+
+.last-login-time {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 20px;
+  position: sticky;
+  bottom: 20px;
+}
+
+.feedback-button {
+  --border-color: var(--teal-primary);
+  --color: var(--teal-primary);
+  --border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+}
+
+.logout-button {
+  --background: var(--teal-primary);
+  --color: white;
+  --border-radius: 8px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+}
+
+/* App Launcher Styles */
+.launcher-container {
+  padding: 20px;
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 00px;
+}
+
+.welcome-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.welcome-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.app-selection {
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 40px;
+}
+
+.app-card {
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.app-card-content {
+  padding: 24px;
+  margin: 0;
+}
+
+.app-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--teal-primary);
+  flex-shrink: 0;
+}
+
+.app-details {
+  flex: 1;
+  text-align: left;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.app-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.app-arrow {
+  width: 20px;
+  height: 20px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.launcher-footer {
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
 }
