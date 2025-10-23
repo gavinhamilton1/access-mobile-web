@@ -28,6 +28,7 @@ import CaptureHistory from './pages/CaptureHistory';
 import DailySummary from './pages/DailySummary';
 import DepositSuccess from './pages/DepositSuccess';
 import Profile from './pages/Profile';
+import AppExperience from './pages/AppExperience';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 /* Core CSS required for Ionic components to work properly */
@@ -123,6 +124,9 @@ const App: React.FC = () => (
           </Route>
           <Route exact path="/profile">
             <Profile />
+          </Route>
+          <Route exact path="/app-experience">
+            <AppExperience />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">

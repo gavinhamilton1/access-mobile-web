@@ -607,6 +607,27 @@ ion-header::part(border) {
   border-color: #e0e0e0;
 }
 
+/* Remove shadows from headers */
+ion-header {
+  box-shadow: none !important;
+  --box-shadow: none !important;
+}
+
+ion-header::part(native) {
+  box-shadow: none !important;
+  --box-shadow: none !important;
+}
+
+ion-toolbar {
+  box-shadow: none !important;
+  --box-shadow: none !important;
+}
+
+ion-toolbar::part(native) {
+  box-shadow: none !important;
+  --box-shadow: none !important;
+}
+
 /* ============================================
    PAGE CONTENT
    ============================================ */
@@ -3475,4 +3496,116 @@ ion-tab-button.tab-selected .tab-icon {
   font-size: 14px;
   color: #999;
   margin: 0;
+}
+
+/* App Experience Page Styles */
+.app-experience-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background-color: #ffffff;
+}
+
+.app-experience-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.brand-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 20px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.instruction-text {
+  font-size: 18px;
+  color: #666666;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.experience-options {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.experience-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding: 20px;
+}
+
+.experience-card:hover {
+  transform: translateY(-2px);
+}
+
+.experience-icon {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.experience-card:hover .experience-icon {
+  border-color: #1a6b7a;
+  box-shadow: 0 4px 12px rgba(37, 133, 158, 0.15);
+}
+
+.experience-icon-svg {
+  width: 120px;
+  height: 120px;
+  color: #25859e;
+}
+
+.experience-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #25859e;
+  margin: 0;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .app-experience-container {
+    padding: 20px 15px;
+  }
+  
+  .brand-title {
+    font-size: 20px;
+  }
+  
+  .instruction-text {
+    font-size: 16px;
+  }
+  
+  .experience-options {
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .experience-icon {
+    width: 100px;
+    height: 100px;
+  }
+  
+
 }

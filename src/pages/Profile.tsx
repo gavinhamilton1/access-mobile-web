@@ -30,6 +30,10 @@ const Profile: React.FC = () => {
     console.log('Navigate to Notifications');
   };
 
+  const handleAppExperience = () => {
+    history.push('/app-experience');
+  };
+
   const handleGiveFeedback = () => {
     console.log('Give feedback');
   };
@@ -86,7 +90,7 @@ const Profile: React.FC = () => {
               <IonCard className="profile-option-card" onClick={handleSupport}>
                 <IonCardContent className="profile-option-content">
                   <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Alert.svg" slot="start" className="option-icon" />
+                    <IonIcon icon="/images/Phone.svg" slot="start" className="option-icon" />
                     <IonLabel>Support</IonLabel>
                     <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
                   </IonItem>
@@ -98,6 +102,16 @@ const Profile: React.FC = () => {
                   <IonItem className="profile-option-item">
                     <IonIcon icon="/images/Alert.svg" slot="start" className="option-icon" />
                     <IonLabel>Notifications</IonLabel>
+                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
+                  </IonItem>
+                </IonCardContent>
+              </IonCard>
+
+              <IonCard className="profile-option-card" onClick={handleAppExperience}>
+                <IonCardContent className="profile-option-content">
+                  <IonItem className="profile-option-item">
+                    <IonIcon icon="/images/Apps.svg" slot="start" className="option-icon" />
+                    <IonLabel>App Experience</IonLabel>
                     <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
                   </IonItem>
                 </IonCardContent>
