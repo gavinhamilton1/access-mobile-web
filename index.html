@@ -42,10 +42,16 @@
         // The component will handle the callback
       }
     </script>
-    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
+    <script>
+      // Configure OpenCV to use local WASM file
+      window.OpenCVConfig = {
+        wasmBinaryFile: '/opencv/opencv_js.wasm'
+      };
+    </script>
+    <script async src="/opencv/opencv.js" onload="onOpenCvReady();" type="text/javascript"></script>
     
-    <!-- Tesseract.js for OCR -->
-    <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <!-- Tesseract.js for OCR - Local files -->
+    <script src="/tesseract/tesseract.min.js"></script>
     
     <!-- add to homescreen for ios -->
     <meta name="mobile-web-app-capable" content="yes" />

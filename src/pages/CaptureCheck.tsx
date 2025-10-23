@@ -19,6 +19,9 @@ declare global {
     cv: any;
     Tesseract: any;
     onOpenCvReady: () => void;
+    OpenCVConfig?: {
+      wasmBinaryFile: string;
+    };
   }
 }
 
@@ -56,8 +59,9 @@ const CaptureCheck: React.FC = () => {
   const [frozenFrameData, setFrozenFrameData] = useState<string | null>(null);
   const countdownActiveRef = useRef<boolean>(false);
   
+  
   // Document size requirements
-  const MIN_DOCUMENT_SIZE_PERCENTAGE = 0.15; // 30% of frame area
+  const MIN_DOCUMENT_SIZE_PERCENTAGE = 0.30; // 30% of frame area
   const [documentSizePercentage, setDocumentSizePercentage] = useState<number>(0);
   const countdownIntervalRef = useRef<number | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
@@ -196,8 +200,11 @@ const CaptureCheck: React.FC = () => {
     // Set the callback only once
     window.onOpenCvReady = () => {
       console.log('OpenCV.js loaded successfully');
-      (window as any).openCVInitialized = true;
-      // Don't call onOpenCvReady again to prevent recursion
+      // Add a small delay to ensure OpenCV is fully ready
+      setTimeout(() => {
+        (window as any).openCVInitialized = true;
+        console.log('OpenCV initialization complete');
+      }, 200);
     };
   }, []);
 
@@ -401,8 +408,14 @@ const CaptureCheck: React.FC = () => {
 
   // Auto-detection using OpenCV.js with size requirements
   const detectDocument = async (videoElement: HTMLVideoElement): Promise<{detected: boolean, sizePercentage: number}> => {
-    if (!window.cv || !(window as any).openCVInitialized) {
-      console.log('OpenCV not ready yet, skipping detection');
+    if (!window.cv) {
+      console.log('OpenCV not loaded yet, skipping detection');
+      return {detected: false, sizePercentage: 0};
+    }
+    
+    // Additional check to ensure OpenCV is ready
+    if (typeof window.cv.matFromImageData !== 'function') {
+      console.log('OpenCV not fully initialized, skipping detection');
       return {detected: false, sizePercentage: 0};
     }
 
@@ -429,13 +442,18 @@ const CaptureCheck: React.FC = () => {
       
       // Apply Gaussian blur
       const blurred = new window.cv.Mat();
-      window.cv.GaussianBlur(gray, blurred, new window.cv.Size(3, 3), 0);
+      window.cv.GaussianBlur(gray, blurred, new window.cv.Size(5, 5), 0);
       
       // Edge detection with more sensitive parameters
       window.cv.Canny(blurred, edges, 30, 100);
       
-      // Find contours
+      // Find contours - try both external and all contours
       window.cv.findContours(edges, contours, hierarchy, window.cv.RETR_EXTERNAL, window.cv.CHAIN_APPROX_SIMPLE);
+      
+      // If no external contours found, try finding all contours
+      if (contours.size() === 0) {
+        window.cv.findContours(edges, contours, hierarchy, window.cv.RETR_LIST, window.cv.CHAIN_APPROX_SIMPLE);
+      }
       
       let largestArea = 0;
       let bestContour = null;
@@ -446,22 +464,15 @@ const CaptureCheck: React.FC = () => {
         const area = window.cv.contourArea(contour);
         
         if (area > largestArea) {
-          // Check if contour is roughly rectangular (more flexible)
+          // More flexible shape detection - accept 4-6 vertices
           const epsilon = 0.03 * window.cv.arcLength(contour, true);
           const approx = new window.cv.Mat();
           window.cv.approxPolyDP(contour, approx, epsilon, true);
           
           // Accept contours with 4-6 vertices (more flexible for document shapes)
           if (approx.rows >= 4 && approx.rows <= 6) {
-            // Additional check: ensure the contour has reasonable aspect ratio
-            const rect = window.cv.boundingRect(contour);
-            const aspectRatio = rect.width / rect.height;
-            
-            // Accept documents with aspect ratio between 0.5 and 2.0 (typical for checks/documents)
-            if (aspectRatio >= 0.5 && aspectRatio <= 2.0) {
-              largestArea = area;
-              bestContour = approx;
-            }
+            largestArea = area;
+            bestContour = approx;
           }
           approx.delete();
         }
@@ -652,8 +663,17 @@ const CaptureCheck: React.FC = () => {
       img.src = imageData;
       
       return new Promise((resolve) => {
+        // Add timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          console.log('OCR extraction timeout');
+          setIsProcessingOCR(false);
+          resolve({});
+        }, 30000); // 30 second timeout
+        
         img.onload = async () => {
           try {
+            console.log('Starting OCR extraction...');
+            
             // Define routing number area (MICR line at bottom of check)
             // Routing numbers are typically in the bottom 15% of the check
             const routingArea = {
@@ -668,35 +688,78 @@ const CaptureCheck: React.FC = () => {
             // Use Tesseract with specific area and MICR configuration
             const { data: { text } } = await window.Tesseract.recognize(imageData, 'eng', {
               logger: (m: any) => {
-                if (m.status === 'recognizing text') {
-                  
-                }
+                console.log('OCR progress:', m);
               },
               // Focus on the routing number area
               rectangle: routingArea,
               // Use MICR-specific settings for better number recognition
               tessedit_char_whitelist: '0123456789',
-              tessedit_pageseg_mode: '8' // Single word
+              tessedit_pageseg_mode: '8', // Single word
+              // Use local files
+              workerPath: '/tesseract/worker.min.js',
+              corePath: '/tesseract/tesseract-core-simd.wasm.js',
+              langPath: '/tesseract/'
             });
             
-            // Parse MICR line format: [Transit] [Account] [Check Number] [Amount]
-            // MICR format: 123456789 1234567890 123456 123.45
-            const lines = text.split('\n').filter((line: string) => line.trim().length > 0);
-            const micrLine = lines[lines.length - 1] || '';
-            const cleanMicrLine = micrLine.replace(/[^\d\s]/g, ''); // Keep only digits and spaces
+            console.log('OCR extracted text:', text);
             
-            // Split MICR line into components
-            const micrParts = cleanMicrLine.trim().split(/\s+/).filter((part: string) => part.length > 0);
+            // Parse MICR line format: [Transit] [Account] [Check Number] [Amount]
+            // Look for lines that contain MICR patterns (numbers with * symbols)
+            const lines = text.split('\n').filter((line: string) => line.trim().length > 0);
+            console.log('All OCR lines:', lines);
+            
+            // Find the MICR line (contains long sequences of numbers)
+            let micrLine = '';
+            for (const line of lines) {
+              // Look for lines with long sequences of numbers (typical MICR format)
+              if (/\d{9,}/.test(line) && line.length > 20) {
+                micrLine = line;
+                break;
+              }
+            }
+            
+            console.log('Found MICR line:', micrLine);
+            
+            // Clean the MICR line - keep digits, spaces, and * symbols
+            const cleanMicrLine = micrLine.replace(/[^\d\s\*]/g, '').trim();
+            console.log('Cleaned MICR line:', cleanMicrLine);
+            
+            // Split by spaces and filter out empty parts
+            const micrParts = cleanMicrLine.split(/\s+/).filter((part: string) => part.length > 0);
+            console.log('MICR parts:', micrParts);
             
             let routingNumber = '';
             let accountNumber = '';
             let checkNumber = '';
             let amount = '';
             
-            if (micrParts.length >= 1) routingNumber = micrParts[0]; // First 9 digits
-            if (micrParts.length >= 2) accountNumber = micrParts[1]; // Account number
-            if (micrParts.length >= 3) checkNumber = micrParts[2]; // Check number
-            if (micrParts.length >= 4) amount = micrParts[3]; // Amount
+            // Extract numbers from the MICR line
+            const numbers = cleanMicrLine.match(/\d+/g) || [];
+            console.log('Extracted numbers:', numbers);
+            
+            // Use the two largest numbers: largest = account, second largest = routing
+            if (numbers.length >= 2) {
+              // Sort numbers by length (longest first), then by value
+              const sortedNumbers = numbers.sort((a, b) => {
+                if (a.length !== b.length) {
+                  return b.length - a.length; // Longer numbers first
+                }
+                return parseInt(b) - parseInt(a); // If same length, larger value first
+              });
+              
+              accountNumber = sortedNumbers[0] || ''; // Largest number = account
+              routingNumber = sortedNumbers[1] || ''; // Second largest number = routing
+              console.log('Account number (largest):', accountNumber);
+              console.log('Routing number (second largest):', routingNumber);
+              
+              if (numbers.length >= 3) {
+                checkNumber = sortedNumbers[2] || '';
+                console.log('Check number (third):', checkNumber);
+              }
+            } else if (numbers.length === 1) {
+              routingNumber = numbers[0] || '';
+              console.log('Routing number (only number):', routingNumber);
+            }
             
             const micrData = {
               routingNumber,
@@ -708,13 +771,23 @@ const CaptureCheck: React.FC = () => {
             
             setExtractedText(JSON.stringify(micrData, null, 2));
             console.log('Parsed MICR data:', micrData);
+            clearTimeout(timeout);
             resolve(micrData);
           } catch (error) {
             console.error('Routing number OCR error:', error);
+            clearTimeout(timeout);
             resolve({});
           } finally {
             setIsProcessingOCR(false);
           }
+        };
+        
+        // Handle image load errors
+        img.onerror = () => {
+          console.error('Failed to load image for OCR');
+          clearTimeout(timeout);
+          setIsProcessingOCR(false);
+          resolve({});
         };
       });
     } catch (error) {
@@ -743,7 +816,11 @@ const CaptureCheck: React.FC = () => {
             if (m.status === 'recognizing text') {
               
             }
-          }
+          },
+          // Use local files
+          workerPath: '/tesseract/worker.min.js',
+          corePath: '/tesseract/tesseract-core-simd.wasm.js',
+          langPath: '/tesseract/'
         }
       );
       
@@ -805,10 +882,11 @@ const CaptureCheck: React.FC = () => {
       // Try OpenCV detection first
       let detectionResult = {detected: false, sizePercentage: 0};
       
-        if (window.cv && (window as any).openCVInitialized) {
+        if (window.cv && typeof window.cv.matFromImageData === 'function') {
+          console.log('OpenCV is ready, attempting detection');
           detectionResult = await detectDocument(videoRef.current);
         } else {
-          console.log('OpenCV not available');
+          console.log(`OpenCV not available - window.cv: ${!!window.cv}, matFromImageData: ${typeof window.cv?.matFromImageData}`);
           detectionResult = {detected: false, sizePercentage: 0};
         }
       
@@ -926,7 +1004,7 @@ const CaptureCheck: React.FC = () => {
 
   const getStepTitle = () => {
     if (isCheckCapture) {
-      return currentStep === 'front' ? 'Capture check' : 'Capture check';
+      return currentStep === 'front' ? 'Capture check front' : 'Capture check back';
     }
     return 'Capture document';
   };
