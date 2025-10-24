@@ -21,7 +21,7 @@ const AppExperience: React.FC = () => {
 
   const handleDigitalBanking = () => {
     console.log('Navigate to Digital Banking experience');
-    // You can add navigation logic here
+    window.location.href = 'https://digital-banking-fac4.onrender.com/';
   };
 
   const handleBack = () => {
