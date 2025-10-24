@@ -444,8 +444,11 @@ const CaptureCheck: React.FC = () => {
       const blurred = new window.cv.Mat();
       window.cv.GaussianBlur(gray, blurred, new window.cv.Size(5, 5), 0);
       
-      // Edge detection with more sensitive parameters
-      window.cv.Canny(blurred, edges, 30, 100);
+      // Edge detection with mobile-optimized parameters
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const cannyLow = isMobileDevice ? 20 : 30;
+      const cannyHigh = isMobileDevice ? 80 : 100;
+      window.cv.Canny(blurred, edges, cannyLow, cannyHigh);
       
       // Find contours - try both external and all contours
       window.cv.findContours(edges, contours, hierarchy, window.cv.RETR_EXTERNAL, window.cv.CHAIN_APPROX_SIMPLE);
@@ -483,6 +486,16 @@ const CaptureCheck: React.FC = () => {
       const totalFrameArea = canvas.width * canvas.height;
       const sizePercentage = largestArea / totalFrameArea;
       
+      // Debug logging for mobile devices
+      console.log('Detection debug:', {
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height,
+        totalFrameArea,
+        largestArea,
+        sizePercentage: (sizePercentage * 100).toFixed(1) + '%',
+        isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      });
+      
       // Update size percentage for UI feedback
       setDocumentSizePercentage(sizePercentage);
 
@@ -495,8 +508,18 @@ const CaptureCheck: React.FC = () => {
       hierarchy.delete();
 
       // Check if we found a good document contour with sufficient size
-      const minArea = totalFrameArea * MIN_DOCUMENT_SIZE_PERCENTAGE;
+      // Use lower threshold for mobile devices due to camera resolution differences
+      const mobileThreshold = isMobileDevice ? 0.15 : MIN_DOCUMENT_SIZE_PERCENTAGE; // 15% for mobile, 30% for desktop
+      const minArea = totalFrameArea * mobileThreshold;
       const detected = largestArea > minArea && bestContour !== null;
+      
+      console.log('Detection threshold:', {
+        isMobile: isMobileDevice,
+        threshold: (mobileThreshold * 100).toFixed(1) + '%',
+        minArea,
+        largestArea,
+        detected
+      });
       
       return {detected, sizePercentage};
       
@@ -898,9 +921,12 @@ const CaptureCheck: React.FC = () => {
       } else {
         // Show size-specific guidance when not detected
         if (!isCountingDown) {
-          if (detectionResult.sizePercentage > 0 && detectionResult.sizePercentage < MIN_DOCUMENT_SIZE_PERCENTAGE) {
+          const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+          const mobileThreshold = isMobileDevice ? 0.15 : MIN_DOCUMENT_SIZE_PERCENTAGE;
+          
+          if (detectionResult.sizePercentage > 0 && detectionResult.sizePercentage < mobileThreshold) {
             const percentage = Math.round(detectionResult.sizePercentage * 100);
-            const required = Math.round(MIN_DOCUMENT_SIZE_PERCENTAGE * 100);
+            const required = Math.round(mobileThreshold * 100);
             setDetectionStatus(`Move closer - document is ${percentage}% of frame (need ${required}%)`);
           } else {
             setDetectionStatus('Position document within frame');
