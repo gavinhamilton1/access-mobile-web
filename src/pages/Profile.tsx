@@ -124,7 +124,7 @@ const Profile: React.FC = () => {
                 <p className="last-login-label">Last login</p>
               </IonText>
               <IonText color="medium">
-                <p className="last-login-time">20-Oct-25 at 4:43 PM</p>
+                <p className="last-login-time">24-Oct-25 at 9:41 PM</p>
               </IonText>
             </div>
 
