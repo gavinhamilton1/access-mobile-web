@@ -1545,27 +1545,45 @@ ion-title {
   background: white;
   color: #333;
   border-bottom: 1px solid #f0f0f0;
+  padding: 16px 20px 12px 20px;
 }
 
 .light-alert .alert-title {
   color: #333;
   font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+  display: block;
 }
 
 .light-alert .alert-message {
   color: #666;
   background: white;
+  padding: 20px 20px !important;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* Override Ionic's default alert message padding */
+.light-alert .alert-head.sc-ion-alert-md + .alert-message.sc-ion-alert-md {
+  padding-top: 20px !important;
+  padding: 20px 20px !important;
 }
 
 .light-alert .alert-button-group {
   background: white;
   border-top: 1px solid #f0f0f0;
+  padding: 8px 20px 12px 20px;
 }
 
 .light-alert .alert-button {
   color: var(--teal-primary);
   font-weight: 600;
   background: white;
+  padding: 8px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 4px;
 }
 
 .light-alert .alert-button:hover {
