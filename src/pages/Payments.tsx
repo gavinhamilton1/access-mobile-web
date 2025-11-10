@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import {
   IonContent,
-  IonHeader,
   IonPage,
   IonTitle,
-  IonToolbar,
   IonCard,
   IonCardContent,
   IonInput,
@@ -15,6 +13,8 @@ import {
   IonButton
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
+import StandardHeader from '../components/StandardHeader/StandardHeader';
+import PaymentCard from '../components/PaymentCard/PaymentCard';
 
 // Mock payment data
 const mockPayments = {
@@ -162,65 +162,56 @@ const Payments: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="payments-header-layout">
-            <div className="header-left">
-            <IonButton fill="clear" className="header-button" onClick={handleSelectToggle}>
-                <IonText>{isSelectMode ? 'Cancel' : 'Select'}</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Pending payments</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button">
-                <IonText>History</IonText>
-              </IonButton>
-            </div>
+      <StandardHeader
+        left={
+          <IonButton fill="clear" className="header-button" onClick={handleSelectToggle}>
+            <IonText>{isSelectMode ? 'Cancel' : 'Select'}</IonText>
+          </IonButton>
+        }
+        center={<IonTitle>Pending payments</IonTitle>}
+        right={
+          <IonButton fill="clear" className="header-button">
+            <IonText>History</IonText>
+          </IonButton>
+        }
+      />
+      {/* Search Section in header */}
+      <div className="payments-search-header">
+        <div className="search-wrapper">
+          <div className="search-container">
+            <img src="/images/Search.svg" alt="Search" className="search-icon" />
+            <IonInput
+              placeholder={activeTab === 'approve' ? "Search approvals" : "Search releases"}
+              className="search-input"
+            />
           </div>
-        </IonToolbar>
-                {/* Search Section in header */}
-                <div className="payments-search-header">
-                  <div className="search-wrapper">
-                    <div className="search-container">
-                      <img src="/images/Search.svg" alt="Search" className="search-icon" />
-                      <IonInput
-                        placeholder={activeTab === 'approve' ? "Search approvals" : "Search releases"}
-                        className="search-input"
-                      />
-                    </div>
-                    <IonButton fill="clear" className="filter-button">
-                      <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
-                    </IonButton>
-                  </div>
-                </div>
-        {/* Tabs in header */}
-        <div className="payments-tabs-header">
-          <IonSegment 
-            value={activeTab} 
-            onIonChange={e => {
-              // Cancel selection mode when switching tabs
-              if (isSelectMode) {
-                setIsSelectMode(false);
-                setSelectedItems(new Set());
-              }
-              setActiveTab(e.detail.value as 'approve' | 'release');
-            }}
-            className="payments-segment"
-          >
-            <IonSegmentButton value="approve" className="payment-tab">
-              <IonLabel>Approve</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="release" className="payment-tab">
-              <IonLabel>Release</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
+          <IonButton fill="clear" className="filter-button">
+            <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
+          </IonButton>
         </div>
-        
-
-      </IonHeader>
-
+      </div>
+      {/* Tabs in header */}
+      <div className="payments-tabs-header">
+        <IonSegment
+          value={activeTab}
+          onIonChange={e => {
+            // Cancel selection mode when switching tabs
+            if (isSelectMode) {
+              setIsSelectMode(false);
+              setSelectedItems(new Set());
+            }
+            setActiveTab(e.detail.value as 'approve' | 'release');
+          }}
+          className="payments-segment"
+        >
+          <IonSegmentButton value="approve" className="payment-tab">
+            <IonLabel>Approve</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="release" className="payment-tab">
+            <IonLabel>Release</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
+      </div>
       <IonContent fullscreen>
         <div className="page-content">
 
@@ -236,54 +227,13 @@ const Payments: React.FC = () => {
                 </div>
                 
                 {group.payments.map((payment, paymentIndex) => (
-                  <IonCard 
-                    key={paymentIndex} 
-                    className={`card payment-card ${isSelectMode ? 'selectable-card' : ''}`}
-                    onClick={isSelectMode ? () => handleItemSelect(payment.id) : undefined}
-                  >
-                    <IonCardContent className="card-content">
-                      <div className="payment-item">
-                        {isSelectMode && (
-                          <div className="payment-select">
-                            <input 
-                              type="checkbox"
-                              checked={selectedItems.has(payment.id)}
-                              onChange={() => handleItemSelect(payment.id)}
-                              className="payment-radio"
-                            />
-                          </div>
-                        )}
-                        <div className="payment-details">
-                          <div className="payment-left">
-                            <IonText>
-                              <h3 className="payment-id">{payment.id}</h3>
-                            </IonText>
-                            <IonText color="medium">
-                              <p className="payment-from">{payment.from}</p>
-                            </IonText>
-                          </div>
-                          
-                          <div className="payment-right">
-                            <div className="payment-type-section">
-                              <IonText color="medium">
-                                <p className="payment-type">{payment.type} <img src="/images/ArrowForward.svg" alt="Arrow" className="icon-small" /></p>
-                              </IonText>
-                              <IonText>
-                                <p className="payment-amount">{payment.amount}</p>
-                              </IonText>
-                            </div>
-                            
-                            <div className="payment-status">
-                              <img src="/images/Warning.svg" alt="Warning" className="warning-icon" />
-                              <IonText color="warning">
-                                <p className="status-text-warning">{payment.status}</p>
-                              </IonText>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </IonCardContent>
-                  </IonCard>
+                  <PaymentCard
+                    key={paymentIndex}
+                    payment={payment}
+                    isSelectMode={isSelectMode}
+                    isSelected={selectedItems.has(payment.id)}
+                    onSelect={handleItemSelect}
+                  />
                 ))}
               </div>
             ))}

@@ -1,0 +1,42 @@
+.account-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0;
+}
+
+.account-details {
+  flex: 1;
+  text-align: left;
+}
+
+.account-details h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--teal-primary);
+}
+
+.account-details p {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.account-star {
+  flex-shrink: 0;
+}
+
+.account-balance {
+  color: #333;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  font-weight: normal;
+}
+
+.account-number {
+  color: #666;
+  font-weight: normal;
+  margin-left: 4px;
+}
