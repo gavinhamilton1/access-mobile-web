@@ -1,5 +1,20 @@
 import React, { useState } from 'react';
+import {
+  IonContent,
+  IonPage,
+  IonTitle,
+  IonCard,
+  IonCardContent,
+  IonInput,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonText,
+  IonButton
+} from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
+import StandardHeader from '../components/StandardHeader/StandardHeader';
+import PaymentCard from '../components/PaymentCard/PaymentCard';
 
 const mockPayments = {
   approve: [
@@ -52,81 +67,80 @@ const Payments: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow-md sticky top-0 z-10">
-        <div className="flex justify-between items-center p-4">
-          <button onClick={handleSelectToggle} className="text-blue-600">{isSelectMode ? 'Cancel' : 'Select'}</button>
-          <h1 className="text-xl font-semibold">Pending payments</h1>
-          <button className="text-blue-600">History</button>
-        </div>
-        <div className="p-4">
-          <div className="flex items-center bg-gray-200 rounded-lg p-2">
-            <img src="/images/Search.svg" alt="Search" className="w-5 h-5 mr-2" />
-            <input
-              type="text"
+    <IonPage>
+      <StandardHeader
+        left={
+          <IonButton fill="clear" className="header-button" onClick={handleSelectToggle}>
+            <IonText>{isSelectMode ? 'Cancel' : 'Select'}</IonText>
+          </IonButton>
+        }
+        center={<IonTitle>Pending payments</IonTitle>}
+        right={
+          <IonButton fill="clear" className="header-button">
+            <IonText>History</IonText>
+          </IonButton>
+        }
+      />
+      {/* Search Section in header */}
+      <div className="payments-search-header">
+        <div className="search-wrapper">
+          <div className="search-container">
+            <img src="/images/Search.svg" alt="Search" className="search-icon" />
+            <IonInput
               placeholder={activeTab === 'approve' ? "Search approvals" : "Search releases"}
-              className="bg-transparent focus:outline-none w-full"
+              className="search-input"
             />
-            <button className="ml-2">
-              <img src="/images/Filter.svg" alt="Filter" className="w-6 h-6" />
-            </button>
           </div>
+          <IonButton fill="clear" className="filter-button">
+            <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
+          </IonButton>
         </div>
-        <div className="border-b">
-          <div className="flex">
-            <button
-              className={`flex-1 py-2 text-center ${activeTab === 'approve' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('approve')}
-            >
-              Approve
-            </button>
-            <button
-              className={`flex-1 py-2 text-center ${activeTab === 'release' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500'}`}
-              onClick={() => setActiveTab('release')}
-            >
-              Release
-            </button>
-          </div>
-        </div>
-      </header>
-      <main className="p-4">
-        {Object.entries(groupedPayments).map(([date, payments]) => (
-          <div key={date}>
-            <div className="bg-gray-200 px-4 py-1">
-              <p className="text-sm text-gray-600">Cut-off date {date}</p>
-            </div>
-            {(payments as any[]).map(payment => (
-              <div
-                key={payment.id}
-                className={`bg-white p-4 border-b ${isSelectMode ? 'cursor-pointer' : ''}`}
-                onClick={() => isSelectMode && handleItemSelect(payment.id)}
-              >
-                <div className="flex items-center">
-                  {isSelectMode && (
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.has(payment.id)}
-                      onChange={() => handleItemSelect(payment.id)}
-                      className="mr-4"
-                    />
-                  )}
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <div>
-                        <h3 className="font-semibold">{payment.id}</h3>
-                        <p className="text-sm text-gray-500">{payment.from}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500 flex items-center">{payment.type} <img src="/images/ArrowForward.svg" alt=">" className="w-4 h-4 ml-1" /></p>
-                        <p className="font-semibold">{payment.amount}</p>
-                        <div className="flex items-center text-yellow-500 text-sm">
-                          <img src="/images/Warning.svg" alt="!" className="w-4 h-4 mr-1" />
-                          {payment.status}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+      </div>
+      {/* Tabs in header */}
+      <div className="payments-tabs-header">
+        <IonSegment
+          value={activeTab}
+          onIonChange={e => {
+            // Cancel selection mode when switching tabs
+            if (isSelectMode) {
+              setIsSelectMode(false);
+              setSelectedItems(new Set());
+            }
+            setActiveTab(e.detail.value as 'approve' | 'release');
+          }}
+          className="payments-segment"
+        >
+          <IonSegmentButton value="approve" className="payment-tab">
+            <IonLabel>Approve</IonLabel>
+          </IonSegmentButton>
+          <IonSegmentButton value="release" className="payment-tab">
+            <IonLabel>Release</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
+      </div>
+      <IonContent fullscreen>
+        <div className="page-content">
+
+
+          {/* Payment List */}
+          <div className="payments-list">
+            {groupedPayments.map((group, groupIndex) => (
+              <div key={groupIndex} className="payment-group">
+                <div className="cutoff-date-header">
+                  <IonText color="medium">
+                    <p className="cutoff-date-text">Cut-off date {group.date}</p>
+                  </IonText>
                 </div>
+                
+                {group.payments.map((payment, paymentIndex) => (
+                  <PaymentCard
+                    key={paymentIndex}
+                    payment={payment}
+                    isSelectMode={isSelectMode}
+                    isSelected={selectedItems.has(payment.id)}
+                    onSelect={handleItemSelect}
+                  />
+                ))}
               </div>
             ))}
           </div>
