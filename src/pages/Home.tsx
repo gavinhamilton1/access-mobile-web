@@ -1,29 +1,6 @@
-import { 
-  IonContent, 
-  IonHeader, 
-  IonPage, 
-  IonTitle, 
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonButton,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonSelect,
-  IonSelectOption,
-  IonChip,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonText
-} from '@ionic/react';
-import { notifications, chevronDown, checkmark, document, informationCircle, closeCircle, camera } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 
-const Tab1: React.FC = () => {
+const Home: React.FC = () => {
   const history = useHistory();
 
   const handleCaptureDeposit = () => {
@@ -31,161 +8,116 @@ const Tab1: React.FC = () => {
   };
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <div className="header-content">
-            <div className="welcome-section">
-              <IonText color="medium">
-                <p className="text-medium">Welcome, test.</p>
-              </IonText>
+    <div className="bg-gray-100 min-h-screen">
+      <header className="bg-white shadow-md">
+        <div className="flex justify-between items-center p-4">
+          <div className="text-center flex-1">
+            <p className="text-gray-600">Welcome, test.</p>
+          </div>
+          <img src="/images/Alert.svg" alt="Alerts" className="w-6 h-6" />
+        </div>
+      </header>
+      <main className="p-4">
+        {/* Balance Overview Card */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-sm text-gray-500">Current day</p>
+              <h2 className="text-2xl font-bold">1 063 261<span className="text-lg">,52</span></h2>
             </div>
-            <div className="header-actions">
-              <img src="/images/Alert.svg" alt="Alerts" className="icon-medium" />
+            <select className="border-none bg-transparent text-blue-600">
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+            </select>
+          </div>
+
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <p className="text-sm text-gray-500">Prior day</p>
+              <h2 className="text-2xl font-bold">1 063 261<span className="text-lg">,52</span></h2>
             </div>
           </div>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <div className="page-content">
-          {/* Balance Overview Card */}
-          <IonCard className="card balance-card">
-            <IonCardContent className="card-content">
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <IonText color="medium">
-                    <p className="text-small">Current day</p>
-                  </IonText>
-                  <IonText>
-                    <h2 className="text-large">1 063 261<span className="decimal-part">,52</span></h2>
-                  </IonText>
-                </div>
-                <div className="balance-amount-section">
-                  <IonSelect 
-                    value="USD" 
-                    interface="popover"
-                    className="currency-select-inline"
-                  >
-                    <IonSelectOption value="USD">USD</IonSelectOption>
-                    <IonSelectOption value="EUR">EUR</IonSelectOption>
-                    <IonSelectOption value="GBP">GBP</IonSelectOption>
-                  </IonSelect>
-                </div>
-              </div>
-              
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <IonText color="medium">
-                    <p className="text-small">Prior day</p>
-                  </IonText>
-                  <IonText>
-                    <h2 className="text-large">1 063 261<span className="decimal-part">,52</span></h2>
-                  </IonText>
-                </div>
-                <div className="balance-amount-section">
-                  {/* Empty section for alignment */}
-                </div>
-              </div>
 
-              <div className="balance-divider"></div>
+          <hr className="my-4" />
 
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <div className="credit-debit-left">
-                    <img src="/images/PiggyBank.svg" alt="Credits" className="icon-small" />
-                    <span>Credits</span>
-                  </div>
-                </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">0,00</span>
-                </div>
-              </div>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center">
+              <img src="/images/PiggyBank.svg" alt="Credits" className="w-5 h-5 mr-2" />
+              <span>Credits</span>
+            </div>
+            <span className="font-bold">0,00</span>
+          </div>
 
-              <div className="balance-divider"></div>
+          <hr className="my-4" />
 
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <div className="credit-debit-left">
-                    <img src="/images/VisibilityOn.svg" alt="Debits" className="icon-small" />
-                    <span>Debits</span>
-                  </div>
-                </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">(0,00)</span>
-                </div>
-              </div>
-            </IonCardContent>
-          </IonCard>
-
-          {/* Payment Actions Card */}
-          <IonCard className="card payment-actions-card">
-            <IonCardContent className="card-content">
-              <div className="card-action-item">
-                <div className="card-action-left">
-                  <img src="/images/Check.svg" alt="Approve" className="icon-small" />
-                  <span>Approve payment</span>
-                </div>
-                <div className="icon-dot"></div>
-              </div>
-              <div className="card-action-item">
-                <div className="card-action-left">
-                  <img src="/images/ListCheck.svg" alt="Release" className="icon-small" />
-                  <span>Release payment</span>
-                </div>
-                <div className="icon-dot"></div>
-              </div>
-            </IonCardContent>
-          </IonCard>
-
-          {/* File Transmissions Card */}
-          <IonCard className="card file-transmissions-card">
-            <IonCardHeader>
-              <IonCardTitle className="text-title">File Transmissions</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent className="card-content">
-              <div className="transmission-status">
-                <div className="status-item">
-                  <div className="status-left">
-                    <img src="/images/CircleCheck.svg" alt="Sent" className="icon-small status-icon-green" />
-                    <span>Sent for processing</span>
-                  </div>
-                  <IonChip color="primary" className="status-count">55</IonChip>
-                </div>
-                <div className="status-item">
-                  <div className="status-left">
-                    <img src="/images/CircleInfo.svg" alt="In process" className="icon-small" />
-                    <span>In process</span>
-                  </div>
-                  <IonChip color="primary" className="status-count">648</IonChip>
-                </div>
-                <div className="status-item">
-                  <div className="status-left">
-                    <img src="/images/CircleCross.svg" alt="Failed" className="icon-small status-icon-red" />
-                    <span>Failed</span>
-                  </div>
-                  <IonChip color="primary" className="status-count">7</IonChip>
-                </div>
-              </div>
-            </IonCardContent>
-          </IonCard>
-          
-          {/* Bottom spacer to allow scrolling past fixed button */}
-          <div className="bottom-spacer">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <img src="/images/VisibilityOn.svg" alt="Debits" className="w-5 h-5 mr-2" />
+              <span>Debits</span>
+            </div>
+            <span className="font-bold">(0,00)</span>
           </div>
         </div>
-        {/* Fixed Floating Capture Button */}
-        <div className="floating-capture-button">
-          <IonButton 
-            className="btn-primary floating-btn"
-            onClick={handleCaptureDeposit}
-          >
-            <img src="/images/Camera.svg" alt="Camera" className="btn-icon" />
-            Capture deposit
-          </IonButton>
+
+        {/* Payment Actions Card */}
+        <div className="bg-white rounded-lg shadow-md p-4 mb-4">
+          <div className="flex justify-between items-center py-2 border-b">
+            <div className="flex items-center">
+              <img src="/images/Check.svg" alt="Approve" className="w-5 h-5 mr-2" />
+              <span>Approve payment</span>
+            </div>
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          </div>
+          <div className="flex justify-between items-center py-2">
+            <div className="flex items-center">
+              <img src="/images/ListCheck.svg" alt="Release" className="w-5 h-5 mr-2" />
+              <span>Release payment</span>
+            </div>
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          </div>
         </div>
-      </IonContent>
-    </IonPage>
+
+        {/* File Transmissions Card */}
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <h3 className="text-lg font-bold mb-4">File Transmissions</h3>
+          <div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex items-center">
+                <img src="/images/CircleCheck.svg" alt="Sent" className="w-5 h-5 mr-2" />
+                <span>Sent for processing</span>
+              </div>
+              <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">55</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <div className="flex items-center">
+                <img src="/images/CircleInfo.svg" alt="In process" className="w-5 h-5 mr-2" />
+                <span>In process</span>
+              </div>
+              <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">648</span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <div className="flex items-center">
+                <img src="/images/CircleCross.svg" alt="Failed" className="w-5 h-5 mr-2" />
+                <span>Failed</span>
+              </div>
+              <span className="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">7</span>
+            </div>
+          </div>
+        </div>
+        <div className="h-20"></div>
+      </main>
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-11/12 max-w-sm">
+        <button
+          className="bg-blue-600 text-white w-full py-3 rounded-full shadow-lg flex items-center justify-center"
+          onClick={handleCaptureDeposit}
+        >
+          <img src="/images/Camera.svg" alt="Camera" className="w-6 h-6 mr-2" />
+          Capture deposit
+        </button>
+      </div>
+    </div>
   );
 };
 
-export default Tab1;
+export default Home;

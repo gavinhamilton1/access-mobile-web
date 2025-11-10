@@ -1,155 +1,62 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonButton,
-  IonIcon,
-  IonItem,
-  IonLabel
-} from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 
 const Profile: React.FC = () => {
   const history = useHistory();
 
-  const handleSettings = () => {
-    console.log('Navigate to Settings');
-  };
-
-  const handleSupport = () => {
-    console.log('Navigate to Support');
-  };
-
-  const handleNotifications = () => {
-    console.log('Navigate to Notifications');
-  };
-
   const handleAppExperience = () => {
     history.push('/app-experience');
   };
 
-  const handleGiveFeedback = () => {
-    console.log('Give feedback');
-  };
-
-  const handleLogout = () => {
-    console.log('Log out');
-  };
+  const menuItems = [
+    { icon: '/images/Settings.svg', label: 'Settings', action: () => console.log('Settings') },
+    { icon: '/images/Phone.svg', label: 'Support', action: () => console.log('Support') },
+    { icon: '/images/Alert.svg', label: 'Notifications', action: () => console.log('Notifications') },
+    { icon: '/images/Apps.svg', label: 'App Experience', action: handleAppExperience },
+  ];
 
   return (
-    <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-            </div>
-            <div className="header-center">
-              <IonTitle>Profile</IonTitle>
-            </div>
-            <div className="header-right">
-            </div>
-          </div>
-        </IonToolbar>
-      </IonHeader>
-
-      <IonContent fullscreen>
-        <div className="page-content">
-          <div className="profile-container">
-            {/* User Information */}
-            <div className="user-info-section">
-              <IonCard className="user-info-card">
-                <IonCardContent className="user-info-content">
-                  <div className="user-info">
-                    <IonIcon icon="/images/Profile.svg" className="user-avatar" />
-                    <IonText>
-                      <h2 className="user-name">test mobile</h2>
-                    </IonText>
-                  </div>
-                </IonCardContent>
-              </IonCard>
-            </div>
-
-            {/* Navigation Items */}
-            <div className="profile-options">
-              <IonCard className="profile-option-card" onClick={handleSettings}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Settings.svg" slot="start" className="option-icon" />
-                    <IonLabel>Settings</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
-
-              <IonCard className="profile-option-card" onClick={handleSupport}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Phone.svg" slot="start" className="option-icon" />
-                    <IonLabel>Support</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
-
-              <IonCard className="profile-option-card" onClick={handleNotifications}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Alert.svg" slot="start" className="option-icon" />
-                    <IonLabel>Notifications</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
-
-              <IonCard className="profile-option-card" onClick={handleAppExperience}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Apps.svg" slot="start" className="option-icon" />
-                    <IonLabel>App Experience</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
-            </div>
-
-            {/* Last Login */}
-            <div className="last-login-section">
-              <IonText>
-                <p className="last-login-label">Last login</p>
-              </IonText>
-              <IonText color="medium">
-                <p className="last-login-time">24-Oct-25 at 9:41 PM</p>
-              </IonText>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="profile-actions">
-              <IonButton 
-                fill="outline" 
-                className="feedback-button"
-                onClick={handleGiveFeedback}
-              >
-                <IonText>Give feedback</IonText>
-              </IonButton>
-
-              <IonButton 
-                fill="solid" 
-                className="logout-button"
-                onClick={handleLogout}
-              >
-                <IonText>Log out</IonText>
-              </IonButton>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow p-4">
+        <h1 className="text-xl font-semibold text-center">Profile</h1>
+      </header>
+      <main className="p-4">
+        <div className="flex items-center mb-8">
+          <img src="/images/Profile.svg" alt="Avatar" className="w-12 h-12 rounded-full mr-4" />
+          <h2 className="text-2xl font-semibold">test mobile</h2>
         </div>
-      </IonContent>
-    </IonPage>
+
+        <div className="bg-white rounded-lg shadow">
+          {menuItems.map((item, index) => (
+            <div
+              key={item.label}
+              className={`flex items-center justify-between p-4 cursor-pointer ${index < menuItems.length - 1 ? 'border-b' : ''}`}
+              onClick={item.action}
+            >
+              <div className="flex items-center">
+                <img src={item.icon} alt={item.label} className="w-6 h-6 mr-4" />
+                <span>{item.label}</span>
+              </div>
+              <img src="/images/ArrowForward.svg" alt=">" className="w-5 h-5" />
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center my-8">
+          <p className="text-gray-600">Last login</p>
+          <p className="text-sm text-gray-500">24-Oct-25 at 9:41 PM</p>
+        </div>
+
+        <div className="space-y-4">
+          <button className="w-full border border-blue-600 text-blue-600 py-3 rounded-full">
+            Give feedback
+          </button>
+          <button className="w-full bg-blue-600 text-white py-3 rounded-full">
+            Log out
+          </button>
+        </div>
+      </main>
+    </div>
   );
 };
 

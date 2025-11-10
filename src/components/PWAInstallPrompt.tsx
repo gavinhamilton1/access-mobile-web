@@ -1,12 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  IonButton,
-  IonCard,
-  IonCardContent,
-  IonIcon,
-  IonText
-} from '@ionic/react';
-import { close, download } from 'ionicons/icons';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -103,43 +95,31 @@ const PWAInstallPrompt: React.FC = () => {
   }
 
   return (
-    <div className="pwa-install-prompt">
-      <IonCard className="install-prompt-card">
-        <IonCardContent>
-          <div className="install-prompt-content">
-            <div className="install-prompt-header">
-              <IonIcon icon={download} className="install-icon" />
-              <IonText>
-                <h3 className="install-title">Install Access Mobile</h3>
-              </IonText>
-              <IonButton 
-                fill="clear" 
-                size="small" 
-                onClick={handleDismiss}
-                className="dismiss-button"
-              >
-                <IonIcon icon={close} />
-              </IonButton>
-            </div>
-            
-            <IonText>
-              <p className="install-description">
-                Install this app on your device for quick access and a better experience.
-              </p>
-            </IonText>
-            
-            <div className="install-actions">
-              <IonButton 
-                expand="block" 
-                onClick={handleInstallClick}
-                className="install-button"
-              >
-                Install App
-              </IonButton>
-            </div>
+    <div className="fixed bottom-20 left-5 right-5 z-50 max-w-md mx-auto">
+      <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg shadow-lg p-4">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <h3 className="text-lg font-semibold">Install Access Mobile</h3>
           </div>
-        </IonCardContent>
-      </IonCard>
+          <button onClick={handleDismiss} className="text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <p className="mb-4">
+          Install this app on your device for quick access and a better experience.
+        </p>
+        <button
+          onClick={handleInstallClick}
+          className="bg-white text-blue-600 w-full py-2 rounded-lg font-semibold"
+        >
+          Install App
+        </button>
+      </div>
     </div>
   );
 };
