@@ -1,0 +1,148 @@
+.payment-card {
+  margin-bottom: 0;
+  margin-top: 5px;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 0;
+  box-shadow: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.payment-card .card-content {
+  padding: 16px;
+  margin: 0;
+}
+
+.payment-item {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+}
+
+.payment-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 60px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.payment-radio {
+  width: 20px;
+  height: 20px;
+  appearance: none;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.payment-radio:checked {
+  border: 2px solid var(--teal-primary);
+  background: white;
+}
+
+.payment-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal-primary);
+  transform: translate(-50%, -50%);
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 1;
+  gap: 16px;
+}
+
+.payment-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0; /* Allow shrinking */
+}
+
+.payment-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.payment-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-id {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  color: #333;
+}
+
+.payment-from {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #666;
+}
+
+.payment-type-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.payment-type {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.payment-amount {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.payment-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.warning-icon {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(25deg) brightness(110%) contrast(110%);
+}
+
+.status-text-warning {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #ff6b35;
+  font-weight: 500;
+}
