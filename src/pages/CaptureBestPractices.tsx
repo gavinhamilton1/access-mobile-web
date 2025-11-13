@@ -7,7 +7,6 @@ import {
   IonToolbar,
   IonButton,
   IonText,
-  IonIcon
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -18,6 +17,26 @@ interface LocationState {
   programName?: string;
 }
 
+const tips = [
+  {
+    title: 'Dark or mostly monochrome background',
+    description:
+      'Use a uniform, darker background—especially when the check itself is light colored.',
+  },
+  {
+    title: 'Photograph the physical check',
+    description: 'Avoid capturing screenshots or photocopies; always use the original document.',
+  },
+  {
+    title: 'Stick to auto capture',
+    description: 'Auto captured checks satisfy deposit criteria more reliably than manual shots.',
+  },
+  {
+    title: 'Limit excessive angles',
+    description: 'Hold the camera directly above the check without casting shadows.',
+  },
+];
+
 const CaptureBestPractices: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
@@ -27,128 +46,82 @@ const CaptureBestPractices: React.FC = () => {
   const selectedProgram = state?.selectedProgram || '15501';
   const programName = state?.programName || 'AUTOAL1 RDC PROGRAM 1 GROUPS';
 
-  const handleBack = () => {
-    history.goBack();
-  };
+  const handleBack = () => history.goBack();
 
   const handleStartCapture = () => {
-    // Navigate to capture check with all selections
     history.push('/capture-check', {
-      captureType: captureType,
-      selectedGroup: selectedGroup,
-      selectedProgram: selectedProgram,
-      programName: programName
+      captureType,
+      selectedGroup,
+      selectedProgram,
+      programName,
     });
   };
 
   const handleDoNotShowAgain = () => {
-    // Handle "Do not show again" functionality
     console.log('Do not show again');
     history.goBack();
   };
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Remote capture tips</IonTitle>
-            </div>
-            <div className="header-right">
-              {/* Empty for symmetry */}
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Remote capture tips</IonTitle>
+            <div className="min-w-[64px]" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="capture-tips-container">
-            {/* Camera Icon */}
-            <div className="camera-icon-container">
-              <IonIcon 
-                icon="/images/Camera.svg" 
-                className="camera-icon"
-              />
+        <div className="flex min-h-full items-center justify-center bg-slate-100 px-4 py-10">
+          <div className="w-full max-w-lg space-y-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div className="flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
+                <img src="/images/Camera.svg" alt="Camera" className="h-8 w-8 text-teal-primary" />
+              </div>
             </div>
 
-            {/* Main Heading */}
-            <div className="tips-heading">
+            <div className="text-center">
               <IonText>
-                <h1 className="main-heading">Remote capture best practices</h1>
+                <h1 className="text-2xl font-semibold text-slate-900">
+                  Remote capture best practices
+                </h1>
               </IonText>
             </div>
 
-            {/* Tips List */}
-            <div className="tips-list">
-              {/* Tip 1 */}
-              <div className="tip-item">
-                <IonText>
-                  <h3 className="tip-title">Dark or mostly monochrome background</h3>
-                </IonText>
-                <IonText color="medium">
-                  <p className="tip-description">
-                    The image background should be a uniform, preferably darker color, especially if the check itself is light colored.
-                  </p>
-                </IonText>
-              </div>
-
-              {/* Tip 2 */}
-              <div className="tip-item">
-                <IonText>
-                  <h3 className="tip-title">Photograph physical check</h3>
-                </IonText>
-                <IonText color="medium">
-                  <p className="tip-description">
-                    Try not to take an image of a check.
-                  </p>
-                </IonText>
-              </div>
-
-              {/* Tip 3 */}
-              <div className="tip-item">
-                <IonText>
-                  <h3 className="tip-title">Stick to auto capture</h3>
-                </IonText>
-                <IonText color="medium">
-                  <p className="tip-description">
-                    Auto captured checks meet deposit criteria more than checks captured manually.
-                  </p>
-                </IonText>
-              </div>
-
-              {/* Tip 4 */}
-              <div className="tip-item">
-                <IonText>
-                  <h3 className="tip-title">No excessive angles</h3>
-                </IonText>
-                <IonText color="medium">
-                  <p className="tip-description">
-                    Hold camera as close to directly above the check as possible without casting shadows.
-                  </p>
-                </IonText>
-              </div>
+            <div className="space-y-5">
+              {tips.map(tip => (
+                <div
+                  key={tip.title}
+                  className="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-center shadow-sm"
+                >
+                  <IonText>
+                    <h3 className="text-base font-semibold text-slate-900">{tip.title}</h3>
+                  </IonText>
+                  <p className="mt-2 text-sm text-slate-600">{tip.description}</p>
+                </div>
+              ))}
             </div>
 
-            {/* Action Buttons */}
-            <div className="capture-actions">
-              <IonButton 
-                expand="block" 
-                className="start-capture-button"
+            <div className="space-y-3">
+              <IonButton
+                expand="block"
+                className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
                 onClick={handleStartCapture}
               >
                 Start capture
               </IonButton>
-              
-              <IonButton 
-                fill="clear" 
-                className="do-not-show-button"
+              <IonButton
+                fill="clear"
+                className="w-full text-sm font-semibold text-slate-500 underline"
                 onClick={handleDoNotShowAgain}
               >
                 Do not show again

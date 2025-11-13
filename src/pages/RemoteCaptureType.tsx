@@ -6,8 +6,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonText,
-  IonIcon
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -16,6 +14,12 @@ interface LocationState {
   programName?: string;
 }
 
+const captureOptions = [
+  { label: 'Check and document(s)', value: 'Check and document(s)' },
+  { label: 'Check only', value: 'Check only' },
+  { label: 'Document(s) only', value: 'Document(s) only' },
+];
+
 const RemoteCaptureType: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
@@ -23,101 +27,61 @@ const RemoteCaptureType: React.FC = () => {
   const selectedProgram = state?.selectedProgram || '';
   const programName = state?.programName || '';
 
-  const handleBack = () => {
-    history.goBack();
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
 
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
-
-  const handleCheckAndDocuments = () => {
+  const handleSelect = (captureType: string) => {
     history.push('/choose-group', {
-      captureType: 'Check and document(s)',
-      selectedProgram: selectedProgram,
-      programName: programName
-    });
-  };
-
-  const handleCheckOnly = () => {
-    history.push('/choose-group', {
-      captureType: 'Check only',
-      selectedProgram: selectedProgram,
-      programName: programName
-    });
-  };
-
-  const handleDocumentsOnly = () => {
-    history.push('/choose-group', {
-      captureType: 'Document(s) only',
-      selectedProgram: selectedProgram,
-      programName: programName
+      captureType,
+      selectedProgram,
+      programName,
     });
   };
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="remote-capture-header">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Choose capture type</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Choose capture type</IonTitle>
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleCancel}
+            >
+              Cancel
+            </IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="capture-type-container">
-            {/* Check and Documents Option */}
-            <div className="capture-type-option" onClick={handleCheckAndDocuments}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Check and document(s)</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
+        <div className="space-y-4 bg-slate-100 p-4 pb-12">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-slate-400">Program</p>
+            <p className="text-sm font-semibold text-slate-900">{programName || 'Select a program'}</p>
+            <p className="text-xs text-slate-500">{selectedProgram}</p>
+          </div>
 
-            {/* Check Only Option */}
-            <div className="capture-type-option" onClick={handleCheckOnly}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Check only</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
-
-            {/* Documents Only Option */}
-            <div className="capture-type-option" onClick={handleDocumentsOnly}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Document(s) only</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
+          <div className="space-y-3">
+            {captureOptions.map(option => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleSelect(option.value)}
+                className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:border-teal-primary hover:shadow-md"
+              >
+                <span>{option.label}</span>
+                <img src="/images/ArrowForward.svg" alt="Select" className="h-5 w-5" />
+              </button>
+            ))}
           </div>
         </div>
       </IonContent>

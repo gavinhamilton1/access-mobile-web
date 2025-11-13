@@ -6,12 +6,13 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonText,
   IonIcon,
   IonSpinner,
   IonModal
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
+import '../capture-check.css';
+import { eyeOutline } from 'ionicons/icons';
 
 // TypeScript declarations for external libraries
 declare global {
@@ -946,31 +947,9 @@ const CaptureCheck: React.FC = () => {
     }
   };
 
-  const handleContinue = () => {
-    if (currentStep === 'complete') {
-      // Stop camera before navigating
-      stopCamera();
-      // Clear status after processing is complete
-      setDetectionStatus('');
-      
-      // Navigate to capture summary with captured images
-      history.push('/capture-summary', {
-        captureType,
-        selectedGroup,
-        selectedProgram,
-        programName,
-        frontImage,
-        backImage: isCheckCapture ? backImage : null,
-        frontCheckDetails: isCheckCapture ? frontCheckDetails : null,
-        backCheckDetails: isCheckCapture ? backCheckDetails : null
-      });
-    }
-  };
-
   const handleRetakeCapture = async (imageType: 'front' | 'back') => {
     console.log(`Retaking ${imageType} capture`);
     
-    // Stop current camera first
     stopCamera();
     
     if (imageType === 'front') {
@@ -981,7 +960,6 @@ const CaptureCheck: React.FC = () => {
       setCurrentStep('back');
     }
     
-    // Reset detection status
     setDetectionStatus('Position document within frame');
     setIsAutoDetecting(false);
     setIsProcessingOCR(false);
@@ -996,10 +974,6 @@ const CaptureCheck: React.FC = () => {
       countdownIntervalRef.current = null;
     }
     
-    // Force detection to restart by clearing any existing detection state
-    
-    
-    // Clear any existing check details for the specific image
     if (imageType === 'front') {
       setFrontCheckDetails({});
     } else if (imageType === 'back') {
@@ -1007,12 +981,10 @@ const CaptureCheck: React.FC = () => {
     }
     setExtractedText('');
     
-    // Reinitialize camera after a short delay
     setTimeout(async () => {
       try {
         console.log('Reinitializing camera for retake...');
         await initializeCamera();
-        // Force detection to start by triggering a manual detection check once camera reports ready
         const waitForReady = setInterval(() => {
           if (isCameraReady) {
             clearInterval(waitForReady);
@@ -1030,247 +1002,296 @@ const CaptureCheck: React.FC = () => {
 
   const getStepTitle = () => {
     if (isCheckCapture) {
-      return currentStep === 'front' ? 'Capture check front' : 'Capture check back';
+      if (currentStep === 'front') return 'Capture check front';
+      if (currentStep === 'back') return 'Capture check back';
+      return 'Review capture';
     }
-    return 'Capture document';
+    if (currentStep === 'front') return 'Capture document';
+    if (currentStep === 'back') return 'Capture document back';
+    return 'Review capture';
   };
 
+  const handleContinue = () => {
+    if (isExtractionComplete) {
+      history.push('/capture-summary', {
+        captureType,
+        selectedGroup,
+        selectedProgram,
+        programName,
+        frontImage,
+        backImage: isCheckCapture ? backImage : null,
+        frontCheckDetails: isCheckCapture ? frontCheckDetails : null,
+        backCheckDetails: isCheckCapture ? backCheckDetails : null
+      });
+    }
+  };
+
+  const frontDetailEntries = [
+    frontCheckDetails?.routingNumber
+      ? { label: 'Routing Number', value: frontCheckDetails.routingNumber }
+      : null,
+    frontCheckDetails?.accountNumber
+      ? { label: 'Account Number', value: frontCheckDetails.accountNumber }
+      : null,
+    frontCheckDetails?.checkNumber
+      ? { label: 'Check Number', value: frontCheckDetails.checkNumber }
+      : null,
+    frontCheckDetails?.amount
+      ? { label: 'Amount', value: `$${frontCheckDetails.amount}` }
+      : null,
+    frontCheckDetails?.date
+      ? { label: 'Date', value: frontCheckDetails.date }
+      : null,
+    frontCheckDetails?.payee
+      ? { label: 'Payee', value: frontCheckDetails.payee }
+      : null,
+    frontCheckDetails?.memo
+      ? { label: 'Memo', value: frontCheckDetails.memo }
+      : null,
+  ].filter((detail): detail is { label: string; value: string } => Boolean(detail?.value));
+
+  const backDetailEntries = [
+    backCheckDetails?.routingNumber
+      ? { label: 'Routing Number', value: backCheckDetails.routingNumber }
+      : null,
+    backCheckDetails?.accountNumber
+      ? { label: 'Account Number', value: backCheckDetails.accountNumber }
+      : null,
+    backCheckDetails?.checkNumber
+      ? { label: 'Check Number', value: backCheckDetails.checkNumber }
+      : null,
+    backCheckDetails?.amount
+      ? { label: 'Amount', value: `$${backCheckDetails.amount}` }
+      : null,
+    backCheckDetails?.date
+      ? { label: 'Date', value: backCheckDetails.date }
+      : null,
+    backCheckDetails?.payee
+      ? { label: 'Payee', value: backCheckDetails.payee }
+      : null,
+    backCheckDetails?.memo
+      ? { label: 'Memo', value: backCheckDetails.memo }
+      : null,
+  ].filter((detail): detail is { label: string; value: string } => Boolean(detail?.value));
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>{getStepTitle()}</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">{getStepTitle()}</IonTitle>
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleCancel}
+            >
+              Cancel
+            </IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen className="capture-content">
-        <div className="capture-container">
-
-
-          {/* Camera Preview Pane */}
+      <IonContent fullscreen className="bg-slate-100">
+        <div className="flex min-h-full flex-col items-center gap-6 pb-20">
           {!isExtractionComplete && (
-          <div className="camera-preview-pane">
-            <div className="camera-view">
-              {/* Always render video element */}
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                webkit-playsinline="true"
-                className="camera-video"
-                onLoadStart={() => console.log('Video load started')}
-                onLoadedData={() => console.log('Video data loaded')}
-                onCanPlay={() => console.log('Video can play')}
-                style={{ display: isVideoFrozen ? 'none' : 'block' }}
-              />
-              
-              {/* Frozen frame overlay during processing */}
-              {isVideoFrozen && frozenFrameData && (
-                <img 
-                  src={frozenFrameData} 
-                  alt="Frozen frame" 
-                  className="camera-video-frozen"
+            <div className="camera-preview-pane mt-6">
+              <div className="camera-view">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  webkit-playsinline="true"
+                  className={`camera-video ${isVideoFrozen ? 'hidden' : 'block'}`}
+                  onLoadStart={() => console.log('Video load started')}
+                  onLoadedData={() => console.log('Video data loaded')}
+                  onCanPlay={() => console.log('Video can play')}
                 />
-              )}
-              
-              {/* Loading overlay */}
-              {!isCameraReady && (
-                <div className="camera-loading">
-                  <IonText>
-                    <p className="loading-text">Initializing camera...</p>
-                  </IonText>
-                </div>
-              )}
-              
-              {/* Framing Mask */}
-              <div className="framing-mask">
-                <div className="mask-overlay">
-                  <div className="mask-top"></div>
-                  <div className="mask-middle">
-                    <div className="mask-left"></div>
-                    <div className="capture-frame">
-                      <div className="frame-corners">
-                        <div className="corner top-left"></div>
-                        <div className="corner top-right"></div>
-                        <div className="corner bottom-left"></div>
-                        <div className="corner bottom-right"></div>
-                      </div>
-                      <div className="frame-guidelines">
-                        <div className="guideline horizontal top"></div>
-                        <div className="guideline horizontal bottom"></div>
-                        <div className="guideline vertical left"></div>
-                        <div className="guideline vertical right"></div>
-                      </div>
-                    </div>
-                    <div className="mask-right"></div>
+
+                {isVideoFrozen && frozenFrameData && (
+                  <img src={frozenFrameData} alt="Frozen frame" className="camera-video-frozen" />
+                )}
+
+                {!isCameraReady && (
+                  <div className="camera-loading">
+                    <p className="text-lg font-semibold text-white">Initializing camera...</p>
                   </div>
-                  <div className="mask-bottom"></div>
+                )}
+
+                <div className="framing-mask">
+                  <div className="mask-overlay">
+                    <div className="mask-top"></div>
+                    <div className="mask-middle">
+                      <div className="mask-left"></div>
+                      <div className="capture-frame">
+                        <div className="frame-corners">
+                          <div className="corner top-left"></div>
+                          <div className="corner top-right"></div>
+                          <div className="corner bottom-left"></div>
+                          <div className="corner bottom-right"></div>
+                        </div>
+                        <div className="frame-guidelines">
+                          <div className="guideline horizontal top"></div>
+                          <div className="guideline horizontal bottom"></div>
+                          <div className="guideline vertical left"></div>
+                          <div className="guideline vertical right"></div>
+                        </div>
+                      </div>
+                      <div className="mask-right"></div>
+                    </div>
+                    <div className="mask-bottom"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           )}
 
-          {/* Detection Status - moved below camera preview */}
           {detectionStatus && !isExtractionComplete && (
-            <div className="detection-status">
-              <IonText>
-                <p className="status-text">
-                  {isAutoDetecting && <IonSpinner name="crescent" />}
-                  {isProcessingOCR && <IonSpinner name="crescent" />}
-                  {isCountingDown && (
-                    <span className="countdown-display">
-                      {countdown}
-                    </span>
-                  )}
-                  {detectionStatus}
-                </p>
-              </IonText>
+            <div className="mx-4 mt-2 flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
+              {(isAutoDetecting || isProcessingOCR) && <IonSpinner name="crescent" />}
+              {isCountingDown && (
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-xs font-semibold text-white">
+                  {countdown}
+                </span>
+              )}
+              <span>{detectionStatus}</span>
             </div>
           )}
 
-          {/* Captured Images Preview */}
           {isExtractionComplete && frontImage && (
-            <div className="captured-preview">
-              <IonText>
-                <h3 className="preview-title">Captured Images</h3>
-              </IonText>
-              {frontImage && (
-                <div className="preview-item">
-                  <div className="preview-header">
-                    <IonText>
-                      <p className="preview-label">Front</p>
-                    </IonText>
-                    <div className="preview-actions">
-                      <IonButton 
-                        fill="outline" 
-                        size="small" 
-                        className="action-button retake-button"
-                        onClick={() => handleRetakeCapture('front')}
+            <div className="w-full max-w-3xl space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 className="text-center text-lg font-semibold text-slate-900">Captured images</h3>
+
+              <div className="flex flex-wrap justify-center gap-6">
+                <div className="w-full max-w-sm space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-slate-700">Front</p>
+                    <IonButton
+                      fill="outline"
+                      size="small"
+                      className="flex items-center gap-2 rounded-full border border-blue-500 px-3 py-2 text-xs font-semibold text-blue-500 hover:border-blue-600 hover:text-blue-600"
+                      onClick={() => handleRetakeCapture('front')}
+                    >
+                      <img src="/images/Retake.svg" alt="Retake" className="h-4 w-4" />
+                      Retake
+                    </IonButton>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsPreviewModalOpen(true)}
+                    className="group relative block h-36 w-full overflow-hidden rounded-lg border border-slate-200 bg-white"
+                  >
+                    <img src={frontImage} alt="Front" className="h-full w-full object-cover" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
+                      <IonIcon icon={eyeOutline} className="text-xl text-white" />
+                    </div>
+                  </button>
+                </div>
+
+                {backImage && (
+                  <div className="w-full max-w-sm space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-slate-700">Back</p>
+                      <IonButton
+                        fill="outline"
+                        size="small"
+                        className="flex items-center gap-2 rounded-full border border-blue-500 px-3 py-2 text-xs font-semibold text-blue-500 hover:border-blue-600 hover:text-blue-600"
+                        onClick={() => handleRetakeCapture('back')}
                       >
-                        <img src="/images/Retake.svg" alt="Retake" className="retake-icon" slot="start" />
+                        <img src="/images/Retake.svg" alt="Retake" className="h-4 w-4" />
                         Retake
                       </IonButton>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPreviewModalOpen(true)}
+                      className="group relative block h-36 w-full overflow-hidden rounded-lg border border-slate-200 bg-white"
+                    >
+                      <img src={backImage} alt="Back" className="h-full w-full object-cover" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
+                        <IonIcon icon={eyeOutline} className="text-xl text-white" />
+                      </div>
+                    </button>
                   </div>
-                  <img src={frontImage} alt="Front" className="preview-image" onClick={() => setIsPreviewModalOpen(true)} />
-                </div>
-              )}
-              
-              
-              {/* Front Image MICR Details */}
-              {frontImage && (
-                <div className="check-details front-ocr-details">
-                  <IonText>
-                    <h3 className="details-title">Front - MICR Details:</h3>
-                  </IonText>
-                  <div className="details-grid">
-                    {frontCheckDetails?.routingNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Routing Number:</span>
-                        <span className="detail-value">{frontCheckDetails.routingNumber}</span>
+                )}
+              </div>
+
+              {frontDetailEntries.length > 0 && (
+                <div className="rounded-xl border-l-4 border-blue-500 bg-blue-50/70 p-4">
+                  <h4 className="text-sm font-semibold text-blue-900">Front – MICR details</h4>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {frontDetailEntries.map(detail => (
+                      <div key={detail.label} className="space-y-1 rounded-lg border border-blue-100 bg-white/80 px-3 py-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                          {detail.label}
+                        </p>
+                        <p className="break-words text-sm font-semibold text-slate-900">{detail.value}</p>
                       </div>
-                    )}
-                    {frontCheckDetails?.accountNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Account Number:</span>
-                        <span className="detail-value">{frontCheckDetails.accountNumber}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.checkNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Check Number:</span>
-                        <span className="detail-value">{frontCheckDetails.checkNumber}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.amount && (
-                      <div className="detail-item">
-                        <span className="detail-label">Amount:</span>
-                        <span className="detail-value">${frontCheckDetails.amount}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.date && (
-                      <div className="detail-item">
-                        <span className="detail-label">Date:</span>
-                        <span className="detail-value">{frontCheckDetails.date}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.payee && (
-                      <div className="detail-item">
-                        <span className="detail-label">Payee:</span>
-                        <span className="detail-value">{frontCheckDetails.payee}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.memo && (
-                      <div className="detail-item">
-                        <span className="detail-label">Memo:</span>
-                        <span className="detail-value">{frontCheckDetails.memo}</span>
-                      </div>
-                    )}
+                    ))}
                   </div>
                 </div>
               )}
 
+              {backDetailEntries.length > 0 && (
+                <div className="rounded-xl border-l-4 border-emerald-500 bg-emerald-50/70 p-4">
+                  <h4 className="text-sm font-semibold text-emerald-900">Back – MICR details</h4>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {backDetailEntries.map(detail => (
+                      <div key={detail.label} className="space-y-1 rounded-lg border border-emerald-100 bg-white/80 px-3 py-2">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                          {detail.label}
+                        </p>
+                        <p className="break-words text-sm font-semibold text-slate-900">{detail.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Continue Button - only show when capture is complete */}
           {currentStep === 'complete' && (
-            <div className="continue-section">
-              <IonButton 
-                expand="block" 
-                className="continue-button"
+            <div className="w-full max-w-3xl px-4">
+              <IonButton
+                expand="block"
+                className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
                 onClick={handleContinue}
               >
                 Continue
               </IonButton>
             </div>
           )}
-          
-          {/* Fullscreen Preview Modal */}
-          <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)} className="image-preview-modal">
-            <IonHeader className="standard-header">
-              <IonToolbar>
-                <div className="header-content">
-                  <div className="header-left">
-                    <IonButton fill="clear" className="header-button" onClick={() => setIsPreviewModalOpen(false)}>
-                      <IonText>Close</IonText>
-                    </IonButton>
-                  </div>
-                  <div className="header-center">
-                    <IonTitle>Preview</IonTitle>
-                  </div>
-                  <div className="header-right"></div>
+
+          <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
+            <IonHeader>
+              <IonToolbar className="px-4">
+                <div className="flex items-center justify-between py-2">
+                  <IonTitle className="text-base font-semibold text-slate-800">Preview</IonTitle>
+                  <IonButton
+                    fill="clear"
+                    className="text-sm font-semibold text-slate-600"
+                    onClick={() => setIsPreviewModalOpen(false)}
+                  >
+                    Close
+                  </IonButton>
                 </div>
               </IonToolbar>
             </IonHeader>
-            <IonContent className="image-preview-content">
+            <IonContent className="flex items-center justify-center bg-black">
               {frontImage && (
-                <div className="image-preview-wrapper">
-                  <img src={frontImage} alt="Captured" className="image-preview-full" />
-                </div>
+                <img src={frontImage} alt="Captured" className="max-h-full max-w-full object-contain" />
               )}
             </IonContent>
           </IonModal>
         </div>
 
-        {/* Hidden canvas for image capture */}
         <canvas ref={canvasRef} style={{ display: 'none' }} />
       </IonContent>
     </IonPage>

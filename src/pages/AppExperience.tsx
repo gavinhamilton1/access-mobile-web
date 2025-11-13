@@ -6,84 +6,66 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonText,
-  IonIcon
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
+
+const experiences = [
+  {
+    label: 'Access',
+    icon: '/images/AccessLineLogo.svg',
+    action: (history: ReturnType<typeof useHistory>) => history.push('/home'),
+  },
+  {
+    label: 'Digital Banking',
+    icon: '/images/DigitalBankingLineLogo.svg',
+    action: () => (window.location.href = 'https://digital-banking-fac4.onrender.com/'),
+  },
+];
 
 const AppExperience: React.FC = () => {
   const history = useHistory();
 
-  const handleAccess = () => {
-    console.log('Navigate to Access experience');
-    history.push('/home');
-  };
-
-  const handleDigitalBanking = () => {
-    console.log('Navigate to Digital Banking experience');
-    window.location.href = 'https://digital-banking-fac4.onrender.com/';
-  };
-
-  const handleBack = () => {
-    history.goBack();
-  };
+  const handleBack = () => history.goBack();
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton 
-                fill="clear" 
-                onClick={handleBack}
-                className="back-button"
-              >
-                <IonIcon icon="/images/ArrowBack.svg" />
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>App Experience</IonTitle>
-            </div>
-            <div className="header-right">
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">App experience</IonTitle>
+            <div className="min-w-[64px]" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="app-experience-container">
-          {/* Header Section */}
-          <div className="app-experience-header">
-            <IonText>
-              <h1 className="brand-title">J.P. Morgan Payments</h1>
-            </IonText>
-            <IonText>
-              <p className="instruction-text">Choose your experience</p>
-            </IonText>
+        <div className="flex min-h-full flex-col items-center justify-center gap-10 bg-slate-100 px-4 py-16">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-semibold text-slate-900">J.P. Morgan Payments</h1>
+            <p className="text-sm text-slate-500">Choose your experience</p>
           </div>
 
-          {/* Experience Options */}
-          <div className="experience-options">
-            {/* Access Option */}
-            <div className="experience-card" onClick={handleAccess}>
-              <div className="experience-icon">
-                <IonIcon icon="/images/AccessLineLogo.svg" className="experience-icon-svg" />
-              </div>
-              <IonText>
-                <p className="experience-label">Access</p>
-              </IonText>
-            </div>
-
-            {/* Digital Banking Option */}
-            <div className="experience-card" onClick={handleDigitalBanking}>
-              <div className="experience-icon">
-                <IonIcon icon="/images/DigitalBankingLineLogo.svg" className="experience-icon-svg" />
-              </div>
-              <IonText>
-                <p className="experience-label">Digital Banking</p>
-              </IonText>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            {experiences.map(exp => (
+              <button
+                key={exp.label}
+                type="button"
+                onClick={() => exp.action(history)}
+                className="flex w-40 flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 py-8 shadow-sm transition hover:border-teal-primary hover:shadow-md"
+              >
+                <div className="flex h-24 w-24 items-center justify-center">
+                  <img src={exp.icon} alt={exp.label} className="h-24 w-24 object-contain" />
+                </div>
+                <span className="text-sm font-semibold text-teal-primary">{exp.label}</span>
+              </button>
+            ))}
           </div>
         </div>
       </IonContent>

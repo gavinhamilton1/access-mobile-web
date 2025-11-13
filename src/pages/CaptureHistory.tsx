@@ -5,16 +5,14 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonIcon,
   IonInput,
   IonCard,
   IonCardContent,
   IonText,
-  IonButton
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 
-interface CaptureHistoryItem {
+type CaptureHistoryItem = {
   id: string;
   title: string;
   programNumber: string;
@@ -22,186 +20,175 @@ interface CaptureHistoryItem {
   currency: string;
   status: 'action-required' | 'deposited';
   date: string;
-}
+};
+
+const mockHistoryData: CaptureHistoryItem[] = [
+  {
+    id: '1',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '3 000 000,00',
+    currency: 'USD',
+    status: 'action-required',
+    date: '2024-01-15',
+  },
+  {
+    id: '2',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '100 000,00',
+    currency: 'USD',
+    status: 'action-required',
+    date: '2024-01-15',
+  },
+  {
+    id: '3',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '25,00',
+    currency: 'USD',
+    status: 'action-required',
+    date: '2024-01-15',
+  },
+  {
+    id: '4',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '50,00',
+    currency: 'USD',
+    status: 'deposited',
+    date: '2024-01-14',
+  },
+  {
+    id: '5',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '75,00',
+    currency: 'USD',
+    status: 'deposited',
+    date: '2024-01-14',
+  },
+  {
+    id: '6',
+    title: 'CAD PROGRAM CA/USD',
+    programNumber: 'Program 931503602',
+    amount: '80,12',
+    currency: 'USD',
+    status: 'action-required',
+    date: '2024-01-13',
+  },
+  {
+    id: '7',
+    title: 'CAD PROGRAM CA/CAD',
+    programNumber: 'Program 931503601',
+    amount: '10,11',
+    currency: 'CAD',
+    status: 'action-required',
+    date: '2024-01-13',
+  },
+  {
+    id: '8',
+    title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
+    programNumber: 'Program 15501',
+    amount: '125,00',
+    currency: 'USD',
+    status: 'deposited',
+    date: '2024-01-12',
+  },
+];
 
 const CaptureHistory: React.FC = () => {
   const history = useHistory();
   const [searchText, setSearchText] = useState('');
-
-  // Mock data based on the image
-  const mockHistoryData: CaptureHistoryItem[] = [
-    {
-      id: '1',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '3 000 000,00',
-      currency: 'USD',
-      status: 'action-required',
-      date: '2024-01-15'
-    },
-    {
-      id: '2',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '100 000,00',
-      currency: 'USD',
-      status: 'action-required',
-      date: '2024-01-15'
-    },
-    {
-      id: '3',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '25,00',
-      currency: 'USD',
-      status: 'action-required',
-      date: '2024-01-15'
-    },
-    {
-      id: '4',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '50,00',
-      currency: 'USD',
-      status: 'deposited',
-      date: '2024-01-14'
-    },
-    {
-      id: '5',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '75,00',
-      currency: 'USD',
-      status: 'deposited',
-      date: '2024-01-14'
-    },
-    {
-      id: '6',
-      title: 'CAD PROGRAM CA/USD',
-      programNumber: 'Program 931503602',
-      amount: '80,12',
-      currency: 'USD',
-      status: 'action-required',
-      date: '2024-01-13'
-    },
-    {
-      id: '7',
-      title: 'CAD PROGRAM CA/CAD',
-      programNumber: 'Program 931503601',
-      amount: '10,11',
-      currency: 'CAD',
-      status: 'action-required',
-      date: '2024-01-13'
-    },
-    {
-      id: '8',
-      title: 'AUTOAL1 RDC PROGRAM 1 GROUPS',
-      programNumber: 'Program 15501',
-      amount: '125,00',
-      currency: 'USD',
-      status: 'deposited',
-      date: '2024-01-12'
-    }
-  ];
-
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleItemClick = (item: CaptureHistoryItem) => {
-    console.log('Navigate to item details:', item.id);
-    // TODO: Navigate to item details page
-  };
 
   const filteredData = mockHistoryData.filter(item =>
     item.title.toLowerCase().includes(searchText.toLowerCase()) ||
     item.programNumber.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleBack = () => history.goBack();
+
+  const statusStyles: Record<CaptureHistoryItem['status'], { label: string; badge: string; icon: string }> = {
+    'action-required': {
+      label: 'Action Required',
+      badge: 'text-amber-600 bg-amber-100',
+      icon: '/images/Warning.svg',
+    },
+    deposited: {
+      label: 'Deposited',
+      badge: 'text-emerald-600 bg-emerald-100',
+      icon: '/images/Check.svg',
+    },
+  };
+
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Deposit to</IonTitle>
-            </div>
-            <div className="header-right">
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Capture history</IonTitle>
+            <div className="min-w-[64px]" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="history-container">
-            {/* Search Bar */}
-              <IonCardContent className="card-content">
-                <div className="search-container">
-                  <img src="/images/Search.svg" alt="Search" className="search-icon" />
-                  <IonInput
-                    placeholder="Search transactions"
-                    className="search-input"
-                  />
-                </div>
-              </IonCardContent>
+        <div className="space-y-5 bg-slate-100 p-4 pb-10">
+          <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <img src="/images/Search.svg" alt="Search" className="h-5 w-5 opacity-60" />
+            <IonInput
+              placeholder="Search history"
+              value={searchText}
+              onIonInput={e => setSearchText(e.detail.value ?? '')}
+              className="text-sm text-slate-700"
+            />
+          </div>
 
-            {/* History List */}
-            <div className="history-list">
-              {filteredData.map((item) => (
-                <IonCard 
-                  key={item.id} 
-                  className="card payment-card"
-                  onClick={() => handleItemClick(item)}
+          <div className="space-y-3">
+            {filteredData.map(item => {
+              const status = statusStyles[item.status];
+              return (
+                <IonCard
+                  key={item.id}
+                  className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
                 >
-                  <IonCardContent className="card-content">
-                    <div className="payment-item">
-                      <div className="payment-details">
-                        <div className="payment-left">
-                          <IonText>
-                            <h3 className="payment-id">{item.title}</h3>
-                          </IonText>
-                          <IonText color="medium">
-                            <p className="payment-from">{item.programNumber}</p>
-                          </IonText>
-                        </div>
-                        
-                        <div className="payment-right">
-                          <div className="payment-type-section">
-                            <IonText>
-                              <p className="payment-amount">{item.currency} {item.amount}</p>
-                            </IonText>
-                          </div>
-                          
-                          <div className="payment-status">
-                            {item.status === 'action-required' ? (
-                              <>
-                                <img src="/images/Warning.svg" alt="Warning" className="warning-icon" />
-                                <IonText color="warning">
-                                  <p className="status-text-warning">Action Required</p>
-                                </IonText>
-                              </>
-                            ) : (
-                              <>
-                                <img src="/images/Check.svg" alt="Check" className="warning-icon" />
-                                <IonText color="success">
-                                  <p className="status-text-success">Deposited</p>
-                                </IonText>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                  <IonCardContent className="flex flex-col gap-3 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 space-y-1">
+                        <IonText>
+                          <h3 className="truncate text-base font-semibold text-slate-900">{item.title}</h3>
+                        </IonText>
+                        <p className="text-sm text-slate-500">{item.programNumber}</p>
                       </div>
+                      <div className="text-right text-sm font-semibold text-slate-900">
+                        {item.currency} {item.amount}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-slate-400">{item.date}</span>
+                      <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${status.badge}`}>
+                        <img src={status.icon} alt={status.label} className="h-4 w-4" />
+                        {status.label}
+                      </span>
                     </div>
                   </IonCardContent>
                 </IonCard>
-              ))}
-            </div>
+              );
+            })}
+
+            {filteredData.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+                No capture history matches your search.
+              </div>
+            )}
           </div>
         </div>
       </IonContent>

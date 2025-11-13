@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --teal-primary: #137e96;
+  --teal-primary-active: #83c2d0;
+  --teal-primary-rgb: 19, 126, 150;
+  --background-color: #f5f5f5;
+}
+
+ion-app {
+  --background: white;
+  --color: #333;
+}
+
+ion-input,
+ion-textarea,
+ion-datetime,
+ion-range {
+  --background: #f8f9fa;
+  --color: #333;
+  --border-radius: 6px;
+  --border-color: #e0e0e0;
+  --border-width: 1px;
+  --border-style: solid;
+}
+
+ion-modal,
+ion-popover,
+ion-alert,
+ion-action-sheet {
+  --background: white;
+  --color: #333;
+}
+
+ion-list,
+ion-item {
+  --background: white;
+  --color: #333;
+  --border-color: #e0e0e0;
+}
+
+ion-item:hover {
+  --background: #f8f9fa;
+}
+
+ion-item.item-activated {
+  --background: #f8f9fa;
+  --color: #333;
+}
+
+ion-item.item-focused {
+  --background: #f8f9fa;
+  --color: #333;
+}
+
+ion-content {
+  --background: #f5f5f5;
+  --color: #333;
+}
+
+ion-page {
+  --background: #f5f5f5;
+  --color: #333;
+}
+
+ion-toolbar::part(native),
+ion-header::part(native) {
+  background: white;
+  color: #333;
+}
+
+ion-header {
+  --background: white;
+  --color: #333;
+}
+
+ion-toolbar {
+  --background: white;
+  --color: #333;
+  --border-color: #e0e0e0;
+}
+
+body {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+ion-card,
+ion-card-content,
+ion-card-header {
+  --background: white;
+  --color: #333;
+}
+
+ion-tab-bar {
+  --background: white;
+  --color: #666;
+  --color-selected: var(--teal-primary);
+  --border: 1px solid #e0e0e0;
+}
+
+ion-tab-bar::part(native) {
+  background: white;
+  color: #666;
+  border-top: 1px solid #e0e0e0;
+}
+
+ion-tab-button {
+  --color: #666;
+  --color-selected: var(--teal-primary);
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 0.75rem;
+}
+
+ion-tab-button::part(native) {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+ion-tab-button.tab-selected::part(native) {
+  background: rgba(19, 126, 150, 0.1);
+}
+
+ion-tab-button img,
+ion-tab-button ion-icon {
+  width: 20px;
+  height: 20px;
+}
+

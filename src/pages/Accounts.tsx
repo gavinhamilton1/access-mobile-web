@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -10,237 +10,197 @@ import {
   IonText,
   IonSelect,
   IonSelectOption,
-  IonItem,
-  IonLabel,
-  IonIcon,
-  IonChip,
-  IonList
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { accountsData } from '../data/accountsData';
 
-// Note: accountsData is now available globally for use in other pages
-// Mock account data (same as AccountDetails)
-const mockAccounts = accountsData
+type Account = (typeof accountsData)[keyof typeof accountsData];
+
+const mockAccounts: Record<string, Account> = accountsData;
 
 const Accounts: React.FC = () => {
   const history = useHistory();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  
-  // Load accounts from localStorage or use mock data
-  const [accounts, setAccounts] = useState(() => {
+  const [accounts, setAccounts] = useState<Record<string, Account>>(() => {
     const savedAccounts = localStorage.getItem('accounts');
     return savedAccounts ? JSON.parse(savedAccounts) : mockAccounts;
   });
+  const [sortedAccounts, setSortedAccounts] = useState<Account[]>([]);
 
-  // Maintain sorted accounts array separately
-  const [sortedAccounts, setSortedAccounts] = useState<any[]>([]);
-
-  // Initialize sorted accounts on first load - favorites first, then alphabetical
   React.useEffect(() => {
-    const sorted = Object.values(accounts).sort((a: any, b: any) => {
-      // First sort by starred status (starred first)
+    const sorted = Object.values(accounts).sort((a, b) => {
       if (a.isStarred && !b.isStarred) return -1;
       if (!a.isStarred && b.isStarred) return 1;
-      
-      // Then sort by name
       const nameA = a.name.toLowerCase();
       const nameB = b.name.toLowerCase();
-      
-      if (sortOrder === 'asc') {
-        return nameA.localeCompare(nameB);
-      } else {
-        return nameB.localeCompare(nameA);
-      }
+      return sortOrder === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
     });
     setSortedAccounts(sorted);
-  }, []); // Only run once on mount
+  }, [accounts, sortOrder]);
 
   const handleAccountClick = (accountId: string) => {
-    // Navigate to account details page using React Router
     history.push(`/accounts/account-details/${accountId}`);
   };
 
   const handleSortClick = () => {
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
-    
-    // Re-sort the accounts with the new sort order (alphabetical only)
-    const sorted = Object.values(accounts).sort((a: any, b: any) => {
+    const sorted = Object.values(accounts).sort((a: Account, b: Account) => {
       const nameA = a.name.toLowerCase();
       const nameB = b.name.toLowerCase();
-      
-      if (newSortOrder === 'asc') {
-        return nameA.localeCompare(nameB);
-      } else {
-        return nameB.localeCompare(nameA);
-      }
+      return newSortOrder === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
     });
     setSortedAccounts(sorted);
   };
 
   const handleStarClick = (accountId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent account card click
+    event.stopPropagation();
     const updatedAccounts = {
       ...accounts,
       [accountId]: {
         ...accounts[accountId],
-        isStarred: !accounts[accountId].isStarred
-      }
+        isStarred: !accounts[accountId].isStarred,
+      },
     };
     setAccounts(updatedAccounts);
     localStorage.setItem('accounts', JSON.stringify(updatedAccounts));
-    
-    // Update only the star state in sorted accounts without re-sorting
-    setSortedAccounts(prevSorted => 
-      prevSorted.map(account => 
-        account.id === accountId 
+    setSortedAccounts(prevSorted =>
+      prevSorted.map(account =>
+        account.id === accountId
           ? { ...account, isStarred: !account.isStarred }
           : account
       )
     );
   };
 
-
   return (
     <IonPage>
-
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-            </div>
-            <div className="header-center">
-              <IonTitle>Accounts</IonTitle>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex w-full items-center justify-between gap-4 py-2">
+            <div className="flex min-w-[64px] justify-start" />
+            <div className="flex flex-1 flex-col items-center gap-2 text-center">
+              <IonTitle className="text-base font-semibold text-slate-800">
+                Accounts
+              </IonTitle>
               <IonSelect
                 value="Current day"
                 interface="popover"
-                className="currency-select-inline"
+                className="rounded-full border border-slate-200 px-4 py-1 text-sm font-medium text-slate-600"
               >
                 <IonSelectOption value="Current day">Current day</IonSelectOption>
                 <IonSelectOption value="Prior day">Prior day</IonSelectOption>
                 <IonSelectOption value="Last week">Last week</IonSelectOption>
               </IonSelect>
             </div>
-            <div className="header-right">
-              <img 
-                src={sortOrder === 'asc' ? "/images/SortDown.svg" : "/images/SortUp.svg"} 
-                alt="Sort" 
-                className="icon-medium" 
+            <div className="flex min-w-[64px] justify-end">
+              <img
+                src={sortOrder === 'asc' ? '/images/SortDown.svg' : '/images/SortUp.svg'}
+                alt="Sort"
+                className="h-6 w-6 cursor-pointer"
                 onClick={handleSortClick}
-                style={{ cursor: 'pointer' }}
               />
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
-
-
       <IonContent fullscreen>
-        <div className="page-content">
-          {/* Current Available Balance Card */}
-        <IonCard className="card balance-card">
-          <IonCardContent className="card-content">
-            <div className="balance-row">
-              <div className="balance-label-section">
-                <IonText color="medium">
-                  <p className="text-small">Current available</p>
-                </IonText>
-                <IonText>
-                  <h2 className="text-large">1 063 261<span className="decimal-part">,52</span></h2>
-                </IonText>
-              </div>
-              <div className="balance-amount-section">
+        <div className="space-y-6 bg-slate-100 p-4 pb-16">
+          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
+            <IonCardContent className="flex flex-col gap-4 p-4">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <IonText color="medium">
+                    <p className="text-sm font-medium text-slate-500">Current available</p>
+                  </IonText>
+                  <IonText>
+                    <h2 className="text-3xl font-semibold text-slate-900">
+                      1 063 261<span className="text-lg text-slate-500">,52</span>
+                    </h2>
+                  </IonText>
+                </div>
                 <IonSelect
                   value="USD"
                   interface="popover"
-                  className="currency-select-inline"
+                  className="rounded-full border border-slate-200 px-4 py-1 text-sm font-medium text-slate-600"
                 >
                   <IonSelectOption value="USD">USD</IonSelectOption>
                   <IonSelectOption value="EUR">EUR</IonSelectOption>
                   <IonSelectOption value="GBP">GBP</IonSelectOption>
                 </IonSelect>
               </div>
-            </div>
 
-            <div className="balance-divider"></div>
-
-            <div className="balance-row">
-              <div className="balance-label-section">
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
                 <span>Opening balance</span>
+                <span className="font-semibold text-slate-800">1 063 261,52</span>
               </div>
-              <div className="balance-amount-section">
-                <span className="text-bold">1 063 261,52</span>
-              </div>
-            </div>
-
-            <div className="balance-divider"></div>
-
-            <div className="balance-row">
-              <div className="balance-label-section">
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
                 <span>Current balance</span>
+                <span className="font-semibold text-slate-800">1 063 261,52</span>
               </div>
-              <div className="balance-amount-section">
-                <span className="text-bold">1 063 261,52</span>
-              </div>
-            </div>
-
-            <div className="balance-divider"></div>
-
-            <div className="balance-row">
-              <div className="balance-label-section">
-                <div className="credit-debit-left">
-                  <img src="/images/PiggyBank.svg" alt="Credits" className="icon-small" />
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
+                <div className="flex items-center gap-2">
+                  <img src="/images/PiggyBank.svg" alt="Credits" className="h-5 w-5" />
                   <span>Credits</span>
                 </div>
+                <span className="font-semibold text-slate-800">0,00</span>
               </div>
-              <div className="balance-amount-section">
-                <span className="text-bold">0,00</span>
-              </div>
-            </div>
-
-            <div className="balance-divider"></div>
-
-            <div className="balance-row">
-              <div className="balance-label-section">
-                <div className="credit-debit-left">
-                  <img src="/images/VisibilityOn.svg" alt="Debits" className="icon-small" />
+              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
+                <div className="flex items-center gap-2">
+                  <img src="/images/VisibilityOn.svg" alt="Debits" className="h-5 w-5" />
                   <span>Debits</span>
                 </div>
+                <span className="font-semibold text-slate-800">(0,00)</span>
               </div>
-              <div className="balance-amount-section">
-                <span className="text-bold">(0,00)</span>
-              </div>
-            </div>
-          </IonCardContent>
-        </IonCard>
+            </IonCardContent>
+          </IonCard>
 
-        {/* Accounts Section */}
-        <div className="accounts-section">
-          <h3 className="section-title">Accounts</h3>
-          
-          {sortedAccounts.map((account: any) => (
-            <IonCard key={account.id} className="card" onClick={() => handleAccountClick(account.id)}>
-              <IonCardContent className="card-content">
-                <div className="account-item">
-                  <img 
-                    src={account.isStarred ? "/images/StarFilled.svg" : "/images/StarBlank.svg"} 
-                    alt="Star" 
-                    className="icon-small account-star" 
-                    onClick={(e) => handleStarClick(account.id, e)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                  <div className="account-details">
-                    <h3>{account.name}<span className="account-number">{account.number}</span></h3>
-                    <p className="account-balance">{account.currency} {account.currentBalance}</p>
-                  </div>
-                  <img src="/images/ArrowForward.svg" alt="Chevron" className="icon-small" />
-                </div>
-              </IonCardContent>
-            </IonCard>
-          ))}
-        </div>
+          <section>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-900">Accounts</h3>
+              <span className="text-sm text-slate-500">{sortedAccounts.length} total</span>
+            </div>
+            <div className="space-y-3">
+              {sortedAccounts.map((account: Account) => (
+                <IonCard
+                  key={account.id}
+                  className="cursor-pointer rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
+                  onClick={() => handleAccountClick(account.id)}
+                >
+                  <IonCardContent className="flex items-center gap-4 p-4">
+                    <button
+                      type="button"
+                      onClick={e => handleStarClick(account.id, e)}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white hover:border-teal-primary"
+                    >
+                      <img
+                        src={account.isStarred ? '/images/StarFilled.svg' : '/images/StarBlank.svg'}
+                        alt="Star account"
+                        className="h-5 w-5"
+                      />
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-base font-semibold text-slate-900">
+                        {account.name}
+                        <span className="ml-2 text-sm font-medium text-slate-500">
+                          {account.number}
+                        </span>
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {account.currency} {account.currentBalance}
+                      </p>
+                    </div>
+                    <img src="/images/ArrowForward.svg" alt="Go to account" className="h-5 w-5" />
+                  </IonCardContent>
+                </IonCard>
+              ))}
+            </div>
+          </section>
         </div>
       </IonContent>
     </IonPage>

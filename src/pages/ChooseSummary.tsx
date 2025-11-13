@@ -6,8 +6,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButton,
-  IonText,
-  IonIcon
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -27,117 +25,85 @@ const ChooseSummary: React.FC = () => {
   const selectedProgram = state?.selectedProgram || '15501';
   const programName = state?.programName || 'AUTOAL1 RDC PROGRAM 1 GROUPS';
 
-  const handleBack = () => {
-    history.goBack();
-  };
+  const summaryOptions = [
+    {
+      label: 'Deposit to',
+      value: `${selectedProgram} ${programName}`.trim(),
+      action: () => history.push('/deposit-to'),
+    },
+    {
+      label: 'Capture type',
+      value: captureType,
+      action: () => history.push('/remote-capture-type'),
+    },
+    {
+      label: 'Group',
+      value: selectedGroup,
+      action: () => history.push('/choose-group', { captureType }),
+    },
+  ];
 
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
-
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
   const handleStartCapture = () => {
-    // Navigate to capture best practices
     history.push('/capture-best-practices', {
-      captureType: captureType,
-      selectedGroup: selectedGroup,
-      selectedProgram: selectedProgram,
-      programName: programName
+      captureType,
+      selectedGroup,
+      selectedProgram,
+      programName,
     });
-  };
-
-  const handleEditDepositTo = () => {
-    // Navigate back to program selection
-    history.push('/deposit-to');
-  };
-
-  const handleEditCaptureType = () => {
-    // Navigate back to capture type selection
-    history.push('/remote-capture-type');
-  };
-
-  const handleEditGroup = () => {
-    // Navigate back to group selection
-    history.push('/choose-group', { captureType });
   };
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Choose summary</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Review selection</IonTitle>
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleCancel}
+            >
+              Cancel
+            </IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="summary-container">
-            {/* Deposit to Card */}
-            <div className="summary-option" onClick={handleEditDepositTo}>
-              <div className="summary-content">
-                <div className="summary-info">
-                  <div className="summary-label">Deposit to</div>
-                  <div className="summary-value">{selectedProgram} {programName}</div>
-                </div>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="summary-arrow"
-                />
+        <div className="space-y-4 bg-slate-100 p-4 pb-16">
+          {summaryOptions.map(option => (
+            <button
+              key={option.label}
+              type="button"
+              onClick={option.action}
+              className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition hover:border-teal-primary hover:shadow-md"
+            >
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  {option.label}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">{option.value}</p>
               </div>
-            </div>
+              <img src="/images/ArrowForward.svg" alt="Edit" className="h-5 w-5" />
+            </button>
+          ))}
 
-            {/* Capture Type Card */}
-            <div className="summary-option" onClick={handleEditCaptureType}>
-              <div className="summary-content">
-                <div className="summary-info">
-                  <div className="summary-label">Capture Type</div>
-                  <div className="summary-value">{captureType}</div>
-                </div>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="summary-arrow"
-                />
-              </div>
-            </div>
-
-            {/* Group Card */}
-            <div className="summary-option" onClick={handleEditGroup}>
-              <div className="summary-content">
-                <div className="summary-info">
-                  <div className="summary-label">Group</div>
-                  <div className="summary-value">{selectedGroup}</div>
-                </div>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="summary-arrow"
-                />
-              </div>
-            </div>
-
-            {/* Start Capture Button */}
-            <div className="start-capture-container">
-              <IonButton 
-                expand="block" 
-                className="start-capture-button"
-                onClick={handleStartCapture}
-              >
-                Continue
-              </IonButton>
-            </div>
-          </div>
+          <IonButton
+            expand="block"
+            className="mt-4 rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
+            onClick={handleStartCapture}
+          >
+            Continue
+          </IonButton>
         </div>
       </IonContent>
     </IonPage>

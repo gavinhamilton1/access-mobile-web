@@ -8,12 +8,10 @@ import {
   IonButton,
   IonText,
   IonInput,
-  IonItem,
-  IonLabel,
   IonCard,
   IonCardContent,
   IonModal,
-  IonIcon
+  IonIcon,
 } from '@ionic/react';
 import { copyOutline, eyeOutline } from 'ionicons/icons';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -56,7 +54,6 @@ const CaptureSummary: React.FC = () => {
   const frontImage = state?.frontImage;
   const backImage = state?.backImage;
   const frontCheckDetails = state?.frontCheckDetails;
-  const backCheckDetails = state?.backCheckDetails;
 
   const [amount, setAmount] = useState('3 000 000,00');
   const [paymentNumber, setPaymentNumber] = useState('');
@@ -70,7 +67,6 @@ const CaptureSummary: React.FC = () => {
 
   const isCheckCapture = captureType.includes('Check');
 
-  // Auto-populate fields from extracted check details
   useEffect(() => {
     if (frontCheckDetails) {
       if (frontCheckDetails.routingNumber) {
@@ -85,17 +81,9 @@ const CaptureSummary: React.FC = () => {
     }
   }, [frontCheckDetails]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
-
-  const handleAmountConfirmation = (confirmed: boolean) => {
-    setIsAmountConfirmed(confirmed);
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
+  const handleAmountConfirmation = (confirmed: boolean) => setIsAmountConfirmed(confirmed);
 
   const handleCopyToClipboard = async (text: string, fieldName: string) => {
     try {
@@ -113,235 +101,214 @@ const CaptureSummary: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Submitting deposit:', {
-      amount,
-      paymentNumber,
-      routingNumber,
-      accountNumber,
-      controlNumber,
-      captureType,
-      selectedGroup,
-      selectedProgram,
-      programName
-    });
-    // Navigate to success page with deposit details
     history.push('/deposit-success', {
       captureType,
       selectedGroup,
       selectedProgram,
       programName,
-      amount
+      amount,
     });
   };
 
+  const summaryCards = [
+    {
+      title: selectedProgram,
+      details: ['AUTOAL1 RDC', 'PROGRAM 1', 'GROUPS'],
+    },
+    {
+      title: 'Group',
+      details: ['Maintenance', 'Orders'],
+    },
+  ];
+
+  const confirmationButtons = [
+    { label: 'No', action: () => handleAmountConfirmation(false), style: 'border border-slate-200 text-slate-600' },
+    { label: 'Yes', action: () => handleAmountConfirmation(true), style: 'bg-teal-primary text-white shadow-sm' },
+  ];
+
+  const inputFields = [
+    {
+      label: 'Payment/serial number',
+      value: paymentNumber,
+      placeholder: 'Enter payment/serial number',
+      setValue: setPaymentNumber,
+    },
+    {
+      label: 'Routing number',
+      value: routingNumber,
+      placeholder: 'Enter routing number',
+      setValue: setRoutingNumber,
+      copyValue: frontCheckDetails?.routingNumber,
+      copyField: 'routing',
+    },
+    {
+      label: 'Account number',
+      value: accountNumber,
+      placeholder: 'Enter account number',
+      setValue: setAccountNumber,
+      copyValue: frontCheckDetails?.accountNumber,
+      copyField: 'account',
+    },
+    {
+      label: 'Control number',
+      value: controlNumber,
+      placeholder: 'Enter control number',
+      setValue: setControlNumber,
+    },
+  ];
+
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Deposit check</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between gap-3 py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Deposit check</IonTitle>
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleCancel}
+            >
+              Cancel
+            </IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="deposit-summary-container">
-            {/* Summary Cards */}
-            <div className="summary-cards">
-              <IonCard className="summary-card">
-                <IonCardContent className="summary-card-content">
-                  <div className="summary-main">{selectedProgram}</div>
-                  <div className="summary-details">
-                    <div>AUTOAL1 RDC</div>
-                    <div>PROGRAM 1</div>
-                    <div>GROUPS</div>
+        <div className="space-y-6 bg-slate-100 p-4 pb-32">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {summaryCards.map(card => (
+              <IonCard key={card.title} className="rounded-2xl border border-slate-200 shadow-sm">
+                <IonCardContent className="space-y-2 p-4 text-center">
+                  <p className="text-base font-semibold text-slate-900">{card.title}</p>
+                  <div className="text-sm text-slate-500">
+                    {card.details.map(line => (
+                      <div key={line}>{line}</div>
+                    ))}
                   </div>
                 </IonCardContent>
               </IonCard>
+            ))}
+          </div>
 
-              <IonCard className="summary-card">
-                <IonCardContent className="summary-card-content">
-                  <div className="summary-main">Group</div>
-                  <div className="summary-details">
-                    <div>Maintenance</div>
-                    <div>Orders</div>
+          <div className="text-center">
+            <IonText>
+              <h1 className="text-3xl font-semibold text-slate-900">USD {amount}</h1>
+            </IonText>
+            {!isAmountConfirmed && (
+              <p className="mt-2 text-xs font-medium text-amber-500">Confirm the amount before submitting.</p>
+            )}
+          </div>
+
+          {isCheckCapture && (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[{ label: 'Front', image: frontImage }, { label: 'Back', image: backImage }]
+                .filter(item => Boolean(item.image))
+                .map(item => (
+                  <div key={item.label} className="space-y-3">
+                    <h3 className="text-sm font-semibold text-slate-700">{item.label}</h3>
+                    <button
+                      type="button"
+                      onClick={() => handleImagePreview(item.image as string)}
+                      className="group relative h-32 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                    >
+                      <img
+                        src={item.image as string}
+                        alt={`${item.label} of check`}
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
+                        <IonIcon icon={eyeOutline} className="h-6 w-6 text-white" />
+                      </div>
+                    </button>
                   </div>
-                </IonCardContent>
-              </IonCard>
+                ))}
             </div>
+          )}
 
-            {/* Amount Display */}
-            <div className="amount-display">
-              <IonText>
-                <h1 className="amount-text">USD {amount}</h1>
-              </IonText>
-            </div>
-
-            {/* Check Images */}
-            <div className="check-images">
-              {frontImage && (
-                <div className="image-section">
-                  <IonText>
-                    <h3 className="image-label">Front</h3>
-                  </IonText>
-                  <div className="image-container" onClick={() => handleImagePreview(frontImage)}>
-                    <img src={frontImage} alt="Check Front" className="check-image" />
-                    <div className="image-overlay">
-                      <IonIcon icon={eyeOutline} className="preview-icon" />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {backImage && (
-                <div className="image-section">
-                  <IonText>
-                    <h3 className="image-label">Back</h3>
-                  </IonText>
-                  <div className="image-container" onClick={() => handleImagePreview(backImage)}>
-                    <img src={backImage} alt="Check Back" className="check-image" />
-                    <div className="image-overlay">
-                      <IonIcon icon={eyeOutline} className="preview-icon" />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Amount Confirmation */}
-            <div className="amount-confirmation">
-              <IonText>
-                <p className="confirmation-question">
-                  Are you sure USD {amount} is the correct amount?
-                </p>
-              </IonText>
-              <div className="confirmation-buttons">
-                <IonButton 
-                  fill="outline" 
-                  className="confirmation-button"
-                  onClick={() => handleAmountConfirmation(false)}
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-sm font-medium text-slate-700">
+              Are you sure USD {amount} is the correct amount?
+            </p>
+            <div className="mt-4 flex gap-3">
+              {confirmationButtons.map(button => (
+                <button
+                  key={button.label}
+                  type="button"
+                  onClick={button.action}
+                  className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${button.style}`}
                 >
-                  No
-                </IonButton>
-                <IonButton 
-                  fill="solid" 
-                  className="confirmation-button"
-                  onClick={() => handleAmountConfirmation(true)}
-                >
-                  Yes
-                </IonButton>
-              </div>
-            </div>
-
-            {/* Input Fields */}
-            <div className="input-fields">
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Payment/serial number</IonLabel>
-                <IonInput
-                  value={paymentNumber}
-                  onIonInput={(e) => setPaymentNumber(e.detail.value!)}
-                  placeholder="Enter payment/serial number"
-                />
-              </IonItem>
-
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Routing number</IonLabel>
-                <IonInput
-                  value={routingNumber}
-                  onIonInput={(e) => setRoutingNumber(e.detail.value!)}
-                  placeholder="Enter routing number"
-                />
-                {frontCheckDetails?.routingNumber && (
-                  <IonButton 
-                    fill="clear" 
-                    size="small" 
-                    onClick={() => handleCopyToClipboard(frontCheckDetails.routingNumber!, 'routing')}
-                    className="copy-button"
-                  >
-                    <IonIcon icon={copyOutline} />
-                    {copySuccess === 'routing' ? 'Copied!' : 'Copy'}
-                  </IonButton>
-                )}
-              </IonItem>
-
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Account number</IonLabel>
-                <IonInput
-                  value={accountNumber}
-                  onIonInput={(e) => setAccountNumber(e.detail.value!)}
-                  placeholder="Enter account number"
-                />
-                {frontCheckDetails?.accountNumber && (
-                  <IonButton 
-                    fill="clear" 
-                    size="small" 
-                    onClick={() => handleCopyToClipboard(frontCheckDetails.accountNumber!, 'account')}
-                    className="copy-button"
-                  >
-                    <IonIcon icon={copyOutline} />
-                    {copySuccess === 'account' ? 'Copied!' : 'Copy'}
-                  </IonButton>
-                )}
-              </IonItem>
-
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Control number</IonLabel>
-                <IonInput
-                  value={controlNumber}
-                  onIonInput={(e) => setControlNumber(e.detail.value!)}
-                  placeholder="Enter control number"
-                />
-              </IonItem>
-            </div>
-
-            {/* Submit Button */}
-            <div className="submit-container">
-              <IonButton 
-                expand="block" 
-                className="submit-button"
-                onClick={handleSubmit}
-              >
-                Submit
-              </IonButton>
+                  {button.label}
+                </button>
+              ))}
             </div>
           </div>
+
+          <div className="space-y-5">
+            {inputFields.map(field => (
+              <div key={field.label} className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {field.label}
+                </label>
+                <div className="flex gap-2">
+                  <IonInput
+                    value={field.value}
+                    onIonInput={e => field.setValue(e.detail.value ?? '')}
+                    placeholder={field.placeholder}
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
+                  />
+                  {field.copyValue && (
+                    <button
+                      type="button"
+                      onClick={() => handleCopyToClipboard(field.copyValue!, field.copyField as string)}
+                      className="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-teal-primary hover:text-teal-primary"
+                    >
+                      <span className="flex items-center gap-1">
+                        <IonIcon icon={copyOutline} />
+                        {copySuccess === field.copyField ? 'Copied!' : 'Copy'}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <IonButton
+            expand="block"
+            className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
+            onClick={handleSubmit}
+            disabled={!isAmountConfirmed}
+          >
+            Submit
+          </IonButton>
         </div>
 
-        {/* Image Preview Modal */}
-        <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)} className="image-preview-modal">
-          <IonHeader className="standard-header">
-            <IonToolbar>
-              <div className="header-content">
-                <div className="header-left">
-                  <IonButton fill="clear" className="header-button" onClick={() => setIsPreviewModalOpen(false)}>
-                    <IonText>Close</IonText>
-                  </IonButton>
-                </div>
-                <div className="header-center">
-                  <IonTitle>Image Preview</IonTitle>
-                </div>
-                <div className="header-right"></div>
+        <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
+          <IonHeader>
+            <IonToolbar className="px-4">
+              <div className="flex items-center justify-between py-2">
+                <IonTitle className="text-base font-semibold text-slate-800">Image Preview</IonTitle>
+                <IonButton
+                  fill="clear"
+                  className="text-sm font-semibold text-slate-600"
+                  onClick={() => setIsPreviewModalOpen(false)}
+                >
+                  Close
+                </IonButton>
               </div>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="image-preview-content">
+          <IonContent className="flex items-center justify-center bg-black">
             {previewImage && (
-              <div className="image-preview-wrapper">
-                <img src={previewImage} alt="Preview" className="image-preview-full" />
-              </div>
+              <img src={previewImage} alt="Preview" className="max-h-full max-w-full object-contain" />
             )}
           </IonContent>
         </IonModal>

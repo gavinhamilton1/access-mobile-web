@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -7,10 +7,7 @@ import {
   IonToolbar,
   IonButton,
   IonText,
-  IonIcon,
   IonInput,
-  IonItem,
-  IonLabel
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router-dom';
 
@@ -20,104 +17,99 @@ interface LocationState {
   programName?: string;
 }
 
+const mockGroups = ['Tax Sales', 'Maintenance Orders', 'Store Receipts'];
+
 const ChooseGroup: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
-  const [captureType, setCaptureType] = useState<string>('');
-  const [selectedProgram, setSelectedProgram] = useState<string>('');
-  const [programName, setProgramName] = useState<string>('');
+  const [captureType, setCaptureType] = useState('');
+  const [selectedProgram, setSelectedProgram] = useState('');
+  const [programName, setProgramName] = useState('');
 
-  // Mock group data - only first three groups
-  const mockGroups = [
-    'Tax Sales',
-    'Maintenance Orders', 
-    'Store Receipts'
-  ];
-
-  // Get data from navigation state
-  React.useEffect(() => {
+  useEffect(() => {
     const state = location.state as LocationState;
-    if (state?.captureType) {
-      setCaptureType(state.captureType);
-    }
-    if (state?.selectedProgram) {
-      setSelectedProgram(state.selectedProgram);
-    }
-    if (state?.programName) {
-      setProgramName(state.programName);
-    }
+    if (state?.captureType) setCaptureType(state.captureType);
+    if (state?.selectedProgram) setSelectedProgram(state.selectedProgram);
+    if (state?.programName) setProgramName(state.programName);
   }, [location.state]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
 
   const handleGroupSelect = (groupName: string) => {
-    console.log(`Selected group: ${groupName} for capture type: ${captureType}`);
-    // Navigate to choose summary with all data
     history.push('/choose-summary', {
-      captureType: captureType,
+      captureType,
       selectedGroup: groupName,
-      selectedProgram: selectedProgram,
-      programName: programName
+      selectedProgram,
+      programName,
     });
   };
 
-  // Filter groups based on search term
   const filteredGroups = mockGroups.filter(group =>
     group.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="choose-group-header">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Choose a group</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+      <IonHeader>
+        <IonToolbar className="px-4">
+          <div className="flex items-center justify-between py-2">
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleBack}
+            >
+              Back
+            </IonButton>
+            <IonTitle className="text-base font-semibold text-slate-800">Choose a group</IonTitle>
+            <IonButton
+              fill="clear"
+              className="text-sm font-semibold text-slate-600"
+              onClick={handleCancel}
+            >
+              Cancel
+            </IonButton>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-    
+        <div className="space-y-4 bg-slate-100 p-4 pb-12">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <p className="text-xs uppercase tracking-wide text-slate-400">Program</p>
+            <p className="text-sm font-semibold text-slate-900">{programName || 'Program selection'}</p>
+            <p className="text-xs text-slate-500">{selectedProgram || 'Choose a program to continue'}</p>
+          </div>
 
-          {/* Groups List */}
-          <div className="groups-container">
-            {filteredGroups.map((group, index) => (
-              <div 
-                key={index} 
-                className="group-option" 
+          <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <img src="/images/Search.svg" alt="Search" className="h-5 w-5 opacity-60" />
+            <IonInput
+              placeholder="Search groups"
+              value={searchTerm}
+              onIonInput={e => setSearchTerm(e.detail.value ?? '')}
+              className="text-sm text-slate-700"
+            />
+          </div>
+
+          <div className="space-y-3">
+            {filteredGroups.map(group => (
+              <button
+                key={group}
+                type="button"
                 onClick={() => handleGroupSelect(group)}
+                className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left text-sm font-semibold text-slate-900 shadow-sm transition hover:border-teal-primary hover:shadow-md"
               >
-                <div className="group-content">
-                  <IonText>
-                    <h3 className="group-name">{group}</h3>
-                  </IonText>
-                  <IonIcon 
-                    icon="/images/ArrowForward.svg" 
-                    className="group-arrow"
-                  />
-                </div>
-              </div>
+                <span>{group}</span>
+                <img src="/images/ArrowForward.svg" alt="Select" className="h-5 w-5" />
+              </button>
             ))}
+
+            {filteredGroups.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+                No groups match that search.
+              </div>
+            )}
           </div>
         </div>
       </IonContent>
