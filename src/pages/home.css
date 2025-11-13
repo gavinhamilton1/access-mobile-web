@@ -1,0 +1,227 @@
+.salt-home-shell {
+  min-height: 100%;
+  background: var(--salt-container-primary-background);
+}
+
+.salt-home-toolbar {
+  --background: var(--salt-container-primary-background);
+  --color: var(--salt-content-primary-foreground);
+  border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+  padding: 0 var(--salt-spacing-200);
+}
+
+.salt-home-toolbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--salt-spacing-200);
+}
+
+.salt-home-toolbar-title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.salt-home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--salt-spacing-200);
+}
+
+.salt-home-mode-toggle {
+  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-height: calc(var(--salt-size-base) - var(--salt-spacing-150));
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+  font-size: 0.8rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.salt-home-notification-button {
+  position: relative;
+  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-height: calc(var(--salt-size-base) - var(--salt-spacing-150));
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+}
+
+.salt-home-notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--salt-status-warning-background);
+  box-shadow: 0 0 0 2px var(--salt-container-primary-background);
+}
+
+.salt-home-alert-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.salt-home-content {
+  padding: var(--salt-spacing-300);
+  padding-bottom: calc(var(--salt-spacing-900) + var(--salt-spacing-300));
+  gap: var(--salt-spacing-400);
+}
+
+.salt-home-card {
+  background: var(--salt-container-secondary-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: calc(var(--salt-spacing-250) * 1.3);
+  padding: var(--salt-spacing-300);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
+.salt-home-balance-card {
+  background: var(--salt-container-tertiary-background);
+}
+
+.salt-home-section-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: var(--salt-content-secondary-foreground);
+}
+
+.salt-home-amount {
+  display: flex;
+  align-items: baseline;
+  gap: var(--salt-spacing-75);
+}
+
+.salt-home-amount-value {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.salt-home-amount-decimals {
+  opacity: 0.6;
+}
+
+.salt-home-balance-summary {
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+  padding-top: var(--salt-spacing-250);
+  gap: var(--salt-spacing-200);
+}
+
+.salt-home-inline-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.salt-home-number-positive {
+  color: var(--salt-status-success-foreground);
+  font-weight: 600;
+}
+
+.salt-home-number-negative {
+  color: var(--salt-status-error-foreground);
+  font-weight: 600;
+}
+
+.salt-home-row {
+  padding: var(--salt-spacing-150) 0;
+}
+
+.salt-home-action-card .salt-home-row + .salt-home-row,
+.salt-home-transmission-card .salt-home-row + .salt-home-row {
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+}
+
+.salt-home-dot {
+  width: var(--salt-spacing-150);
+  height: var(--salt-spacing-150);
+  border-radius: 999px;
+}
+
+.salt-home-dot--accent {
+  background: var(--salt-accent-background);
+}
+
+.salt-home-card-heading {
+  font-weight: 600;
+}
+
+.salt-home-pill {
+  min-width: 26px;
+  height: 22px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0 var(--salt-spacing-100);
+}
+
+.salt-home-pill--positive {
+  background: var(--salt-status-success-background);
+  color: var(--salt-status-success-foreground);
+}
+
+.salt-home-pill--accent {
+  background: var(--salt-accent-background);
+  color: var(--salt-accent-foreground);
+}
+
+.salt-home-pill--negative {
+  background: var(--salt-status-error-background);
+  color: var(--salt-status-error-foreground);
+}
+
+.salt-home-pill--warning {
+  background: var(--salt-status-warning-background);
+  color: var(--salt-status-warning-foreground);
+}
+
+.salt-home-currency-dropdown .saltDropdown {
+  justify-content: flex-end;
+  min-height: calc(var(--salt-size-base) - var(--salt-spacing-100));
+  font-size: 0.85rem;
+}
+
+.salt-home-currency-dropdown {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.salt-home-fab {
+  position: sticky;
+  bottom: var(--salt-spacing-300);
+  padding: var(--salt-spacing-200) var(--salt-spacing-300) var(--salt-spacing-300);
+  display: flex;
+  justify-content: center;
+  background: var(--salt-container-primary-background);
+}
+
+.salt-home-primary-action {
+  max-width: 320px;
+  width: 100%;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--salt-spacing-150);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: var(--salt-spacing-150) var(--salt-spacing-350);
+}
+
+.salt-home-primary-action img {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 600px) {
+  .salt-home-content {
+    padding: var(--salt-spacing-250);
+    padding-bottom: calc(var(--salt-spacing-900) + var(--salt-spacing-250));
+  }
+
+  .salt-home-primary-action {
+    max-width: none;
+  }
+}
+

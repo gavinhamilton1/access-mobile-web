@@ -9,6 +9,7 @@ import {
   IonCard,
   IonCardContent,
   IonText,
+  IonButton,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 

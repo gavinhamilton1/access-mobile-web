@@ -1,20 +1,59 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonSelect,
-  IonSelectOption,
-  IonText,
-  IonButton
-} from '@ionic/react';
+import React, { useMemo, useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, Dropdown, FlexLayout, Option, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
 
-const Tab1: React.FC = () => {
+import { useSaltTheme } from '../theme/SaltThemeProvider';
+
+import './home.css';
+
+type ActionItem = {
+  icon: string;
+  label: string;
+  indicator: 'accent';
+};
+
+type TransmissionItem = {
+  icon: string;
+  label: string;
+  count: number;
+  pill: 'positive' | 'accent' | 'negative' | 'warning';
+};
+
+const currencyCodes = ['AUD', 'USD', 'EUR', 'GBP'] as const;
+
+const Home: React.FC = () => {
   const history = useHistory();
+  const { mode, toggleMode } = useSaltTheme();
+  const [currency, setCurrency] = useState<(typeof currencyCodes)[number]>('AUD');
+
+  const balance = useMemo(
+    () => ({
+      current: { label: 'Current day', value: '134 519 621', decimals: '.76' },
+      prior: { label: 'Prior day', value: '134 520 621', decimals: '.76' },
+      credits: '1 000.00',
+      debits: '(2 000.00)',
+    }),
+    [],
+  );
+
+  const actionItems = useMemo<ActionItem[]>(
+    () => [
+      { icon: '/images/Check.svg', label: 'Approve payment', indicator: 'accent' },
+      { icon: '/images/ListCheck.svg', label: 'Release payment', indicator: 'accent' },
+    ],
+    [],
+  );
+
+  const transmissionItems = useMemo<TransmissionItem[]>(
+    () => [
+      { icon: '/images/CircleCheck.svg', label: 'Sent for processing', count: 2, pill: 'positive' },
+      { icon: '/images/CircleInfo.svg', label: 'In process', count: 1, pill: 'accent' },
+      { icon: '/images/CircleCross.svg', label: 'Failed', count: 5, pill: 'negative' },
+      { icon: '/images/Warning.svg', label: 'Pending user actions', count: 4, pill: 'warning' },
+    ],
+    [],
+  );
 
   const handleCaptureDeposit = () => {
     history.push('/deposit-to');
@@ -22,143 +61,158 @@ const Tab1: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <IonText color="medium">
-                <p className="text-sm font-medium text-slate-500">Welcome, test.</p>
-              </IonText>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-home-toolbar">
+          <div className="salt-home-toolbar-content">
+            <Text styleAs="h4" className="salt-home-toolbar-title">
+              Welcome, Gavin.
+            </Text>
+            <div className="salt-home-header-actions">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                className="salt-home-mode-toggle"
+                onClick={toggleMode}
+              >
+                {mode === 'light' ? 'Dark mode' : 'Light mode'}
+              </Button>
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                className="salt-home-notification-button"
+                aria-label="Alerts"
+              >
+                <span className="salt-home-notification-dot" />
+                <img src="/images/Alert.svg" alt="" className="salt-home-alert-icon" />
+              </Button>
             </div>
-            <button type="button" className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white">
-              <img src="/images/Alert.svg" alt="Alerts" className="h-5 w-5" />
-            </button>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-6 bg-slate-100 p-4 pb-28">
-          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
-            <IonCardContent className="flex flex-col gap-4 p-4">
-              {[
-                { label: 'Current day', value: '1 063 261', suffix: ',52', showSelect: true },
-                { label: 'Prior day', value: '1 063 261', suffix: ',52', showSelect: false },
-              ].map(({ label, value, suffix, showSelect }) => (
-                <div key={label} className="flex items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <IonText color="medium">
-                      <p className="text-sm font-medium text-slate-500">{label}</p>
-                    </IonText>
-                    <IonText>
-                      <h2 className="text-3xl font-semibold text-slate-900">
-                        {value}
-                        <span className="text-lg text-slate-500">{suffix}</span>
-                      </h2>
-                    </IonText>
-                  </div>
-                  {showSelect ? (
-                    <IonSelect
-                      value="USD"
-                      interface="popover"
-                      className="rounded-full border border-slate-200 px-4 py-1 text-sm font-medium text-slate-600"
-                    >
-                      <IonSelectOption value="USD">USD</IonSelectOption>
-                      <IonSelectOption value="EUR">EUR</IonSelectOption>
-                      <IonSelectOption value="GBP">GBP</IonSelectOption>
-                    </IonSelect>
-                  ) : (
-                    <div className="h-7" />
-                  )}
-                </div>
-              ))}
-
-              <div className="space-y-3 border-t border-slate-100 pt-3 text-sm text-slate-600">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src="/images/PiggyBank.svg" alt="Credits" className="h-5 w-5" />
-                    <span>Credits</span>
-                  </div>
-                  <span className="font-semibold text-slate-800">0,00</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src="/images/VisibilityOn.svg" alt="Debits" className="h-5 w-5" />
-                    <span>Debits</span>
-                  </div>
-                  <span className="font-semibold text-slate-800">(0,00)</span>
-                </div>
-              </div>
-            </IonCardContent>
-          </IonCard>
-
-          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
-            <IonCardContent className="flex flex-col divide-y divide-slate-100 p-4">
-              {[
-                { icon: '/images/Check.svg', label: 'Approve payment' },
-                { icon: '/images/ListCheck.svg', label: 'Release payment' },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-700">
-                    <img src={item.icon} alt={item.label} className="h-5 w-5" />
-                    <span>{item.label}</span>
-                  </div>
-                  <span className="h-2 w-2 rounded-full bg-teal-primary" />
-                </div>
-              ))}
-            </IonCardContent>
-          </IonCard>
-
-          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
-            <IonCardContent className="space-y-4 p-4">
-              <h3 className="text-base font-semibold text-slate-900">File Transmissions</h3>
-              <div className="space-y-3">
-                {[
-                  {
-                    icon: '/images/CircleCheck.svg',
-                    label: 'Sent for processing',
-                    value: '55',
-                    badgeClass: 'bg-teal-100 text-teal-700',
-                  },
-                  {
-                    icon: '/images/CircleInfo.svg',
-                    label: 'In process',
-                    value: '648',
-                    badgeClass: 'bg-blue-100 text-blue-700',
-                  },
-                  {
-                    icon: '/images/CircleCross.svg',
-                    label: 'Failed',
-                    value: '7',
-                    badgeClass: 'bg-rose-100 text-rose-700',
-                  },
-                ].map(status => (
-                  <div key={status.label} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <img src={status.icon} alt={status.label} className="h-5 w-5" />
-                      <span>{status.label}</span>
+        <div className="salt-home-shell">
+          <StackLayout className="salt-home-content" gap={2}>
+            <Card className="salt-home-card salt-home-balance-card">
+              <StackLayout gap={3}>
+                <FlexLayout align="start" justify="space-between">
+                  <StackLayout gap={1}>
+                    <Text styleAs="label" className="salt-home-section-label">
+                      {balance.current.label}
+                    </Text>
+                    <div className="salt-home-amount">
+                      <Text styleAs="h3">
+                        {balance.current.value}
+                      </Text>
+                      <Text as="span" styleAs="h4">
+                        {balance.current.decimals}
+                      </Text>
                     </div>
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${status.badgeClass}`}>{status.value}</span>
-                  </div>
-                ))}
-              </div>
-            </IonCardContent>
-          </IonCard>
-        </div>
+                  </StackLayout>
 
-        <div className="fixed inset-x-4 bottom-6 z-40">
-          <IonButton
-            expand="block"
-            className="flex items-center justify-center gap-2 rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
+                  <Dropdown
+                    className="salt-home-currency-dropdown"
+                    style={{ minWidth: '4.5rem' }}
+                    selected={[currency]}
+                    onSelectionChange={(_, nextSelected) => {
+                      if (nextSelected[0]) {
+                        setCurrency(nextSelected[0] as (typeof currencyCodes)[number]);
+                      }
+                    }}
+                    valueToString={item => item}
+                    variant="secondary"
+                  >
+                    {currencyCodes.map(code => (
+                      <Option key={code} value={code}>
+                        {code}
+                      </Option>
+                    ))}
+                  </Dropdown>
+                </FlexLayout>
+
+                <StackLayout gap={1}>
+                  <Text styleAs="label" className="salt-home-section-label">
+                    {balance.prior.label}
+                  </Text>
+                  <div className="salt-home-amount">
+                    <Text styleAs="display3">{balance.prior.value}</Text>
+                    <Text as="span" styleAs="display4" className="salt-home-amount-decimals">
+                      {balance.prior.decimals}
+                    </Text>
+                  </div>
+                </StackLayout>
+
+                <StackLayout gap={1} className="salt-home-balance-summary">
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={2}>
+                      <img src="/images/PiggyBank.svg" alt="Credits" className="salt-home-inline-icon" />
+                      <Text styleAs="action">Credits</Text>
+                    </FlexLayout>
+                    <Text styleAs="action" className="salt-home-number-positive">
+                      {balance.credits}
+                    </Text>
+                  </FlexLayout>
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={2}>
+                      <img src="/images/VisibilityOn.svg" alt="Debits" className="salt-home-inline-icon" />
+                      <Text styleAs="action">Debits</Text>
+                    </FlexLayout>
+                    <Text styleAs="action" className="salt-home-number-negative">
+                      {balance.debits}
+                    </Text>
+                  </FlexLayout>
+                </StackLayout>
+              </StackLayout>
+            </Card>
+
+            <Card className="salt-home-card salt-home-action-card">
+              <StackLayout gap={2}>
+                {actionItems.map(item => (
+                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
+                    <FlexLayout align="center" gap={2}>
+                      <img src={item.icon} alt={item.label} className="salt-home-inline-icon" />
+                      <Text styleAs="action">{item.label}</Text>
+                    </FlexLayout>
+                    <span className={`salt-home-dot salt-home-dot--${item.indicator}`} />
+                  </FlexLayout>
+                ))}
+              </StackLayout>
+            </Card>
+
+            <Card className="salt-home-card salt-home-transmission-card">
+              <StackLayout gap={3}>
+                <Text styleAs="h4" className="salt-home-card-heading">
+                  File Transmissions
+                </Text>
+                <StackLayout gap={2}>
+                  {transmissionItems.map(item => (
+                    <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
+                      <FlexLayout align="center" gap={2}>
+                        <img src={item.icon} alt={item.label} className="salt-home-inline-icon" />
+                        <Text styleAs="action">{item.label}</Text>
+                      </FlexLayout>
+                      <div className={`salt-home-pill salt-home-pill--${item.pill}`}>{item.count}</div>
+                    </FlexLayout>
+                  ))}
+                </StackLayout>
+              </StackLayout>
+            </Card>
+          </StackLayout>
+        </div>
+        <div className="salt-home-fab">
+          <Button
+            appearance="solid"
+            sentiment="accented"
+            className="salt-home-primary-action"
             onClick={handleCaptureDeposit}
           >
-            <img src="/images/Camera.svg" alt="Camera" className="h-5 w-5" />
+            <img src="/images/Camera.svg" alt="" />
             Capture deposit
-          </IonButton>
+          </Button>
         </div>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Tab1;
+export default Home;
