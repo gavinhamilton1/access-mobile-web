@@ -11,6 +11,13 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 // Using custom SVG icons from public/images directory
+import {
+  Accounts as AccountsIcon,
+  Deposits as DepositsIcon,
+  Home as HomeIcon,
+  Payments as PaymentsIcon,
+  Profile as ProfileIcon,
+} from './components/icons';
 import Home from './pages/Home';
 import Accounts from './pages/Accounts';
 import AccountDetails from './pages/AccountDetails';
@@ -131,23 +138,23 @@ const App: React.FC = () => (
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
           <IonTabButton tab="home" href="/home">
-            <img src="/images/Home.svg" alt="Home" className="tab-icon" />
+            <HomeIcon size={20} className="tab-icon" />
             <IonLabel>Home</IonLabel>
           </IonTabButton>
           <IonTabButton tab="accounts" href="/accounts">
-            <img src="/images/Accounts.svg" alt="Accounts" className="tab-icon" />
+            <AccountsIcon size={20} className="tab-icon" />
             <IonLabel>Accounts</IonLabel>
           </IonTabButton>
           <IonTabButton tab="payments" href="/payments">
-            <img src="/images/Payments.svg" alt="Payments" className="tab-icon" />
+            <PaymentsIcon size={20} className="tab-icon" />
             <IonLabel>Payments</IonLabel>
           </IonTabButton>
           <IonTabButton tab="deposits" href="/deposits">
-            <img src="/images/Deposits.svg" alt="Deposits" className="tab-icon" />
+            <DepositsIcon size={20} className="tab-icon" />
             <IonLabel>Deposits</IonLabel>
           </IonTabButton>
           <IonTabButton tab="profile" href="/profile">
-            <img src="/images/Profile.svg" alt="Profile" className="tab-icon" />
+            <ProfileIcon size={20} className="tab-icon" />
             <IonLabel>Profile</IonLabel>
           </IonTabButton>
         </IonTabBar>

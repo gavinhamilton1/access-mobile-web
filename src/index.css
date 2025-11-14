@@ -2,11 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-salt-theme],
+[data-salt-theme="light"],
+[data-salt-theme="dark"] {
   --teal-primary: #137e96;
   --teal-primary-active: #83c2d0;
   --teal-primary-rgb: 19, 126, 150;
   --background-color: #f5f5f5;
+  
+  /* Override Salt Design System accent colors to use teal/green */
+  /* These variables control the accent color throughout Salt components */
+  --salt-palette-accent-background: #137e96;
+  --salt-palette-accent-foreground: #ffffff;
+  --salt-palette-accent-border: #137e96;
+  
+  /* Salt's accent color variables used throughout the system */
+  --salt-accent-background: #137e96;
+  --salt-accent-foreground: #ffffff;
+  --salt-accent-borderColor: #137e96;
+  
+  /* Salt's actionable accent colors for buttons with appearance="solid" and sentiment="accented" */
+  --salt-actionable-accented-bold-background: #137e96;
+  --salt-actionable-accented-bold-borderColor: #137e96;
+  --salt-actionable-accented-bold-foreground: #ffffff;
+  --salt-actionable-accented-bold-hover-background: #0f6b80;
+  --salt-actionable-accented-bold-hover-borderColor: #0f6b80;
+  --salt-actionable-accented-bold-hover-foreground: #ffffff;
+  --salt-actionable-accented-bold-active-background: #0a5768;
+  --salt-actionable-accented-bold-active-borderColor: #0a5768;
+  --salt-actionable-accented-bold-active-foreground: #ffffff;
+  
+  /* Button-specific CSS variables (if Salt uses these) */
+  --saltButton-accented-background: #137e96;
+  --saltButton-accented-borderColor: #137e96;
+  --saltButton-accented-foreground: #ffffff;
 }
 
 ion-app {
@@ -56,13 +86,13 @@ ion-item.item-focused {
 }
 
 ion-content {
-  --background: #f5f5f5;
-  --color: #333;
+  --background: var(--salt-container-primary-background);
+  --color: var(--salt-content-primary-foreground);
 }
 
 ion-page {
-  --background: #f5f5f5;
-  --color: #333;
+  --background: var(--salt-container-primary-background);
+  --color: var(--salt-content-primary-foreground);
 }
 
 ion-toolbar::part(native),
@@ -95,40 +125,74 @@ ion-card-header {
 }
 
 ion-tab-bar {
-  --background: white;
-  --color: #666;
-  --color-selected: var(--teal-primary);
-  --border: 1px solid #e0e0e0;
+  --background: var(--salt-container-primary-background);
+  --color: var(--salt-content-secondary-foreground);
+  --color-selected: var(--salt-accent-foreground);
+  --border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
 }
 
 ion-tab-bar::part(native) {
-  background: white;
-  color: #666;
-  border-top: 1px solid #e0e0e0;
+  background: var(--salt-container-primary-background);
+  color: var(--salt-content-secondary-foreground);
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
 }
 
 ion-tab-button {
-  --color: #666;
-  --color-selected: var(--teal-primary);
+  --color: var(--salt-content-primary-foreground);
+  --color-selected: var(--salt-accent-foreground);
   --padding-top: 6px;
   --padding-bottom: 6px;
   --padding-start: 12px;
   --padding-end: 12px;
   font-size: 0.75rem;
+  color: var(--salt-content-primary-foreground);
+  font-weight: 500;
+}
+
+ion-tab-button.tab-selected {
+  --color: var(--salt-accent-foreground);
+  color: var(--salt-accent-foreground);
+  opacity: 1;
+  font-weight: 600;
 }
 
 ion-tab-button::part(native) {
   background: transparent;
-  border-radius: 9999px;
+  border-radius: 12px;
+  overflow: hidden; /* Clip ripple effect to border radius */
 }
 
 ion-tab-button.tab-selected::part(native) {
-  background: rgba(19, 126, 150, 0.1);
+  /* Semi-transparent background that appears behind the icon and text */
+  background: color-mix(in srgb, var(--salt-accent-background) 50%, transparent);
+}
+
+/* Ensure icon and label are not affected by parent opacity */
+ion-tab-button.tab-selected ion-label {
+  color: var(--salt-accent-foreground) !important;
+  opacity: 1 !important;
+}
+
+ion-tab-button.tab-selected .tab-icon,
+ion-tab-button.tab-selected ion-icon {
+  color: var(--salt-accent-foreground) !important;
+  opacity: 1 !important;
 }
 
 ion-tab-button img,
-ion-tab-button ion-icon {
+ion-tab-button ion-icon,
+ion-tab-button .tab-icon {
   width: 20px;
   height: 20px;
+  opacity: 0.8;
+  color: var(--salt-content-primary-foreground);
+}
+
+ion-tab-button.tab-selected img,
+ion-tab-button.tab-selected ion-icon,
+ion-tab-button.tab-selected .tab-icon {
+  opacity: 1;
+  color: var(--salt-accent-foreground);
 }
 

@@ -4,20 +4,38 @@ import { Button, Card, Dropdown, FlexLayout, Option, StackLayout, Text } from '@
 import { useHistory } from 'react-router-dom';
 
 import { useSaltTheme } from '../theme/SaltThemeProvider';
+import {
+  Alert,
+  Camera,
+  Cash,
+  Check,
+  CircleCheck,
+  CircleCross,
+  CircleInfo,
+  ListCheck,
+  PiggyBank,
+  Warning,
+} from '../components/icons';
 
 import './home.css';
 
 type ActionItem = {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   indicator: 'accent';
 };
 
 type TransmissionItem = {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   count: number;
   pill: 'positive' | 'accent' | 'negative' | 'warning';
+};
+
+type BalanceItem = {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
 };
 
 const currencyCodes = ['AUD', 'USD', 'EUR', 'GBP'] as const;
@@ -39,20 +57,28 @@ const Home: React.FC = () => {
 
   const actionItems = useMemo<ActionItem[]>(
     () => [
-      { icon: '/images/Check.svg', label: 'Approve payment', indicator: 'accent' },
-      { icon: '/images/ListCheck.svg', label: 'Release payment', indicator: 'accent' },
+      { icon: <Check size={24} className="salt-home-inline-icon" />, label: 'Approve payment', indicator: 'accent' },
+      { icon: <ListCheck size={24} className="salt-home-inline-icon" />, label: 'Release payment', indicator: 'accent' },
     ],
     [],
   );
 
   const transmissionItems = useMemo<TransmissionItem[]>(
     () => [
-      { icon: '/images/CircleCheck.svg', label: 'Sent for processing', count: 2, pill: 'positive' },
-      { icon: '/images/CircleInfo.svg', label: 'In process', count: 1, pill: 'accent' },
-      { icon: '/images/CircleCross.svg', label: 'Failed', count: 5, pill: 'negative' },
-      { icon: '/images/Warning.svg', label: 'Pending user actions', count: 4, pill: 'warning' },
+      { icon: <CircleCheck size={24} color="var(--salt-status-success-foreground)" className="salt-home-inline-icon" />, label: 'Sent for processing', count: 2, pill: 'accent' },
+      { icon: <CircleInfo size={24} color="var(--salt-status-info-foreground)" className="salt-home-inline-icon" />, label: 'In process', count: 1, pill: 'accent' },
+      { icon: <CircleCross size={24} color="var(--salt-status-error-foreground)" className="salt-home-inline-icon" />, label: 'Failed', count: 5, pill: 'accent' },
+      { icon: <CircleInfo size={24} color="var(--salt-status-warning-foreground)" className="salt-home-inline-icon" />, label: 'Pending user actions', count: 4, pill: 'accent' },
     ],
     [],
+  );
+
+  const balanceItems = useMemo<BalanceItem[]>(
+    () => [
+      { icon: <PiggyBank size={24} className="salt-home-inline-icon" />, label: 'Credits', value: balance.credits },
+      { icon: <Cash size={24} className="salt-home-inline-icon" />, label: 'Debits', value: balance.debits },
+    ],
+    [balance.credits, balance.debits],
   );
 
   const handleCaptureDeposit = () => {
@@ -83,7 +109,7 @@ const Home: React.FC = () => {
                 aria-label="Alerts"
               >
                 <span className="salt-home-notification-dot" />
-                <img src="/images/Alert.svg" alt="" className="salt-home-alert-icon" />
+                <Alert size={20} className="salt-home-alert-icon" />
               </Button>
             </div>
           </div>
@@ -92,19 +118,19 @@ const Home: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-home-shell">
-          <StackLayout className="salt-home-content" gap={2}>
-            <Card className="salt-home-card salt-home-balance-card">
-              <StackLayout gap={3}>
-                <FlexLayout align="start" justify="space-between">
-                  <StackLayout gap={1}>
-                    <Text styleAs="label" className="salt-home-section-label">
+          <StackLayout className="salt-home-content" gap={1}>
+            <Card className="salt-home-card">
+              <StackLayout gap={0} className="salt-card-section">
+                <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
+                  <StackLayout gap={0.2}>
+                    <Text styleAs="label">
                       {balance.current.label}
                     </Text>
                     <div className="salt-home-amount">
-                      <Text styleAs="h3">
+                      <Text className="salt-home-current-amount-value">
                         {balance.current.value}
                       </Text>
-                      <Text as="span" styleAs="h4">
+                      <Text className="salt-home-current-amount-decimals">
                         {balance.current.decimals}
                       </Text>
                     </div>
@@ -112,7 +138,7 @@ const Home: React.FC = () => {
 
                   <Dropdown
                     className="salt-home-currency-dropdown"
-                    style={{ minWidth: '4.5rem' }}
+                    style={{ width: 'auto', flexShrink: 0 }}
                     selected={[currency]}
                     onSelectionChange={(_, nextSelected) => {
                       if (nextSelected[0]) {
@@ -130,48 +156,43 @@ const Home: React.FC = () => {
                   </Dropdown>
                 </FlexLayout>
 
-                <StackLayout gap={1}>
-                  <Text styleAs="label" className="salt-home-section-label">
+                <StackLayout gap={0.2} className="salt-home-prior-balance">
+                  <Text styleAs="label">
                     {balance.prior.label}
                   </Text>
-                  <div className="salt-home-amount">
-                    <Text styleAs="display3">{balance.prior.value}</Text>
-                    <Text as="span" styleAs="display4" className="salt-home-amount-decimals">
-                      {balance.prior.decimals}
-                    </Text>
-                  </div>
+                    <div className="salt-home-amount">
+                      <Text className="salt-home-prior-amount-value">
+                        {balance.prior.value}
+                      </Text>
+                      <Text className="salt-home-prior-amount-decimals">
+                        {balance.prior.decimals}
+                      </Text>
+                    </div>
                 </StackLayout>
 
-                <StackLayout gap={1} className="salt-home-balance-summary">
-                  <FlexLayout align="center" justify="space-between">
-                    <FlexLayout align="center" gap={2}>
-                      <img src="/images/PiggyBank.svg" alt="Credits" className="salt-home-inline-icon" />
-                      <Text styleAs="action">Credits</Text>
+                {balanceItems.map(item => (
+                  <div key={item.label} className="salt-home-balance-summary">
+                    <FlexLayout align="center" justify="space-between" className="salt-home-balance-row">
+                      <FlexLayout align="center" gap={1}>
+                        {item.icon}
+                        <Text styleAs="label">{item.label}</Text>
+                      </FlexLayout>
+                      <Text styleAs="action">
+                        {item.value}
+                      </Text>
                     </FlexLayout>
-                    <Text styleAs="action" className="salt-home-number-positive">
-                      {balance.credits}
-                    </Text>
-                  </FlexLayout>
-                  <FlexLayout align="center" justify="space-between">
-                    <FlexLayout align="center" gap={2}>
-                      <img src="/images/VisibilityOn.svg" alt="Debits" className="salt-home-inline-icon" />
-                      <Text styleAs="action">Debits</Text>
-                    </FlexLayout>
-                    <Text styleAs="action" className="salt-home-number-negative">
-                      {balance.debits}
-                    </Text>
-                  </FlexLayout>
-                </StackLayout>
+                  </div>
+                ))}
               </StackLayout>
             </Card>
 
-            <Card className="salt-home-card salt-home-action-card">
-              <StackLayout gap={2}>
+            <Card className="salt-home-card">
+              <StackLayout gap={0} className="salt-card-section">
                 {actionItems.map(item => (
                   <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
-                    <FlexLayout align="center" gap={2}>
-                      <img src={item.icon} alt={item.label} className="salt-home-inline-icon" />
-                      <Text styleAs="action">{item.label}</Text>
+                    <FlexLayout align="center" gap={1}>
+                      {item.icon}
+                      <Text styleAs="label">{item.label}</Text>
                     </FlexLayout>
                     <span className={`salt-home-dot salt-home-dot--${item.indicator}`} />
                   </FlexLayout>
@@ -179,24 +200,27 @@ const Home: React.FC = () => {
               </StackLayout>
             </Card>
 
-            <Card className="salt-home-card salt-home-transmission-card">
-              <StackLayout gap={3}>
-                <Text styleAs="h4" className="salt-home-card-heading">
-                  File Transmissions
-                </Text>
-                <StackLayout gap={2}>
-                  {transmissionItems.map(item => (
-                    <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
-                      <FlexLayout align="center" gap={2}>
-                        <img src={item.icon} alt={item.label} className="salt-home-inline-icon" />
-                        <Text styleAs="action">{item.label}</Text>
-                      </FlexLayout>
-                      <div className={`salt-home-pill salt-home-pill--${item.pill}`}>{item.count}</div>
+
+            <Card className="salt-home-card">
+              <StackLayout gap={0} className="salt-card-section">
+              <FlexLayout key="txms" align="center" justify="space-between" className="salt-home-row">
+                    <FlexLayout align="center" gap={2}>
+                      <Text styleAs="label">File Transmissions</Text>
                     </FlexLayout>
-                  ))}
-                </StackLayout>
+                  </FlexLayout>
+
+                {transmissionItems.map(item => (
+                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
+                    <FlexLayout align="center" gap={1}>
+                      {item.icon}
+                      <Text styleAs="label">{item.label}</Text>
+                    </FlexLayout>
+                    <div className={`salt-home-pill salt-home-pill--${item.pill}`}>{item.count}</div>
+                    </FlexLayout>
+                ))}
               </StackLayout>
             </Card>
+
           </StackLayout>
         </div>
         <div className="salt-home-fab">
@@ -206,7 +230,7 @@ const Home: React.FC = () => {
             className="salt-home-primary-action"
             onClick={handleCaptureDeposit}
           >
-            <img src="/images/Camera.svg" alt="" />
+            <Camera size={28} />
             Capture deposit
           </Button>
         </div>
