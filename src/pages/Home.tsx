@@ -91,7 +91,7 @@ const Home: React.FC = () => {
         <IonToolbar className="salt-toolbar">
           <div className="salt-toolbar-content">
             <Text styleAs="h4" className="salt-toolbar-title">
-              Welcome, Gavin.
+              Welcome.
             </Text>
             <div className="salt-home-header-actions">
               <Button
