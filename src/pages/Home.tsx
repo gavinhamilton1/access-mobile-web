@@ -57,26 +57,26 @@ const Home: React.FC = () => {
 
   const actionItems = useMemo<ActionItem[]>(
     () => [
-      { icon: <Check size={24} className="salt-home-inline-icon" />, label: 'Approve payment', indicator: 'accent' },
-      { icon: <ListCheck size={24} className="salt-home-inline-icon" />, label: 'Release payment', indicator: 'accent' },
+      { icon: <Check size={24} className="salt-inline-icon" />, label: 'Approve payment', indicator: 'accent' },
+      { icon: <ListCheck size={24} className="salt-inline-icon" />, label: 'Release payment', indicator: 'accent' },
     ],
     [],
   );
 
   const transmissionItems = useMemo<TransmissionItem[]>(
     () => [
-      { icon: <CircleCheck size={24} color="var(--salt-status-success-foreground)" className="salt-home-inline-icon" />, label: 'Sent for processing', count: 2, pill: 'accent' },
-      { icon: <CircleInfo size={24} color="var(--salt-status-info-foreground)" className="salt-home-inline-icon" />, label: 'In process', count: 1, pill: 'accent' },
-      { icon: <CircleCross size={24} color="var(--salt-status-error-foreground)" className="salt-home-inline-icon" />, label: 'Failed', count: 5, pill: 'accent' },
-      { icon: <CircleInfo size={24} color="var(--salt-status-warning-foreground)" className="salt-home-inline-icon" />, label: 'Pending user actions', count: 4, pill: 'accent' },
+      { icon: <CircleCheck size={24} color="var(--salt-status-success-foreground)" className="salt-inline-icon" />, label: 'Sent for processing', count: 2, pill: 'accent' },
+      { icon: <CircleInfo size={24} color="var(--salt-status-info-foreground)" className="salt-inline-icon" />, label: 'In process', count: 1, pill: 'accent' },
+      { icon: <CircleCross size={24} color="var(--salt-status-error-foreground)" className="salt-inline-icon" />, label: 'Failed', count: 5, pill: 'accent' },
+      { icon: <CircleInfo size={24} color="var(--salt-status-warning-foreground)" className="salt-inline-icon" />, label: 'Pending user actions', count: 4, pill: 'accent' },
     ],
     [],
   );
 
   const balanceItems = useMemo<BalanceItem[]>(
     () => [
-      { icon: <PiggyBank size={24} className="salt-home-inline-icon" />, label: 'Credits', value: balance.credits },
-      { icon: <Cash size={24} className="salt-home-inline-icon" />, label: 'Debits', value: balance.debits },
+      { icon: <PiggyBank size={24} className="salt-inline-icon" />, label: 'Credits', value: balance.credits },
+      { icon: <Cash size={24} className="salt-inline-icon" />, label: 'Debits', value: balance.debits },
     ],
     [balance.credits, balance.debits],
   );
@@ -88,9 +88,9 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <IonHeader translucent={false}>
-        <IonToolbar className="salt-home-toolbar">
-          <div className="salt-home-toolbar-content">
-            <Text styleAs="h4" className="salt-home-toolbar-title">
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <Text styleAs="h4" className="salt-toolbar-title">
               Welcome, Gavin.
             </Text>
             <div className="salt-home-header-actions">
@@ -117,27 +117,27 @@ const Home: React.FC = () => {
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="salt-home-shell">
-          <StackLayout className="salt-home-content" gap={1}>
-            <Card className="salt-home-card">
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
                 <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
                   <StackLayout gap={0.2}>
                     <Text styleAs="label">
                       {balance.current.label}
                     </Text>
-                    <div className="salt-home-amount">
-                      <Text className="salt-home-current-amount-value">
+                    <div className="salt-amount">
+                      <Text className="salt-current-amount-value">
                         {balance.current.value}
                       </Text>
-                      <Text className="salt-home-current-amount-decimals">
+                      <Text className="salt-current-amount-decimals">
                         {balance.current.decimals}
                       </Text>
                     </div>
                   </StackLayout>
 
                   <Dropdown
-                    className="salt-home-currency-dropdown"
+                    className="salt-currency-dropdown"
                     style={{ width: 'auto', flexShrink: 0 }}
                     selected={[currency]}
                     onSelectionChange={(_, nextSelected) => {
@@ -156,23 +156,23 @@ const Home: React.FC = () => {
                   </Dropdown>
                 </FlexLayout>
 
-                <StackLayout gap={0.2} className="salt-home-prior-balance">
+                <StackLayout gap={0.2} className="salt-balance-section">
                   <Text styleAs="label">
                     {balance.prior.label}
                   </Text>
-                    <div className="salt-home-amount">
-                      <Text className="salt-home-prior-amount-value">
+                    <div className="salt-amount">
+                      <Text className="salt-prior-amount-value">
                         {balance.prior.value}
                       </Text>
-                      <Text className="salt-home-prior-amount-decimals">
+                      <Text className="salt-prior-amount-decimals">
                         {balance.prior.decimals}
                       </Text>
                     </div>
                 </StackLayout>
 
                 {balanceItems.map(item => (
-                  <div key={item.label} className="salt-home-balance-summary">
-                    <FlexLayout align="center" justify="space-between" className="salt-home-balance-row">
+                  <div key={item.label} className="salt-balance-summary">
+                    <FlexLayout align="center" justify="space-between" className="salt-balance-row">
                       <FlexLayout align="center" gap={1}>
                         {item.icon}
                         <Text styleAs="label">{item.label}</Text>
@@ -186,10 +186,10 @@ const Home: React.FC = () => {
               </StackLayout>
             </Card>
 
-            <Card className="salt-home-card">
+            <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
                 {actionItems.map(item => (
-                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
+                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-card-row">
                     <FlexLayout align="center" gap={1}>
                       {item.icon}
                       <Text styleAs="label">{item.label}</Text>
@@ -201,16 +201,16 @@ const Home: React.FC = () => {
             </Card>
 
 
-            <Card className="salt-home-card">
+            <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
-              <FlexLayout key="txms" align="center" justify="space-between" className="salt-home-row">
+              <FlexLayout key="txms" align="center" justify="space-between" className="salt-card-row">
                     <FlexLayout align="center" gap={2}>
                       <Text styleAs="label">File Transmissions</Text>
                     </FlexLayout>
                   </FlexLayout>
 
                 {transmissionItems.map(item => (
-                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-home-row">
+                  <FlexLayout key={item.label} align="center" justify="space-between" className="salt-card-row">
                     <FlexLayout align="center" gap={1}>
                       {item.icon}
                       <Text styleAs="label">{item.label}</Text>
@@ -227,7 +227,7 @@ const Home: React.FC = () => {
           <Button
             appearance="solid"
             sentiment="accented"
-            className="salt-home-primary-action"
+            className="salt-primary-action"
             onClick={handleCaptureDeposit}
           >
             <Camera size={28} />

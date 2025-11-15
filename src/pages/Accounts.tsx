@@ -1,60 +1,116 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonSelect,
-  IonSelectOption,
-} from '@ionic/react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, Dropdown, FlexLayout, Option, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
 import { accountsData } from '../data/accountsData';
+
+import {
+  ArrowForward,
+  ArrowDown,
+  Cash,
+  Filter,
+  PiggyBank,
+  SortDown,
+  SortUp,
+  StarBlank,
+  StarFilled,
+} from '../components/icons';
+
+import './home.css';
 
 type Account = (typeof accountsData)[keyof typeof accountsData];
 
 const mockAccounts: Record<string, Account> = accountsData;
 
+const currencyCodes = ['USD', 'EUR', 'GBP', 'AUD'] as const;
+const timePeriods = ['Current day', 'Prior day', 'Last week'] as const;
+
 const Accounts: React.FC = () => {
   const history = useHistory();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [currency, setCurrency] = useState<(typeof currencyCodes)[number]>('USD');
+  const [timePeriod, setTimePeriod] = useState<(typeof timePeriods)[number]>('Current day');
   const [accounts, setAccounts] = useState<Record<string, Account>>(() => {
     const savedAccounts = localStorage.getItem('accounts');
     return savedAccounts ? JSON.parse(savedAccounts) : mockAccounts;
   });
-  const [sortedAccounts, setSortedAccounts] = useState<Account[]>([]);
-
-  React.useEffect(() => {
-    const sorted = Object.values(accounts).sort((a, b) => {
+  
+  // Store the display order separately - only changes when sort button is clicked
+  // Initialize with sorted order
+  const getSortedAccountIds = (accountsToSort: Record<string, Account>, order: 'asc' | 'desc') => {
+    const accountList = Object.values(accountsToSort);
+    const sorted = [...accountList].sort((a, b) => {
+      // First, prioritize starred accounts (starred comes first)
       if (a.isStarred && !b.isStarred) return -1;
       if (!a.isStarred && b.isStarred) return 1;
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
-      return sortOrder === 'asc'
-        ? nameA.localeCompare(nameB)
-        : nameB.localeCompare(nameA);
+      
+      // If both have the same starred status, sort alphabetically by name
+      const nameA = a.name.trim().toLowerCase();
+      const nameB = b.name.trim().toLowerCase();
+      
+      // Sort by name according to sortOrder (A-Z for asc, Z-A for desc)
+      const comparison = nameA.localeCompare(nameB, 'en', { numeric: true, sensitivity: 'base' });
+      return order === 'asc' ? comparison : -comparison;
     });
-    setSortedAccounts(sorted);
-  }, [accounts, sortOrder]);
+    return sorted.map(acc => acc.id);
+  };
+  
+  const [displayOrder, setDisplayOrder] = useState<string[]>(() => {
+    // Initialize with sorted order from initial accounts
+    const initialAccounts = (() => {
+      const savedAccounts = localStorage.getItem('accounts');
+      return savedAccounts ? JSON.parse(savedAccounts) : mockAccounts;
+    })();
+    return getSortedAccountIds(initialAccounts, 'asc');
+  });
+  
+  // Track the latest accounts using a ref to avoid dependency issues
+  const accountsRef = useRef(accounts);
+  useEffect(() => {
+    accountsRef.current = accounts;
+  }, [accounts]);
+  
+  // Update display order only when sortOrder changes (sort button clicked)
+  // Use ref to get latest accounts without including it in dependencies
+  useEffect(() => {
+    const currentAccounts = accountsRef.current;
+    if (!currentAccounts || Object.keys(currentAccounts).length === 0) {
+      return;
+    }
+    
+    // Re-sort and update display order
+    const newDisplayOrder = getSortedAccountIds(currentAccounts, sortOrder);
+    setDisplayOrder(newDisplayOrder);
+  }, [sortOrder]); // Only depend on sortOrder - not accounts
+  
+  // Use displayOrder to maintain order when accounts change (e.g., star clicks)
+  // This preserves the current display order even when account data changes
+  const displayedAccounts = useMemo(() => {
+    if (!accounts || Object.keys(accounts).length === 0 || displayOrder.length === 0) {
+      return [];
+    }
+    
+    // Create a map of accounts by ID for quick lookup
+    const accountsById = Object.values(accounts).reduce((acc, account) => {
+      acc[account.id] = account;
+      return acc;
+    }, {} as Record<string, Account>);
+    
+    // Return accounts in displayOrder, filtering out any that no longer exist
+    // This maintains the order from displayOrder even when account data changes
+    return displayOrder
+      .map(id => accountsById[id])
+      .filter((account): account is Account => account !== undefined);
+  }, [accounts, displayOrder]);
 
   const handleAccountClick = (accountId: string) => {
     history.push(`/accounts/account-details/${accountId}`);
   };
 
   const handleSortClick = () => {
+    // Trigger re-sort by changing sortOrder
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
-    const sorted = Object.values(accounts).sort((a: Account, b: Account) => {
-      const nameA = a.name.toLowerCase();
-      const nameB = b.name.toLowerCase();
-      return newSortOrder === 'asc'
-        ? nameA.localeCompare(nameB)
-        : nameB.localeCompare(nameA);
-    });
-    setSortedAccounts(sorted);
   };
 
   const handleStarClick = (accountId: string, event: React.MouseEvent) => {
@@ -68,139 +124,246 @@ const Accounts: React.FC = () => {
     };
     setAccounts(updatedAccounts);
     localStorage.setItem('accounts', JSON.stringify(updatedAccounts));
-    setSortedAccounts(prevSorted =>
-      prevSorted.map(account =>
-        account.id === accountId
-          ? { ...account, isStarred: !account.isStarred }
-          : account
-      )
-    );
+    // Remove direct setSortedAccounts - let useEffect handle re-sorting
   };
+
+  // Calculate totals from all accounts
+  const totals = useMemo(() => {
+    const allAccounts = Object.values(accounts);
+    const currentAvailable = allAccounts
+      .reduce((sum, acc) => {
+        const balance = parseFloat(acc.currentBalance.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+        return sum + balance;
+      }, 0)
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      .replace(',', ' ');
+    
+    const openingBalance = allAccounts
+      .reduce((sum, acc) => {
+        const balance = parseFloat(acc.openingBalance.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+        return sum + balance;
+      }, 0)
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      .replace(',', ' ');
+    
+    const currentBalance = currentAvailable;
+    
+    const credits = allAccounts
+      .reduce((sum, acc) => {
+        const credit = parseFloat(acc.credits.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+        return sum + credit;
+      }, 0)
+      .toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      .replace(',', ' ');
+    
+    const debits = allAccounts
+      .reduce((sum, acc) => {
+        const debit = parseFloat(acc.debits.replace(/[^\d,.-]/g, '').replace(/[()]/g, '').replace(',', '.')) || 0;
+        return sum + debit;
+      }, 0);
+    
+    return {
+      currentAvailable: {
+        value: currentAvailable.split('.')[0].replace(/\s/g, ' '),
+        decimals: '.' + currentAvailable.split('.')[1],
+      },
+      openingBalance: {
+        value: openingBalance.split('.')[0].replace(/\s/g, ' '),
+        decimals: '.' + openingBalance.split('.')[1],
+      },
+      currentBalance: {
+        value: currentBalance.split('.')[0].replace(/\s/g, ' '),
+        decimals: '.' + currentBalance.split('.')[1],
+      },
+      credits,
+      debits: `(${debits.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(',', ' ')})`,
+    };
+  }, [accounts]);
+
+  const balanceItems = useMemo(
+    () => [
+      { icon: <PiggyBank size={24} className="salt-inline-icon" />, label: 'Credits', value: totals.credits },
+      { icon: <Cash size={24} className="salt-inline-icon" />, label: 'Debits', value: totals.debits },
+    ],
+    [totals.credits, totals.debits],
+  );
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex w-full items-center justify-between gap-4 py-2">
-            <div className="flex min-w-[64px] justify-start" />
-            <div className="flex flex-1 flex-col items-center gap-2 text-center">
-              <IonTitle className="text-base font-semibold text-slate-800">
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left" />
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
                 Accounts
-              </IonTitle>
-              <IonSelect
-                value="Current day"
-                interface="popover"
-                className="rounded-full border border-slate-200 px-4 py-1 text-sm font-medium text-slate-600"
+              </Text>
+              <Dropdown
+                className="salt-period-dropdown"
+                style={{ width: 'auto' }}
+                selected={[timePeriod]}
+                onSelectionChange={(_, nextSelected) => {
+                  if (nextSelected[0]) {
+                    setTimePeriod(nextSelected[0] as (typeof timePeriods)[number]);
+                  }
+                }}
+                valueToString={item => item}
+                variant="secondary"
               >
-                <IonSelectOption value="Current day">Current day</IonSelectOption>
-                <IonSelectOption value="Prior day">Prior day</IonSelectOption>
-                <IonSelectOption value="Last week">Last week</IonSelectOption>
-              </IonSelect>
+                {timePeriods.map(period => (
+                  <Option key={period} value={period}>
+                    {period}
+                  </Option>
+                ))}
+              </Dropdown>
             </div>
-            <div className="flex min-w-[64px] justify-end">
-              <img
-                src={sortOrder === 'asc' ? '/images/SortDown.svg' : '/images/SortUp.svg'}
-                alt="Sort"
-                className="h-6 w-6 cursor-pointer"
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                className="salt-filter-button"
                 onClick={handleSortClick}
-              />
+                aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
+              >
+                {sortOrder === 'asc' ? (
+                  <SortDown size={20} className="salt-filter-icon" />
+                ) : (
+                  <SortUp size={20} className="salt-filter-icon" />
+                )}
+              </Button>
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-6 bg-slate-100 p-4 pb-16">
-          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
-            <IonCardContent className="flex flex-col gap-4 p-4">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <IonText color="medium">
-                    <p className="text-sm font-medium text-slate-500">Current available</p>
-                  </IonText>
-                  <IonText>
-                    <h2 className="text-3xl font-semibold text-slate-900">
-                      1 063 261<span className="text-lg text-slate-500">,52</span>
-                    </h2>
-                  </IonText>
-                </div>
-                <IonSelect
-                  value="USD"
-                  interface="popover"
-                  className="rounded-full border border-slate-200 px-4 py-1 text-sm font-medium text-slate-600"
-                >
-                  <IonSelectOption value="USD">USD</IonSelectOption>
-                  <IonSelectOption value="EUR">EUR</IonSelectOption>
-                  <IonSelectOption value="GBP">GBP</IonSelectOption>
-                </IonSelect>
-              </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            <Card className="salt-card">
+              <StackLayout gap={0} className="salt-card-section">
+                <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
+                  <StackLayout gap={0.2}>
+                    <Text styleAs="label">
+                      Current available
+                    </Text>
+                    <div className="salt-amount">
+                      <Text className="salt-current-amount-value">
+                        {totals.currentAvailable.value}
+                      </Text>
+                      <Text className="salt-current-amount-decimals">
+                        {totals.currentAvailable.decimals}
+                      </Text>
+                    </div>
+                  </StackLayout>
 
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
-                <span>Opening balance</span>
-                <span className="font-semibold text-slate-800">1 063 261,52</span>
-              </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
-                <span>Current balance</span>
-                <span className="font-semibold text-slate-800">1 063 261,52</span>
-              </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                  <img src="/images/PiggyBank.svg" alt="Credits" className="h-5 w-5" />
-                  <span>Credits</span>
-                </div>
-                <span className="font-semibold text-slate-800">0,00</span>
-              </div>
-              <div className="flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                  <img src="/images/VisibilityOn.svg" alt="Debits" className="h-5 w-5" />
-                  <span>Debits</span>
-                </div>
-                <span className="font-semibold text-slate-800">(0,00)</span>
-              </div>
-            </IonCardContent>
-          </IonCard>
+                  <Dropdown
+                    className="salt-currency-dropdown"
+                    style={{ width: 'auto', flexShrink: 0 }}
+                    selected={[currency]}
+                    onSelectionChange={(_, nextSelected) => {
+                      if (nextSelected[0]) {
+                        setCurrency(nextSelected[0] as (typeof currencyCodes)[number]);
+                      }
+                    }}
+                    valueToString={item => item}
+                    variant="secondary"
+                  >
+                    {currencyCodes.map(code => (
+                      <Option key={code} value={code}>
+                        {code}
+                      </Option>
+                    ))}
+                  </Dropdown>
+                </FlexLayout>
 
-          <section>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-900">Accounts</h3>
-              <span className="text-sm text-slate-500">{sortedAccounts.length} total</span>
+                <div className="salt-balance-row">
+                  <FlexLayout align="center" justify="space-between">
+                    <Text styleAs="label">Opening balance</Text>
+                    <div className="salt-amount">
+                      <Text className="salt-balance-value">
+                        {totals.openingBalance.value}
+                      </Text>
+                      <Text className="salt-balance-decimals">
+                        {totals.openingBalance.decimals}
+                      </Text>
+                    </div>
+                  </FlexLayout>
+                </div>
+
+                <div className="salt-balance-row">
+                  <FlexLayout align="center" justify="space-between">
+                    <Text styleAs="label">Current balance</Text>
+                    <div className="salt-amount">
+                      <Text className="salt-balance-value">
+                        {totals.currentBalance.value}
+                      </Text>
+                      <Text className="salt-balance-decimals">
+                        {totals.currentBalance.decimals}
+                      </Text>
+                    </div>
+                  </FlexLayout>
+                </div>
+
+                {balanceItems.map(item => (
+                  <div key={item.label} className="salt-balance-summary">
+                    <FlexLayout align="center" justify="space-between" className="salt-balance-row">
+                      <FlexLayout align="center" gap={1}>
+                        {item.icon}
+                        <Text styleAs="label">{item.label}</Text>
+                      </FlexLayout>
+                      <Text styleAs="action">
+                        {item.value}
+                      </Text>
+                    </FlexLayout>
+                  </div>
+                ))}
+              </StackLayout>
+            </Card>
+
+            <div className="salt-list-header">
+              <Text styleAs="h3" className="salt-list-title">
+                Accounts
+              </Text>
             </div>
-            <div className="space-y-3">
-              {sortedAccounts.map((account: Account) => (
-                <IonCard
+
+            <StackLayout gap={1} className="salt-list">
+              {displayedAccounts.map((account: Account) => (
+                <Card
                   key={account.id}
-                  className="cursor-pointer rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
+                  className="salt-account-card"
                   onClick={() => handleAccountClick(account.id)}
                 >
-                  <IonCardContent className="flex items-center gap-4 p-4">
-                    <button
-                      type="button"
-                      onClick={e => handleStarClick(account.id, e)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white hover:border-teal-primary"
+                  <FlexLayout align="center" justify="space-between" className="salt-account-row">
+                    <Button
+                      appearance="transparent"
+                      sentiment="neutral"
+                      className="salt-star-button"
+                      onClick={(e: React.MouseEvent) => handleStarClick(account.id, e)}
+                      aria-label={account.isStarred ? 'Unstar account' : 'Star account'}
                     >
-                      <img
-                        src={account.isStarred ? '/images/StarFilled.svg' : '/images/StarBlank.svg'}
-                        alt="Star account"
-                        className="h-5 w-5"
-                      />
-                    </button>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-base font-semibold text-slate-900">
+                      {account.isStarred ? (
+                        <StarFilled size={20} className="salt-star-icon salt-star-icon-filled" />
+                      ) : (
+                        <StarBlank size={20} className="salt-star-icon" />
+                      )}
+                    </Button>
+                    <div className="salt-account-info">
+                      <Text styleAs="h4" className="salt-account-name">
                         {account.name}
-                        <span className="ml-2 text-sm font-medium text-slate-500">
-                          {account.number}
+                        <span className="salt-account-number">
+                          {' '}({account.number.replace(/[()]/g, '').replace('...', '')})
                         </span>
-                      </p>
-                      <p className="mt-1 text-sm text-slate-500">
+                      </Text>
+                      <Text styleAs="label" className="salt-account-balance">
                         {account.currency} {account.currentBalance}
-                      </p>
+                      </Text>
                     </div>
-                    <img src="/images/ArrowForward.svg" alt="Go to account" className="h-5 w-5" />
-                  </IonCardContent>
-                </IonCard>
+                    <ArrowForward size={20} className="salt-arrow-icon" />
+                  </FlexLayout>
+                </Card>
               ))}
-            </div>
-          </section>
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

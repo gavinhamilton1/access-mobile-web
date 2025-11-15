@@ -1,6 +1,14 @@
 import React, { useMemo, useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import {
+  ArrowForward,
+  Filter,
+  ListCheck,
+  Search,
+} from '../components/icons';
+import './home.css';
 
 const mockPayments = {
   approve: [
@@ -145,146 +153,173 @@ const Payments: React.FC = () => {
     });
   };
 
-  const tabButtonClasses = (tab: 'approve' | 'release') =>
-    `flex-1 rounded-full px-4 py-2 text-center text-sm font-semibold transition ${
-      activeTab === tab
-        ? 'bg-slate-900 text-white shadow'
-        : 'bg-white text-slate-600 border border-slate-200'
-    }`;
-
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4 pb-3">
-          <div className="flex items-center justify-between gap-3 py-2">
-            <button
-              type="button"
-              onClick={handleSelectToggle}
-              className="text-sm font-semibold text-slate-600"
-            >
-              {isSelectMode ? 'Cancel' : 'Select'}
-            </button>
-            <IonTitle className="text-base font-semibold text-slate-800">
-              Pending payments
-            </IonTitle>
-            <button type="button" className="text-sm font-semibold text-slate-600">
-              History
-            </button>
-          </div>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <StackLayout gap={1} className="salt-toolbar-content">
+            <FlexLayout align="center" justify="space-between" gap={2}>
+              <Text styleAs="h4" className="salt-toolbar-title" style={{ flex: 1 }}>
+                Pending payments
+              </Text>
+              {!isSelectMode && (
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  style={{
+                    padding: `0 var(--salt-spacing-100)`,
+                    minWidth: 'auto',
+                  }}
+                >
+                  <Text styleAs="label">History</Text>
+                </Button>
+              )}
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleSelectToggle}
+                style={{
+                  padding: `0 var(--salt-spacing-100)`,
+                  minWidth: 'auto',
+                }}
+              >
+                {isSelectMode ? (
+                  <Text styleAs="label">Cancel</Text>
+                ) : (
+                  <ListCheck size={20} className="salt-inline-icon" />
+                )}
+              </Button>
+            </FlexLayout>
 
-          <div className="flex items-center justify-between gap-3 rounded-full border border-slate-200 bg-white px-4 py-2">
-            <div className="flex flex-1 items-center gap-3">
-              <img src="/images/Search.svg" alt="Search" className="h-5 w-5 opacity-70" />
-              <input
-                type="search"
-                placeholder={activeTab === 'approve' ? 'Search approvals' : 'Search releases'}
-                className="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
-              />
+            <FlexLayout align="center" gap={1} style={{ width: '100%', padding: 'var(--salt-spacing-100) 0' }}>
+              <FlexLayout align="center" gap={1} className="salt-search-input">
+                <Search size={20} className="salt-icon-subtle salt-inline-icon" />
+                <input
+                  type="search"
+                  placeholder={activeTab === 'approve' ? 'Search approvals' : 'Search releases'}
+                />
+              </FlexLayout>
+              <Button
+                appearance="bordered"
+                sentiment="neutral"
+                className="salt-icon-button-circular"
+                aria-label="Filter"
+              >
+                <Filter size={20} className="salt-filter-icon salt-inline-icon" />
+              </Button>
+            </FlexLayout>
+
+            <div className="salt-payments-tabs">
+              <button
+                type="button"
+                className={`salt-payments-tab ${activeTab === 'approve' ? 'salt-payments-tab-active' : ''}`}
+                onClick={() => {
+                  if (activeTab !== 'approve') {
+                    clearSelection();
+                    setActiveTab('approve');
+                  }
+                }}
+              >
+                <Text styleAs="label">Approve</Text>
+              </button>
+              <button
+                type="button"
+                className={`salt-payments-tab ${activeTab === 'release' ? 'salt-payments-tab-active' : ''}`}
+                onClick={() => {
+                  if (activeTab !== 'release') {
+                    clearSelection();
+                    setActiveTab('release');
+                  }
+                }}
+              >
+                <Text styleAs="label">Release</Text>
+              </button>
             </div>
-            <button type="button" className="rounded-full border border-slate-200 p-2">
-              <img src="/images/Filter.svg" alt="Filter" className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="mt-3 flex gap-2">
-            <button type="button" className={tabButtonClasses('approve')} onClick={() => {
-              if (activeTab !== 'approve') {
-                clearSelection();
-                setActiveTab('approve');
-              }
-            }}>
-              Approve
-            </button>
-            <button type="button" className={tabButtonClasses('release')} onClick={() => {
-              if (activeTab !== 'release') {
-                clearSelection();
-                setActiveTab('release');
-              }
-            }}>
-              Release
-            </button>
-          </div>
+          </StackLayout>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-6 bg-slate-100 p-4 pb-24">
-          {groupedPayments.map(group => (
-            <section key={group.date} className="space-y-3">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-500">
-                  Cut-off date {group.date}
-                </p>
-                {isSelectMode && (
-                  <span className="text-xs font-medium text-slate-400">
-                    Tap a payment to toggle selection
-                  </span>
-                )}
-              </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content-wide" gap={2}>
+            {groupedPayments.map(group => (
+              <StackLayout key={group.date} gap={1}>
+                <Text styleAs="label" className="salt-list-title">
+                  Value date {group.date}
+                </Text>
 
-              {group.payments.map(payment => {
-                const isSelected = selectedItems.has(payment.id);
-                return (
-                  <div
-                    key={payment.id}
-                    onClick={() => (isSelectMode ? handleItemSelect(payment.id) : undefined)}
-                    className={`flex cursor-pointer flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-teal-primary/70 hover:shadow-md ${
-                      isSelectMode && isSelected ? 'ring-2 ring-teal-primary' : ''
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      {isSelectMode && (
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => handleItemSelect(payment.id)}
-                          className="mt-1 h-4 w-4 rounded border-slate-300 text-teal-primary focus:ring-teal-primary"
-                        />
-                      )}
-                      <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="space-y-1">
-                          <p className="text-base font-semibold text-slate-900">{payment.id}</p>
-                          <p className="text-sm text-slate-500">{payment.from}</p>
-                        </div>
-                        <div className="flex flex-col items-start gap-2 text-sm text-slate-500 sm:items-end">
-                          <div className="flex items-center gap-2">
-                            <span>{payment.type}</span>
-                            <img src="/images/ArrowForward.svg" alt="Go" className="h-4 w-4" />
-                          </div>
-                          <p className="text-base font-semibold text-slate-900">{payment.amount}</p>
-                          <div className="flex items-center gap-2 text-amber-600">
-                            <img src="/images/Warning.svg" alt="Warning" className="h-5 w-5" />
-                            <span className="text-sm font-medium">{payment.status}</span>
-                          </div>
-                        </div>
+                <StackLayout gap={0}>
+                  {group.payments.map(payment => {
+                    const isSelected = selectedItems.has(payment.id);
+                    return (
+                      <div
+                        key={payment.id}
+                        className={`salt-list-item ${isSelectMode ? 'salt-list-item-has-checkbox' : ''} ${isSelectMode && isSelected ? 'salt-list-item-selected' : ''}`}
+                        onClick={() => (isSelectMode ? handleItemSelect(payment.id) : undefined)}
+                      >
+                        {isSelectMode && (
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleItemSelect(payment.id)}
+                            className="salt-list-item-checkbox"
+                          />
+                        )}
+                        <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
+                          <StackLayout gap={0.2}>
+                            <Text styleAs="h4">
+                              {payment.id}
+                            </Text>
+                            <Text styleAs="label">
+                              {payment.from}
+                            </Text>
+                          </StackLayout>
+                          <StackLayout gap={0.5} align="end">
+                            <FlexLayout align="center" gap={1}>
+                              <Text styleAs="label">
+                                {payment.type}
+                              </Text>
+                              <ArrowForward size={16} className="salt-inline-icon" />
+                            </FlexLayout>
+                            <Text styleAs="h4">
+                              {payment.amount}
+                            </Text>
+                          </StackLayout>
+                        </FlexLayout>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </section>
-          ))}
+                    );
+                  })}
+                </StackLayout>
+              </StackLayout>
+            ))}
+          </StackLayout>
         </div>
       </IonContent>
 
-      {selectedItems.size > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-50 flex gap-3 bg-white px-4 pb-6 pt-4 shadow-lg">
-          <button
-            type="button"
-            className="flex-1 rounded-full border border-teal-primary px-4 py-3 text-sm font-semibold text-teal-primary"
-            onClick={clearSelection}
-          >
-            Reject ({selectedItems.size})
-          </button>
-          <button
-            type="button"
-            className="flex-1 rounded-full bg-teal-primary px-4 py-3 text-sm font-semibold text-white shadow"
-            onClick={() => handleActionClick(activeTab)}
-          >
-            {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
-          </button>
-        </div>
-      )}
+          {selectedItems.size > 0 && (
+            <div className="salt-action-bar">
+              <FlexLayout gap={1} className="salt-action-bar-buttons">
+                <Button
+                  appearance="bordered"
+                  sentiment="neutral"
+                  className="salt-action-bar-button salt-action-bar-button-reject"
+                  onClick={clearSelection}
+                >
+                  <Text styleAs="label">Reject ({selectedItems.size})</Text>
+                </Button>
+                <Button
+                  appearance="solid"
+                  sentiment="accented"
+                  className="salt-action-bar-button salt-action-bar-button-primary"
+                  onClick={() => handleActionClick(activeTab)}
+                >
+                  <Text styleAs="label">
+                    {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
+                  </Text>
+                </Button>
+              </FlexLayout>
+            </div>
+          )}
     </IonPage>
   );
 };

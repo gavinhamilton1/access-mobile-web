@@ -1,9 +1,10 @@
-.salt-home-shell {
+/* Generic page styles */
+.salt-page-shell {
   min-height: 100%;
   background: var(--salt-container-primary-background);
 }
 
-.salt-home-toolbar {
+.salt-toolbar {
   --background: var(--salt-container-primary-background);
   --color: var(--salt-content-primary-foreground);
   --border-width: 0;
@@ -11,10 +12,10 @@
   --box-shadow: none;
   border-bottom: none !important;
   box-shadow: none !important;
-  padding: 0 var(--salt-spacing-200);
+  padding: 0;
 }
 
-.salt-home-toolbar-content {
+.salt-toolbar-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -22,7 +23,7 @@
   height: 100%;
 }
 
-.salt-home-toolbar-title {
+.salt-toolbar-title {
   font-weight: 600;
   letter-spacing: 0.01em;
 }
@@ -76,10 +77,15 @@
   height: 20px;
 }
 
-.salt-home-content {
+.salt-page-content {
   padding: var(--salt-spacing-150);
   padding-bottom: var(--salt-spacing-300);
   gap: var(--salt-spacing-200);
+}
+
+.salt-page-content-wide {
+    padding: var(--salt-spacing-150) 0 var(--salt-spacing-150) 0;
+    gap: var(--salt-spacing-200);
 }
 
 .salt-card-section {
@@ -91,51 +97,61 @@
 .salt-card-section-top-row {
     padding-top: var(--salt-spacing-100);
 }
-.salt-home-card {
+.salt-card {
   background: var(--salt-container-secondary-background);
   border: 1px solid var(--salt-separable-secondary-borderColor);
   border-radius: 10px;
   padding: 0px;
 }
 
-.salt-home-prior-balance {
-    padding-top: var(--salt-spacing-100);
-    padding-bottom: var(--salt-spacing-100);
+.salt-balance-section {
+  padding-top: var(--salt-spacing-100);
+  padding-bottom: var(--salt-spacing-100);
 }
 
-.salt-home-amount {
+.salt-amount {
   display: flex;
   align-items: baseline;
 }
 
-.salt-home-current-amount-value {
-    font-size: 1.5rem;
-  }
-  
-.salt-home-current-amount-decimals {
-    font-size: 0.8rem;
-}
-  
-
-.salt-home-prior-amount-value {
-  font-size: 1.2rem;
+.salt-current-amount-value {
+  font-size: 1.5rem;
 }
 
-.salt-home-prior-amount-decimals {
+.salt-current-amount-decimals {
   font-size: 0.8rem;
 }
 
-.salt-home-balance-summary {
+.salt-prior-amount-value {
+  font-size: 1.2rem;
+}
+
+.salt-prior-amount-decimals {
+  font-size: 0.8rem;
+}
+
+.salt-balance-value {
+  font-size: 1rem;
+}
+
+.salt-balance-decimals {
+  font-size: 0.8rem;
+}
+
+.salt-balance-summary {
   border-top: 1px solid var(--salt-separable-secondary-borderColor);
   margin-left: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
   margin-right: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
   padding: var(--salt-spacing-100) var(--salt-spacing-150);
 }
 
-
-.salt-home-inline-icon {
+.salt-inline-icon {
   /* Size is controlled by the size prop on the icon component */
   flex-shrink: 0;
+}
+
+.salt-icon-subtle {
+  opacity: 0.7;
 }
 
 .salt-home-number-positive {
@@ -148,16 +164,21 @@
   font-weight: 600;
 }
 
-.salt-home-row {
+.salt-card-row {
   padding: var(--salt-spacing-100) 0;
 }
 
-.salt-home-card .salt-home-row + .salt-home-row {
+.salt-card .salt-card-row + .salt-card-row {
   border-top: 1px solid var(--salt-separable-secondary-borderColor);
   margin-left: calc(var(--salt-spacing-150) * -1);
   margin-right: calc(var(--salt-spacing-150) * -1);
   padding-left: var(--salt-spacing-150);
   padding-right: var(--salt-spacing-150);
+}
+
+.salt-balance-row {
+  padding-top: var(--salt-spacing-100);
+  padding-bottom: var(--salt-spacing-100);
 }
 
 .salt-home-dot {
@@ -206,14 +227,6 @@
   color: var(--salt-status-warning-foreground);
 }
 
-.salt-home-currency-dropdown {
-  display: flex;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  min-width: fit-content;
-  font-size: 0.8rem;
-}
-
 .salt-home-fab {
   position: sticky;
   bottom: var(--salt-spacing-100);
@@ -221,7 +234,7 @@
   justify-content: center;
 }
 
-.salt-home-primary-action {
+.salt-primary-action {
   max-width: 320px;
   width: 100%;
   border-radius: 999px;
@@ -237,6 +250,285 @@
   --saltButton-borderColor: var(--salt-actionable-accented-bold-borderColor, #137e96);
   --saltButton-foreground: var(--salt-actionable-accented-bold-foreground, #ffffff);
 }
+
+/* Accounts page specific styles */
+.salt-header-left {
+  min-width: 64px;
+}
+
+.salt-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--salt-spacing-100);
+  flex: 1;
+}
+
+.salt-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 64px;
+}
+
+.salt-period-dropdown {
+  font-size: 0.8rem;
+  min-width: fit-content;
+}
+
+.salt-period-dropdown .saltDropdown {
+  justify-content: center;
+  min-height: auto;
+  height: auto;
+  font-size: 0.75rem;
+  width: auto;
+  min-width: auto;
+  padding: var(--salt-spacing-50) var(--salt-spacing-100);
+  line-height: 1.2;
+}
+
+.salt-filter-button {
+  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-height: 100%;
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 0;
+}
+
+.salt-filter-icon,
+.salt-alert-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--salt-content-primary-foreground);
+}
+
+.salt-list-header {
+  padding: var(--salt-spacing-100) 0;
+}
+
+.salt-list-title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.salt-list {
+  gap: var(--salt-spacing-150);
+}
+
+.salt-account-card {
+  background: var(--salt-container-secondary-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: 10px;
+  padding: var(--salt-spacing-150);
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.salt-account-card:hover {
+  border-color: var(--salt-accent-background);
+}
+
+.salt-account-row {
+  align-items: center;
+  gap: var(--salt-spacing-150);
+}
+
+.salt-star-button {
+  --saltButton-padding: 0;
+  --saltButton-height: auto;
+  flex-shrink: 0;
+  padding: 0;
+  min-width: auto;
+  width: auto;
+}
+
+.salt-star-icon,
+.salt-arrow-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--salt-content-primary-foreground);
+  flex-shrink: 0;
+}
+
+.salt-star-icon-filled {
+  color: var(--salt-status-warning-foreground);
+}
+
+.salt-account-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--salt-spacing-50);
+}
+
+.salt-account-name {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.salt-account-number {
+  font-weight: 500;
+  color: var(--salt-content-secondary-foreground);
+}
+
+.salt-account-balance {
+  color: var(--salt-content-secondary-foreground);
+}
+
+/* Generic search input */
+.salt-search-input {
+  flex: 1;
+  align-items: center;
+  gap: var(--salt-spacing-100);
+  background: var(--salt-container-secondary-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: 999px;
+  padding: var(--salt-spacing-100) var(--salt-spacing-150);
+}
+
+.salt-search-input input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--salt-content-primary-foreground);
+  font-family: inherit;
+}
+
+.salt-search-input input::placeholder {
+  color: var(--salt-content-secondary-foreground);
+}
+
+/* Generic circular icon button */
+.salt-icon-button-circular {
+  --saltButton-padding: var(--salt-spacing-100);
+  --saltButton-height: auto;
+  min-width: auto;
+  border-radius: 999px;
+}
+
+/* Generic list item */
+.salt-list-item {
+  background: var(--salt-container-secondary-background);
+  border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+  padding: var(--salt-spacing-150);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+  width: 100%;
+}
+
+.salt-list-item:hover {
+  background: var(--salt-container-primary-background);
+}
+
+.salt-list-item-selected {
+  background: color-mix(in srgb, var(--salt-accent-background) 10%, var(--salt-container-secondary-background));
+}
+
+/* Generic checkbox for list items */
+.salt-list-item-checkbox {
+  position: absolute;
+  top: var(--salt-spacing-150);
+  left: var(--salt-spacing-150);
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  accent-color: var(--salt-accent-background);
+  cursor: pointer;
+  z-index: 1;
+}
+
+.salt-list-item-has-checkbox .salt-list-item-content {
+  padding-left: calc(16px + var(--salt-spacing-100));
+}
+
+/* Generic fixed bottom action bar */
+.salt-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--salt-container-primary-background);
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+  padding: var(--salt-spacing-150);
+  padding-bottom: calc(var(--salt-spacing-150) + env(safe-area-inset-bottom));
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.salt-action-bar-buttons {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.salt-action-bar-button {
+  flex: 1;
+  border-radius: 999px;
+  --saltButton-padding: var(--salt-spacing-150) var(--salt-spacing-200);
+}
+
+.salt-action-bar-button-reject {
+  --saltButton-background: transparent;
+  --saltButton-borderColor: var(--salt-accent-background);
+  --saltButton-foreground: var(--salt-accent-foreground);
+}
+
+.salt-action-bar-button-primary {
+  --saltButton-background: var(--salt-actionable-accented-bold-background);
+  --saltButton-borderColor: var(--salt-actionable-accented-bold-borderColor);
+  --saltButton-foreground: var(--salt-actionable-accented-bold-foreground);
+}
+
+/* Payments page specific styles - tabs only */
+
+.salt-payments-tabs {
+  display: flex;
+  width: 100%;
+  gap: var(--salt-spacing-200);
+  border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+}
+
+.salt-payments-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--salt-spacing-100) 0;
+  cursor: pointer;
+  color: var(--salt-content-secondary-foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  text-align: center;
+}
+
+.salt-payments-tab:hover {
+  color: var(--salt-content-primary-foreground);
+}
+
+.salt-payments-tab-active {
+  color: var(--salt-accent-foreground);
+  border-bottom-color: var(--salt-accent-background);
+  font-weight: 600;
+}
+
+.salt-payments-tab .saltText {
+  pointer-events: none;
+}
+
+
 
 
 
