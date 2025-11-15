@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonCard,
-  IonCardContent,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { CircleCheck } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   captureType?: string;
@@ -42,59 +36,83 @@ const DepositSuccess: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <div className="min-w-[64px]" />
-            <IonTitle className="text-base font-semibold text-slate-800">Deposit submitted</IonTitle>
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleDone}
-            >
-              Done
-            </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left" />
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Deposit submitted
+              </Text>
+            </div>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleDone}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Done</Text>
+              </Button>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="flex min-h-full flex-col items-center bg-slate-100 px-4 py-10">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 shadow-sm">
-            <img src="/images/CircleCheck.svg" alt="Success" className="h-10 w-10 text-emerald-600" />
-          </div>
-          <h1 className="mt-6 text-2xl font-semibold text-slate-900">Deposit submitted</h1>
-          <p className="mt-2 text-sm text-slate-500">We’re processing your transaction now.</p>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2} style={{ alignItems: 'center', paddingTop: 'var(--salt-spacing-300)' }}>
+            <div style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '999px', 
+              background: 'var(--salt-status-success-background)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+            }}>
+              <CircleCheck size={40} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />
+            </div>
+            
+            <StackLayout gap={0.5} style={{ textAlign: 'center' }}>
+              <Text styleAs="h2">Deposit submitted</Text>
+              <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                We're processing your transaction now.
+              </Text>
+            </StackLayout>
 
-          <div className="mt-8 w-full max-w-xl space-y-3">
-            {details.map(detail => (
-              <IonCard key={detail.label} className="rounded-2xl border border-slate-200 shadow-sm">
-                <IonCardContent className="flex items-center justify-between gap-4 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    {detail.label}
-                  </p>
-                  <p className="text-sm font-semibold text-slate-900 text-right">{detail.value}</p>
-                </IonCardContent>
-              </IonCard>
-            ))}
-          </div>
+            <StackLayout gap={1} style={{ width: '100%', maxWidth: '512px' }}>
+              {details.map(detail => (
+                <Card key={detail.label} className="salt-card">
+                  <FlexLayout align="center" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                    <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                      {detail.label}
+                    </Text>
+                    <Text styleAs="h4" style={{ textAlign: 'right' }}>{detail.value}</Text>
+                  </FlexLayout>
+                </Card>
+              ))}
+            </StackLayout>
 
-          <div className="mt-10 flex w-full max-w-xl flex-col gap-3">
-            <IonButton
-              fill="outline"
-              className="rounded-full border border-teal-primary py-3 text-sm font-semibold text-teal-primary"
-              onClick={handleCaptureAnother}
-            >
-              Capture another transaction
-            </IonButton>
-            <IonButton
-              expand="block"
-              className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
-              onClick={handleDone}
-            >
-              Back to deposits
-            </IonButton>
-          </div>
+            <StackLayout gap={1} style={{ width: '100%', maxWidth: '512px', marginTop: 'var(--salt-spacing-300)' }}>
+              <Button
+                appearance="bordered"
+                sentiment="neutral"
+                onClick={handleCaptureAnother}
+                style={{ borderRadius: '999px', width: '100%' }}
+              >
+                <Text styleAs="label">Capture another transaction</Text>
+              </Button>
+              <Button
+                appearance="solid"
+                sentiment="accented"
+                onClick={handleDone}
+                style={{ borderRadius: '999px', width: '100%' }}
+              >
+                <Text styleAs="label">Back to deposits</Text>
+              </Button>
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

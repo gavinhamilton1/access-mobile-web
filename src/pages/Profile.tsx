@@ -1,88 +1,100 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonButton,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { Alert, Apps, ArrowForward, Phone, Profile as ProfileIcon, Settings } from '../components/icons';
+import './home.css';
 
 const Profile: React.FC = () => {
   const history = useHistory();
 
   const navigationOptions = [
-    { label: 'Settings', icon: '/images/Settings.svg', action: () => console.log('Navigate to Settings') },
-    { label: 'Support', icon: '/images/Phone.svg', action: () => console.log('Navigate to Support') },
-    { label: 'Notifications', icon: '/images/Alert.svg', action: () => console.log('Navigate to Notifications') },
-    { label: 'App Experience', icon: '/images/Apps.svg', action: () => history.push('/app-experience') },
+    { label: 'Settings', icon: <Settings size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Settings') },
+    { label: 'Support', icon: <Phone size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Support') },
+    { label: 'Notifications', icon: <Alert size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Notifications') },
+    { label: 'App Experience', icon: <Apps size={20} className="salt-inline-icon" />, action: () => history.push('/app-experience') },
   ];
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <div className="min-w-[64px]" />
-            <IonTitle className="text-base font-semibold text-slate-800">Profile</IonTitle>
-            <div className="min-w-[64px]" />
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left" />
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Profile
+              </Text>
+            </div>
+            <div className="salt-header-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-8 bg-slate-100 p-4 pb-16">
-          <IonCard className="rounded-2xl border border-slate-200 shadow-sm">
-            <IonCardContent className="flex items-center gap-3 p-5">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50">
-                <img src="/images/Profile.svg" alt="User" className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">test mobile</p>
-                <p className="text-xs text-slate-500">Corporate banking</p>
-              </div>
-            </IonCardContent>
-          </IonCard>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2}>
+            <Card className="salt-card">
+              <FlexLayout align="center" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                <div style={{ 
+                  width: '48px', 
+                  height: '48px', 
+                  borderRadius: '999px', 
+                  background: 'var(--salt-status-success-background)', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <ProfileIcon size={24} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />
+                </div>
+                <StackLayout gap={0.2}>
+                  <Text styleAs="h4">test mobile</Text>
+                  <Text styleAs="label">Corporate banking</Text>
+                </StackLayout>
+              </FlexLayout>
+            </Card>
 
-          <div className="space-y-3">
-            {navigationOptions.map(option => (
-              <IonCard
-                key={option.label}
-                button
-                onClick={option.action}
-                className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
+            <StackLayout gap={1}>
+              {navigationOptions.map(option => (
+                <Card
+                  key={option.label}
+                  className="salt-card"
+                  onClick={option.action}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <FlexLayout align="center" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                    {option.icon}
+                    <Text styleAs="h4" style={{ flex: 1 }}>{option.label}</Text>
+                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                  </FlexLayout>
+                </Card>
+              ))}
+            </StackLayout>
+
+            <Text styleAs="label" style={{ textAlign: 'center', color: 'var(--salt-content-secondary-foreground)' }}>
+              Last login · 24-Oct-25 at 9:41 PM
+            </Text>
+
+            <StackLayout gap={1}>
+              <Button
+                appearance="bordered"
+                sentiment="neutral"
+                onClick={() => console.log('Give feedback')}
+                style={{ borderRadius: '999px', width: '100%' }}
               >
-                <IonCardContent className="flex items-center gap-3 p-4">
-                  <img src={option.icon} alt="" className="h-5 w-5" />
-                  <span className="flex-1 text-sm font-semibold text-slate-900">{option.label}</span>
-                  <img src="/images/ArrowForward.svg" alt="Go" className="h-5 w-5" />
-                </IonCardContent>
-              </IonCard>
-            ))}
-          </div>
-
-          <div className="text-center text-xs text-slate-400">
-            Last login · 24-Oct-25 at 9:41 PM
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <IonButton
-              fill="outline"
-              className="rounded-full border border-teal-primary py-3 text-sm font-semibold text-teal-primary"
-              onClick={() => console.log('Give feedback')}
-            >
-              Give feedback
-            </IonButton>
-            <IonButton
-              className="rounded-full bg-slate-900 py-3 text-sm font-semibold text-white shadow"
-              onClick={() => console.log('Log out')}
-            >
-              Log out
-            </IonButton>
-          </div>
+                <Text styleAs="label">Give feedback</Text>
+              </Button>
+              <Button
+                appearance="solid"
+                sentiment="neutral"
+                onClick={() => console.log('Log out')}
+                style={{ borderRadius: '999px', width: '100%' }}
+              >
+                <Text styleAs="label">Log out</Text>
+              </Button>
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

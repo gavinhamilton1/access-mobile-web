@@ -1,13 +1,9 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowForward } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   captureType?: string;
@@ -56,54 +52,69 @@ const ChooseSummary: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">Review selection</IonTitle>
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleCancel}
-            >
-              Cancel
-            </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Review selection
+              </Text>
+            </div>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Cancel</Text>
+              </Button>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-4 bg-slate-100 p-4 pb-16">
-          {summaryOptions.map(option => (
-            <button
-              key={option.label}
-              type="button"
-              onClick={option.action}
-              className="flex w-full items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm transition hover:border-teal-primary hover:shadow-md"
-            >
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  {option.label}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-slate-900">{option.value}</p>
-              </div>
-              <img src="/images/ArrowForward.svg" alt="Edit" className="h-5 w-5" />
-            </button>
-          ))}
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            {summaryOptions.map(option => (
+              <Card
+                key={option.label}
+                className="salt-card"
+                onClick={option.action}
+                style={{ cursor: 'pointer' }}
+              >
+                <FlexLayout align="center" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150) var(--salt-spacing-200)' }}>
+                  <StackLayout gap={0.2}>
+                    <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                      {option.label}
+                    </Text>
+                    <Text styleAs="h4">{option.value}</Text>
+                  </StackLayout>
+                  <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                </FlexLayout>
+              </Card>
+            ))}
 
-          <IonButton
-            expand="block"
-            className="mt-4 rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
-            onClick={handleStartCapture}
-          >
-            Continue
-          </IonButton>
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              onClick={handleStartCapture}
+              style={{ borderRadius: '999px', width: '100%', marginTop: 'var(--salt-spacing-200)' }}
+            >
+              <Text styleAs="label">Continue</Text>
+            </Button>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

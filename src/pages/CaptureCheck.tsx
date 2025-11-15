@@ -3,16 +3,16 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
   IonToolbar,
   IonButton,
-  IonIcon,
   IonSpinner,
   IonModal
 } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Retake } from '../components/icons';
 import '../capture-check.css';
-import { eyeOutline } from 'ionicons/icons';
+import './home.css';
 
 // TypeScript declarations for external libraries
 declare global {
@@ -1076,24 +1076,34 @@ const CaptureCheck: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">{getStepTitle()}</IonTitle>
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleCancel}
-            >
-              Cancel
-            </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                {getStepTitle()}
+              </Text>
+            </div>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Cancel</Text>
+              </Button>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
@@ -1154,139 +1164,191 @@ const CaptureCheck: React.FC = () => {
           )}
 
           {detectionStatus && !isExtractionComplete && (
-            <div className="mx-4 mt-2 flex items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-              {(isAutoDetecting || isProcessingOCR) && <IonSpinner name="crescent" />}
-              {isCountingDown && (
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-orange-500 text-xs font-semibold text-white">
-                  {countdown}
-                </span>
-              )}
-              <span>{detectionStatus}</span>
-            </div>
+            <Card className="salt-card" style={{ margin: '0 var(--salt-spacing-150)', marginTop: 'var(--salt-spacing-100)' }}>
+              <FlexLayout align="center" gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                {(isAutoDetecting || isProcessingOCR) && <IonSpinner name="crescent" />}
+                {isCountingDown && (
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '999px',
+                    background: 'var(--salt-status-warning-foreground)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                  }}>
+                    {countdown}
+                  </div>
+                )}
+                <Text styleAs="label" style={{ fontWeight: 600 }}>{detectionStatus}</Text>
+              </FlexLayout>
+            </Card>
           )}
 
           {isExtractionComplete && frontImage && (
-            <div className="w-full max-w-3xl space-y-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <h3 className="text-center text-lg font-semibold text-slate-900">Captured images</h3>
+            <Card className="salt-card" style={{ maxWidth: '768px', width: '100%' }}>
+              <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                <Text styleAs="h3" style={{ textAlign: 'center' }}>Captured images</Text>
 
-              <div className="flex flex-wrap justify-center gap-6">
-                <div className="w-full max-w-sm space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-slate-700">Front</p>
-                    <IonButton
-                      fill="outline"
-                      size="small"
-                      className="flex items-center gap-2 rounded-full border border-blue-500 px-3 py-2 text-xs font-semibold text-blue-500 hover:border-blue-600 hover:text-blue-600"
-                      onClick={() => handleRetakeCapture('front')}
-                    >
-                      <img src="/images/Retake.svg" alt="Retake" className="h-4 w-4" />
-                      Retake
-                    </IonButton>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsPreviewModalOpen(true)}
-                    className="group relative block h-36 w-full overflow-hidden rounded-lg border border-slate-200 bg-white"
-                  >
-                    <img src={frontImage} alt="Front" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
-                      <IonIcon icon={eyeOutline} className="text-xl text-white" />
-                    </div>
-                  </button>
-                </div>
-
-                {backImage && (
-                  <div className="w-full max-w-sm space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-slate-700">Back</p>
-                      <IonButton
-                        fill="outline"
-                        size="small"
-                        className="flex items-center gap-2 rounded-full border border-blue-500 px-3 py-2 text-xs font-semibold text-blue-500 hover:border-blue-600 hover:text-blue-600"
-                        onClick={() => handleRetakeCapture('back')}
+                <FlexLayout gap={2} justify="center" style={{ flexWrap: 'wrap' }}>
+                  <Card className="salt-card" style={{ flex: '1 1 300px', maxWidth: '384px', background: 'var(--salt-container-secondary-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <FlexLayout align="center" justify="space-between">
+                        <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>Front</Text>
+                        <Button
+                          appearance="bordered"
+                          sentiment="neutral"
+                          onClick={() => handleRetakeCapture('front')}
+                          style={{ borderRadius: '999px', padding: `var(--salt-spacing-50) var(--salt-spacing-150)`, fontSize: '0.75rem' }}
+                        >
+                          <Retake size={16} className="salt-inline-icon" />
+                          <Text styleAs="label" style={{ fontSize: '0.75rem' }}>Retake</Text>
+                        </Button>
+                      </FlexLayout>
+                      <button
+                        type="button"
+                        onClick={() => setIsPreviewModalOpen(true)}
+                        style={{
+                          height: '144px',
+                          width: '100%',
+                          borderRadius: '8px',
+                          border: '1px solid var(--salt-separable-secondary-borderColor)',
+                          background: 'var(--salt-container-primary-background)',
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          padding: 0,
+                        }}
                       >
-                        <img src="/images/Retake.svg" alt="Retake" className="h-4 w-4" />
-                        Retake
-                      </IonButton>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setIsPreviewModalOpen(true)}
-                      className="group relative block h-36 w-full overflow-hidden rounded-lg border border-slate-200 bg-white"
-                    >
-                      <img src={backImage} alt="Back" className="h-full w-full object-cover" />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
-                        <IonIcon icon={eyeOutline} className="text-xl text-white" />
-                      </div>
-                    </button>
-                  </div>
+                        <img src={frontImage} alt="Front" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </button>
+                    </StackLayout>
+                  </Card>
+
+                  {backImage && (
+                    <Card className="salt-card" style={{ flex: '1 1 300px', maxWidth: '384px', background: 'var(--salt-container-secondary-background)' }}>
+                      <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                        <FlexLayout align="center" justify="space-between">
+                          <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>Back</Text>
+                          <Button
+                            appearance="bordered"
+                            sentiment="neutral"
+                            onClick={() => handleRetakeCapture('back')}
+                            style={{ borderRadius: '999px', padding: `var(--salt-spacing-50) var(--salt-spacing-150)`, fontSize: '0.75rem' }}
+                          >
+                            <Retake size={16} className="salt-inline-icon" />
+                            <Text styleAs="label" style={{ fontSize: '0.75rem' }}>Retake</Text>
+                          </Button>
+                        </FlexLayout>
+                        <button
+                          type="button"
+                          onClick={() => setIsPreviewModalOpen(true)}
+                          style={{
+                            height: '144px',
+                            width: '100%',
+                            borderRadius: '8px',
+                            border: '1px solid var(--salt-separable-secondary-borderColor)',
+                            background: 'var(--salt-container-primary-background)',
+                            cursor: 'pointer',
+                            overflow: 'hidden',
+                            padding: 0,
+                          }}
+                        >
+                          <img src={backImage} alt="Back" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </button>
+                      </StackLayout>
+                    </Card>
+                  )}
+                </FlexLayout>
+
+                {frontDetailEntries.length > 0 && (
+                  <Card className="salt-card" style={{ borderLeft: '4px solid var(--salt-status-info-background)', background: 'var(--salt-status-info-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem', color: 'var(--salt-status-info-foreground)' }}>
+                        Front – MICR details
+                      </Text>
+                      <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                        {frontDetailEntries.map(detail => (
+                          <Card key={detail.label} className="salt-card" style={{ flex: '1 1 200px', minWidth: '200px', background: 'var(--salt-container-primary-background)' }}>
+                            <StackLayout gap={0.2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-100) var(--salt-spacing-150)' }}>
+                              <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                                {detail.label}
+                              </Text>
+                              <Text styleAs="h4" style={{ fontSize: '0.875rem', wordBreak: 'break-word' }}>{detail.value}</Text>
+                            </StackLayout>
+                          </Card>
+                        ))}
+                      </FlexLayout>
+                    </StackLayout>
+                  </Card>
                 )}
-              </div>
 
-              {frontDetailEntries.length > 0 && (
-                <div className="rounded-xl border-l-4 border-blue-500 bg-blue-50/70 p-4">
-                  <h4 className="text-sm font-semibold text-blue-900">Front – MICR details</h4>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {frontDetailEntries.map(detail => (
-                      <div key={detail.label} className="space-y-1 rounded-lg border border-blue-100 bg-white/80 px-3 py-2">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                          {detail.label}
-                        </p>
-                        <p className="break-words text-sm font-semibold text-slate-900">{detail.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {backDetailEntries.length > 0 && (
-                <div className="rounded-xl border-l-4 border-emerald-500 bg-emerald-50/70 p-4">
-                  <h4 className="text-sm font-semibold text-emerald-900">Back – MICR details</h4>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {backDetailEntries.map(detail => (
-                      <div key={detail.label} className="space-y-1 rounded-lg border border-emerald-100 bg-white/80 px-3 py-2">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                          {detail.label}
-                        </p>
-                        <p className="break-words text-sm font-semibold text-slate-900">{detail.value}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                {backDetailEntries.length > 0 && (
+                  <Card className="salt-card" style={{ borderLeft: '4px solid var(--salt-status-success-background)', background: 'var(--salt-status-success-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem', color: 'var(--salt-status-success-foreground)' }}>
+                        Back – MICR details
+                      </Text>
+                      <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                        {backDetailEntries.map(detail => (
+                          <Card key={detail.label} className="salt-card" style={{ flex: '1 1 200px', minWidth: '200px', background: 'var(--salt-container-primary-background)' }}>
+                            <StackLayout gap={0.2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-100) var(--salt-spacing-150)' }}>
+                              <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                                {detail.label}
+                              </Text>
+                              <Text styleAs="h4" style={{ fontSize: '0.875rem', wordBreak: 'break-word' }}>{detail.value}</Text>
+                            </StackLayout>
+                          </Card>
+                        ))}
+                      </FlexLayout>
+                    </StackLayout>
+                  </Card>
+                )}
+              </StackLayout>
+            </Card>
           )}
 
           {currentStep === 'complete' && (
-            <div className="w-full max-w-3xl px-4">
-              <IonButton
-                expand="block"
-                className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
+            <div style={{ width: '100%', maxWidth: '768px', padding: `0 var(--salt-spacing-150)` }}>
+              <Button
+                appearance="solid"
+                sentiment="accented"
                 onClick={handleContinue}
+                style={{ borderRadius: '999px', width: '100%' }}
               >
-                Continue
-              </IonButton>
+                <Text styleAs="label">Continue</Text>
+              </Button>
             </div>
           )}
 
           <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
-            <IonHeader>
-              <IonToolbar className="px-4">
-                <div className="flex items-center justify-between py-2">
-                  <IonTitle className="text-base font-semibold text-slate-800">Preview</IonTitle>
-                  <IonButton
-                    fill="clear"
-                    className="text-sm font-semibold text-slate-600"
-                    onClick={() => setIsPreviewModalOpen(false)}
-                  >
-                    Close
-                  </IonButton>
+            <IonHeader translucent={false}>
+              <IonToolbar className="salt-toolbar">
+                <div className="salt-toolbar-content">
+                  <div className="salt-header-left" />
+                  <div className="salt-header-center">
+                    <Text styleAs="h4" className="salt-toolbar-title">
+                      Preview
+                    </Text>
+                  </div>
+                  <div className="salt-header-right">
+                    <Button
+                      appearance="transparent"
+                      sentiment="neutral"
+                      onClick={() => setIsPreviewModalOpen(false)}
+                      style={{ padding: `0 var(--salt-spacing-100)` }}
+                    >
+                      <Text styleAs="label">Close</Text>
+                    </Button>
+                  </div>
                 </div>
               </IonToolbar>
             </IonHeader>
-            <IonContent className="flex items-center justify-center bg-black">
+            <IonContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
               {frontImage && (
-                <img src={frontImage} alt="Captured" className="max-h-full max-w-full object-contain" />
+                <img src={frontImage} alt="Captured" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
               )}
             </IonContent>
           </IonModal>

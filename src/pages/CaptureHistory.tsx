@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonInput,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonButton,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { Check, Search, Warning } from '../components/icons';
+import './home.css';
 
 type CaptureHistoryItem = {
   id: string;
@@ -109,88 +101,110 @@ const CaptureHistory: React.FC = () => {
 
   const handleBack = () => history.goBack();
 
-  const statusStyles: Record<CaptureHistoryItem['status'], { label: string; badge: string; icon: string }> = {
+  const statusConfig: Record<CaptureHistoryItem['status'], { label: string; icon: React.ReactNode }> = {
     'action-required': {
       label: 'Action Required',
-      badge: 'text-amber-600 bg-amber-100',
-      icon: '/images/Warning.svg',
+      icon: <Warning size={16} className="salt-inline-icon" color="var(--salt-status-warning-foreground)" />,
     },
     deposited: {
       label: 'Deposited',
-      badge: 'text-emerald-600 bg-emerald-100',
-      icon: '/images/Check.svg',
+      icon: <Check size={16} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />,
     },
   };
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">Capture history</IonTitle>
-            <div className="min-w-[64px]" />
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Capture history
+              </Text>
+            </div>
+            <div className="salt-header-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-5 bg-slate-100 p-4 pb-10">
-          <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <img src="/images/Search.svg" alt="Search" className="h-5 w-5 opacity-60" />
-            <IonInput
-              placeholder="Search history"
-              value={searchText}
-              onIonInput={e => setSearchText(e.detail.value ?? '')}
-              className="text-sm text-slate-700"
-            />
-          </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            <FlexLayout align="center" gap={1} className="salt-search-input">
+              <Search size={20} className="salt-icon-subtle salt-inline-icon" />
+              <input
+                type="search"
+                placeholder="Search history"
+                value={searchText}
+                onChange={e => setSearchText(e.target.value)}
+                style={{ fontSize: '0.875rem' }}
+              />
+            </FlexLayout>
 
-          <div className="space-y-3">
-            {filteredData.map(item => {
-              const status = statusStyles[item.status];
-              return (
-                <IonCard
-                  key={item.id}
-                  className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
-                >
-                  <IonCardContent className="flex flex-col gap-3 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="min-w-0 space-y-1">
-                        <IonText>
-                          <h3 className="truncate text-base font-semibold text-slate-900">{item.title}</h3>
-                        </IonText>
-                        <p className="text-sm text-slate-500">{item.programNumber}</p>
-                      </div>
-                      <div className="text-right text-sm font-semibold text-slate-900">
-                        {item.currency} {item.amount}
-                      </div>
-                    </div>
+            <StackLayout gap={1}>
+              {filteredData.map(item => {
+                const status = statusConfig[item.status];
+                return (
+                  <Card key={item.id} className="salt-card">
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <FlexLayout align="center" justify="space-between" gap={2}>
+                        <StackLayout gap={0.2} style={{ flex: 1, minWidth: 0 }}>
+                          <Text styleAs="h4" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                            {item.title}
+                          </Text>
+                          <Text styleAs="label">{item.programNumber}</Text>
+                        </StackLayout>
+                        <Text styleAs="h4">
+                          {item.currency} {item.amount}
+                        </Text>
+                      </FlexLayout>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-400">{item.date}</span>
-                      <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${status.badge}`}>
-                        <img src={status.icon} alt={status.label} className="h-4 w-4" />
-                        {status.label}
-                      </span>
-                    </div>
-                  </IonCardContent>
-                </IonCard>
-              );
-            })}
+                      <FlexLayout align="center" justify="space-between">
+                        <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)', fontSize: '0.75rem' }}>
+                          {item.date}
+                        </Text>
+                        <FlexLayout align="center" gap={1} style={{
+                          borderRadius: '999px',
+                          padding: `var(--salt-spacing-50) var(--salt-spacing-150)`,
+                          background: item.status === 'action-required' 
+                            ? 'var(--salt-status-warning-background)' 
+                            : 'var(--salt-status-success-background)',
+                          color: item.status === 'action-required'
+                            ? 'var(--salt-status-warning-foreground)'
+                            : 'var(--salt-status-success-foreground)',
+                        }}>
+                          {status.icon}
+                          <Text styleAs="label" style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                            {status.label}
+                          </Text>
+                        </FlexLayout>
+                      </FlexLayout>
+                    </StackLayout>
+                  </Card>
+                );
+              })}
 
-            {filteredData.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
-                No capture history matches your search.
-              </div>
-            )}
-          </div>
+              {filteredData.length === 0 && (
+                <Card className="salt-card">
+                  <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', textAlign: 'center' }}>
+                    <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                      No capture history matches your search.
+                    </Text>
+                  </div>
+                </Card>
+              )}
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

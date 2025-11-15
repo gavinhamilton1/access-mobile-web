@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButton,
-  IonText,
-  IonSpinner,
-  IonAlert,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar, IonAlert, IonSpinner } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import './home.css';
 
 type PaymentSelection = {
   id: string;
@@ -59,72 +51,90 @@ const ApproveRelease: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between gap-3 py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleCancel}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">{titleText}</IonTitle>
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleCancel}
-            >
-              Cancel
-            </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                {titleText}
+              </Text>
+            </div>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Cancel</Text>
+              </Button>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-4 bg-slate-100 p-4 pb-24">
-          {isLoading ? (
-            <div className="flex h-48 items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white">
-              <IonSpinner name="crescent" />
-            </div>
-          ) : selectedItems.length > 0 ? (
-            selectedItems.map(item => (
-              <div
-                key={item.id}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0 space-y-1">
-                    <IonText>
-                      <h3 className="truncate text-base font-semibold text-slate-900">{item.id}</h3>
-                    </IonText>
-                    <IonText color="medium">
-                      <p className="truncate text-sm text-slate-500">{item.from}</p>
-                    </IonText>
-                  </div>
-                  <div className="flex flex-col items-start gap-1 text-right text-sm text-slate-500 sm:items-end">
-                    <span>{item.type}</span>
-                    <span className="text-base font-semibold text-slate-900">{item.amount}</span>
-                  </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            {isLoading ? (
+              <Card className="salt-card">
+                <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '192px' }}>
+                  <IonSpinner name="crescent" />
                 </div>
-              </div>
-            ))
-          ) : (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
-              No payments selected.
-            </div>
-          )}
+              </Card>
+            ) : selectedItems.length > 0 ? (
+              selectedItems.map(item => (
+                <Card key={item.id} className="salt-card">
+                  <FlexLayout align="start" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                    <StackLayout gap={0.2}>
+                      <Text styleAs="h4" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {item.id}
+                      </Text>
+                      <Text styleAs="label" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {item.from}
+                      </Text>
+                    </StackLayout>
+                    <StackLayout gap={0.2} align="end">
+                      <Text styleAs="label">{item.type}</Text>
+                      <Text styleAs="h4">{item.amount}</Text>
+                    </StackLayout>
+                  </FlexLayout>
+                </Card>
+              ))
+            ) : (
+              <Card className="salt-card">
+                <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', textAlign: 'center' }}>
+                  <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                    No payments selected.
+                  </Text>
+                </div>
+              </Card>
+            )}
+          </StackLayout>
         </div>
 
-        <div className="fixed inset-x-4 bottom-6 z-40">
-          <IonButton
-            expand="block"
-            className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
-            onClick={handleConfirm}
-            disabled={isLoading || selectedItems.length === 0}
-          >
-            Confirm
-          </IonButton>
+        <div className="salt-action-bar" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 }}>
+          <div style={{ padding: 'var(--salt-spacing-150)' }}>
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              onClick={handleConfirm}
+              disabled={isLoading || selectedItems.length === 0}
+              style={{ borderRadius: '999px', width: '100%' }}
+            >
+              <Text styleAs="label">Confirm</Text>
+            </Button>
+          </div>
         </div>
       </IonContent>
 

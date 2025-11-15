@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Camera } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   captureType?: string;
@@ -64,70 +59,86 @@ const CaptureBestPractices: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">Remote capture tips</IonTitle>
-            <div className="min-w-[64px]" />
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Remote capture tips
+              </Text>
+            </div>
+            <div className="salt-header-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="flex min-h-full items-center justify-center bg-slate-100 px-4 py-10">
-          <div className="w-full max-w-lg space-y-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-            <div className="flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-teal-50">
-                <img src="/images/Camera.svg" alt="Camera" className="h-8 w-8 text-teal-primary" />
-              </div>
-            </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2} style={{ alignItems: 'center', justifyContent: 'center', minHeight: '100%', paddingTop: 'var(--salt-spacing-300)' }}>
+            <Card className="salt-card" style={{ maxWidth: '512px', width: '100%' }}>
+              <StackLayout gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)' }}>
+                <FlexLayout align="center" justify="center">
+                  <div style={{ 
+                    width: '64px', 
+                    height: '64px', 
+                    borderRadius: '999px', 
+                    background: 'var(--salt-status-success-background)', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                  }}>
+                    <Camera size={32} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />
+                  </div>
+                </FlexLayout>
 
-            <div className="text-center">
-              <IonText>
-                <h1 className="text-2xl font-semibold text-slate-900">
+                <Text styleAs="h2" style={{ textAlign: 'center' }}>
                   Remote capture best practices
-                </h1>
-              </IonText>
-            </div>
+                </Text>
 
-            <div className="space-y-5">
-              {tips.map(tip => (
-                <div
-                  key={tip.title}
-                  className="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-center shadow-sm"
-                >
-                  <IonText>
-                    <h3 className="text-base font-semibold text-slate-900">{tip.title}</h3>
-                  </IonText>
-                  <p className="mt-2 text-sm text-slate-600">{tip.description}</p>
-                </div>
-              ))}
-            </div>
+                <StackLayout gap={1}>
+                  {tips.map(tip => (
+                    <Card key={tip.title} className="salt-card" style={{ background: 'var(--salt-container-secondary-background)' }}>
+                      <StackLayout gap={0.5} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)', textAlign: 'center' }}>
+                        <Text styleAs="h4">{tip.title}</Text>
+                        <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                          {tip.description}
+                        </Text>
+                      </StackLayout>
+                    </Card>
+                  ))}
+                </StackLayout>
 
-            <div className="space-y-3">
-              <IonButton
-                expand="block"
-                className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
-                onClick={handleStartCapture}
-              >
-                Start capture
-              </IonButton>
-              <IonButton
-                fill="clear"
-                className="w-full text-sm font-semibold text-slate-500 underline"
-                onClick={handleDoNotShowAgain}
-              >
-                Do not show again
-              </IonButton>
-            </div>
-          </div>
+                <StackLayout gap={1}>
+                  <Button
+                    appearance="solid"
+                    sentiment="accented"
+                    onClick={handleStartCapture}
+                    style={{ borderRadius: '999px', width: '100%' }}
+                  >
+                    <Text styleAs="label">Start capture</Text>
+                  </Button>
+                  <Button
+                    appearance="transparent"
+                    sentiment="neutral"
+                    onClick={handleDoNotShowAgain}
+                    style={{ width: '100%', textDecoration: 'underline' }}
+                  >
+                    <Text styleAs="label">Do not show again</Text>
+                  </Button>
+                </StackLayout>
+              </StackLayout>
+            </Card>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

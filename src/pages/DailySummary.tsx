@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonButton,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { ArrowForward } from '../components/icons';
+import './home.css';
 
 type DailySummaryItem = {
   id: string;
@@ -40,50 +34,65 @@ const DailySummary: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">Daily summary</IonTitle>
-            <div className="min-w-[64px]" />
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Daily summary
+              </Text>
+            </div>
+            <div className="salt-header-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-3 bg-slate-100 p-4 pb-10">
-          {mockDailyData.map(item => (
-            <IonCard
-              key={item.id}
-              button
-              onClick={() => handleDayClick(item)}
-              className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-teal-primary hover:shadow-md"
-            >
-              <IonCardContent className="flex items-center justify-between gap-6 p-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-slate-400">Deposits</p>
-                  <p className="mt-1 text-lg font-semibold text-slate-900">{item.depositsCount}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs uppercase tracking-wide text-slate-400">Total value</p>
-                  <p className="mt-1 text-lg font-semibold text-slate-900">{item.totalValue}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="text-right">
-                    <p className="text-xs uppercase tracking-wide text-slate-400">Date</p>
-                    <p className="mt-1 text-sm font-semibold text-slate-900">{item.date}</p>
-                  </div>
-                  <img src="/images/ArrowForward.svg" alt="View" className="h-5 w-5 text-slate-300" />
-                </div>
-              </IonCardContent>
-            </IonCard>
-          ))}
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            {mockDailyData.map(item => (
+              <Card
+                key={item.id}
+                className="salt-card"
+                onClick={() => handleDayClick(item)}
+                style={{ cursor: 'pointer' }}
+              >
+                <FlexLayout align="center" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                  <StackLayout gap={0.2}>
+                    <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Deposits
+                    </Text>
+                    <Text styleAs="h3">{item.depositsCount}</Text>
+                  </StackLayout>
+                  <StackLayout gap={0.2} align="center">
+                    <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Total value
+                    </Text>
+                    <Text styleAs="h3">{item.totalValue}</Text>
+                  </StackLayout>
+                  <FlexLayout align="center" gap={2}>
+                    <StackLayout gap={0.2} align="end">
+                      <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Date
+                      </Text>
+                      <Text styleAs="h4">{item.date}</Text>
+                    </StackLayout>
+                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                  </FlexLayout>
+                </FlexLayout>
+              </Card>
+            ))}
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

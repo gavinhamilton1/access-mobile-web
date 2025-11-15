@@ -1,20 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-  IonInput,
-  IonCard,
-  IonCardContent,
-  IonModal,
-  IonIcon,
-} from '@ionic/react';
-import { copyOutline, eyeOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonPage, IonToolbar, IonModal } from '@ionic/react';
+import { Button, Card, FlexLayout, Input, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { Check, Close, Retake } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   captureType?: string;
@@ -121,11 +110,6 @@ const CaptureSummary: React.FC = () => {
     },
   ];
 
-  const confirmationButtons = [
-    { label: 'No', action: () => handleAmountConfirmation(false), style: 'border border-slate-200 text-slate-600' },
-    { label: 'Yes', action: () => handleAmountConfirmation(true), style: 'bg-teal-primary text-white shadow-sm' },
-  ];
-
   const inputFields = [
     {
       label: 'Payment/serial number',
@@ -159,156 +143,191 @@ const CaptureSummary: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="px-4">
-          <div className="flex items-center justify-between gap-3 py-2">
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleBack}
-            >
-              Back
-            </IonButton>
-            <IonTitle className="text-base font-semibold text-slate-800">Deposit check</IonTitle>
-            <IonButton
-              fill="clear"
-              className="text-sm font-semibold text-slate-600"
-              onClick={handleCancel}
-            >
-              Cancel
-            </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Back</Text>
+              </Button>
+            </div>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Deposit check
+              </Text>
+            </div>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Cancel</Text>
+              </Button>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="space-y-6 bg-slate-100 p-4 pb-32">
-          <div className="grid gap-4 sm:grid-cols-2">
-            {summaryCards.map(card => (
-              <IonCard key={card.title} className="rounded-2xl border border-slate-200 shadow-sm">
-                <IonCardContent className="space-y-2 p-4 text-center">
-                  <p className="text-base font-semibold text-slate-900">{card.title}</p>
-                  <div className="text-sm text-slate-500">
-                    {card.details.map(line => (
-                      <div key={line}>{line}</div>
-                    ))}
-                  </div>
-                </IonCardContent>
-              </IonCard>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <IonText>
-              <h1 className="text-3xl font-semibold text-slate-900">USD {amount}</h1>
-            </IonText>
-            {!isAmountConfirmed && (
-              <p className="mt-2 text-xs font-medium text-amber-500">Confirm the amount before submitting.</p>
-            )}
-          </div>
-
-          {isCheckCapture && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[{ label: 'Front', image: frontImage }, { label: 'Back', image: backImage }]
-                .filter(item => Boolean(item.image))
-                .map(item => (
-                  <div key={item.label} className="space-y-3">
-                    <h3 className="text-sm font-semibold text-slate-700">{item.label}</h3>
-                    <button
-                      type="button"
-                      onClick={() => handleImagePreview(item.image as string)}
-                      className="group relative h-32 w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-                    >
-                      <img
-                        src={item.image as string}
-                        alt={`${item.label} of check`}
-                        className="h-full w-full object-cover"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
-                        <IonIcon icon={eyeOutline} className="h-6 w-6 text-white" />
-                      </div>
-                    </button>
-                  </div>
-                ))}
-            </div>
-          )}
-
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-sm font-medium text-slate-700">
-              Are you sure USD {amount} is the correct amount?
-            </p>
-            <div className="mt-4 flex gap-3">
-              {confirmationButtons.map(button => (
-                <button
-                  key={button.label}
-                  type="button"
-                  onClick={button.action}
-                  className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold transition ${button.style}`}
-                >
-                  {button.label}
-                </button>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2}>
+            <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+              {summaryCards.map(card => (
+                <Card key={card.title} className="salt-card" style={{ flex: 1, minWidth: '200px' }}>
+                  <StackLayout gap={0.5} align="center" className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)', textAlign: 'center' }}>
+                    <Text styleAs="h4">{card.title}</Text>
+                    <StackLayout gap={0.2}>
+                      {card.details.map(line => (
+                        <Text key={line} styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                          {line}
+                        </Text>
+                      ))}
+                    </StackLayout>
+                  </StackLayout>
+                </Card>
               ))}
-            </div>
-          </div>
+            </FlexLayout>
 
-          <div className="space-y-5">
-            {inputFields.map(field => (
-              <div key={field.label} className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  {field.label}
-                </label>
-                <div className="flex gap-2">
-                  <IonInput
-                    value={field.value}
-                    onIonInput={e => field.setValue(e.detail.value ?? '')}
-                    placeholder={field.placeholder}
-                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700"
-                  />
-                  {field.copyValue && (
-                    <button
-                      type="button"
-                      onClick={() => handleCopyToClipboard(field.copyValue!, field.copyField as string)}
-                      className="rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:border-teal-primary hover:text-teal-primary"
-                    >
-                      <span className="flex items-center gap-1">
-                        <IonIcon icon={copyOutline} />
-                        {copySuccess === field.copyField ? 'Copied!' : 'Copy'}
-                      </span>
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+            <StackLayout gap={0.5} style={{ textAlign: 'center' }}>
+              <Text styleAs="h1">USD {amount}</Text>
+              {!isAmountConfirmed && (
+                <Text styleAs="label" style={{ color: 'var(--salt-status-warning-foreground)', fontSize: '0.75rem' }}>
+                  Confirm the amount before submitting.
+                </Text>
+              )}
+            </StackLayout>
 
-          <IonButton
-            expand="block"
-            className="rounded-full bg-teal-primary py-3 text-sm font-semibold text-white shadow-lg"
-            onClick={handleSubmit}
-            disabled={!isAmountConfirmed}
-          >
-            Submit
-          </IonButton>
+            {isCheckCapture && (
+              <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                {[{ label: 'Front', image: frontImage }, { label: 'Back', image: backImage }]
+                  .filter(item => Boolean(item.image))
+                  .map(item => (
+                    <StackLayout key={item.label} gap={0.5} style={{ flex: 1, minWidth: '200px' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>{item.label}</Text>
+                      <button
+                        type="button"
+                        onClick={() => handleImagePreview(item.image as string)}
+                        style={{
+                          height: '128px',
+                          width: '100%',
+                          borderRadius: '12px',
+                          border: '1px solid var(--salt-separable-secondary-borderColor)',
+                          background: 'var(--salt-container-primary-background)',
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          padding: 0,
+                        }}
+                      >
+                        <img
+                          src={item.image as string}
+                          alt={`${item.label} of check`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </button>
+                    </StackLayout>
+                  ))}
+              </FlexLayout>
+            )}
+
+            <Card className="salt-card">
+              <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                <Text styleAs="label">Are you sure USD {amount} is the correct amount?</Text>
+                <FlexLayout gap={1}>
+                  <Button
+                    appearance="bordered"
+                    sentiment="neutral"
+                    onClick={() => handleAmountConfirmation(false)}
+                    style={{ flex: 1, borderRadius: '999px' }}
+                  >
+                    <Text styleAs="label">No</Text>
+                  </Button>
+                  <Button
+                    appearance="solid"
+                    sentiment="accented"
+                    onClick={() => handleAmountConfirmation(true)}
+                    style={{ flex: 1, borderRadius: '999px' }}
+                  >
+                    <Text styleAs="label">Yes</Text>
+                  </Button>
+                </FlexLayout>
+              </StackLayout>
+            </Card>
+
+            <StackLayout gap={1}>
+              {inputFields.map(field => (
+                <StackLayout key={field.label} gap={0.5}>
+                  <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                    {field.label}
+                  </Text>
+                  <FlexLayout gap={1}>
+                    <Input
+                      value={field.value}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.setValue(e.target.value)}
+                      placeholder={field.placeholder}
+                      style={{ flex: 1, fontSize: '0.875rem' }}
+                    />
+                    {field.copyValue && (
+                      <Button
+                        appearance="bordered"
+                        sentiment="neutral"
+                        onClick={() => handleCopyToClipboard(field.copyValue!, field.copyField as string)}
+                        style={{ borderRadius: '999px', whiteSpace: 'nowrap' }}
+                      >
+                        <Text styleAs="label">
+                          {copySuccess === field.copyField ? 'Copied!' : 'Copy'}
+                        </Text>
+                      </Button>
+                    )}
+                  </FlexLayout>
+                </StackLayout>
+              ))}
+            </StackLayout>
+
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              onClick={handleSubmit}
+              disabled={!isAmountConfirmed}
+              style={{ borderRadius: '999px', width: '100%' }}
+            >
+              <Text styleAs="label">Submit</Text>
+            </Button>
+          </StackLayout>
         </div>
 
         <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
-          <IonHeader>
-            <IonToolbar className="px-4">
-              <div className="flex items-center justify-between py-2">
-                <IonTitle className="text-base font-semibold text-slate-800">Image Preview</IonTitle>
-                <IonButton
-                  fill="clear"
-                  className="text-sm font-semibold text-slate-600"
-                  onClick={() => setIsPreviewModalOpen(false)}
-                >
-                  Close
-                </IonButton>
+          <IonHeader translucent={false}>
+            <IonToolbar className="salt-toolbar">
+              <div className="salt-toolbar-content">
+                <div className="salt-header-left" />
+                <div className="salt-header-center">
+                  <Text styleAs="h4" className="salt-toolbar-title">
+                    Image Preview
+                  </Text>
+                </div>
+                <div className="salt-header-right">
+                  <Button
+                    appearance="transparent"
+                    sentiment="neutral"
+                    onClick={() => setIsPreviewModalOpen(false)}
+                    style={{ padding: `0 var(--salt-spacing-100)` }}
+                  >
+                    <Close size={20} className="salt-inline-icon" />
+                  </Button>
+                </div>
               </div>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="flex items-center justify-center bg-black">
+          <IonContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
             {previewImage && (
-              <img src={previewImage} alt="Preview" className="max-h-full max-w-full object-contain" />
+              <img src={previewImage} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
             )}
           </IonContent>
         </IonModal>
