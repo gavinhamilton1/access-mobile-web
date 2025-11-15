@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--salt-spacing-200);
+  padding: var(--salt-spacing-200) var(--salt-spacing-100) var(--salt-spacing-50) var(--salt-spacing-200);
   height: 100%;
 }
 
@@ -35,9 +36,11 @@
 }
 
 .salt-home-mode-toggle {
-  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-margin: 0 var(--salt-spacing-100);
   --saltButton-height: 100%;
   --saltButton-text-color: var(--salt-content-secondary-foreground);
+  --saltButton-borderRadius: 5px;
+  --saltButton-borderColor: var(--salt-separable-secondary-borderColor);
   font-size: 0.8rem;
   letter-spacing: normal;
   text-transform: none;
@@ -45,7 +48,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 0 var(--salt-spacing-150);
+  padding: 0 var(--salt-spacing-100);
 }
 
 .salt-home-notification-button {
@@ -80,7 +83,7 @@
 .salt-page-content {
   padding: var(--salt-spacing-150);
   padding-bottom: var(--salt-spacing-300);
-  gap: var(--salt-spacing-200);
+  gap: var(--salt-spacing-100);
 }
 
 .salt-page-content-wide {
@@ -98,7 +101,7 @@
     padding-top: var(--salt-spacing-100);
 }
 .salt-card {
-  background: var(--salt-container-secondary-background);
+  background: var(--salt-card-background);
   border: 1px solid var(--salt-separable-secondary-borderColor);
   border-radius: 10px;
   padding: 0px;
@@ -319,7 +322,7 @@
 }
 
 .salt-account-card {
-  background: var(--salt-container-secondary-background);
+  background: var(--card-background, black);
   border: 1px solid var(--salt-separable-secondary-borderColor);
   border-radius: 10px;
   padding: var(--salt-spacing-150);

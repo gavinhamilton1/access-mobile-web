@@ -59,14 +59,14 @@ const Deposits: React.FC = () => {
                 key={option.label}
                 className="salt-card"
                 onClick={navigateTo(option.action)}
-                style={{ cursor: 'pointer', backgroundColor: 'black' }}
+                style={{ cursor: 'pointer' }}
               >
                 <StackLayout 
                   align="center" 
                   gap={1} 
                   className="salt-card-section" 
                   style={{ 
-                    padding: 'var(--salt-spacing-200)',
+                    padding: 'var(--salt-spacing-150)',
                     alignItems: 'center',
                     textAlign: 'center'
                   }}
@@ -79,7 +79,7 @@ const Deposits: React.FC = () => {
                     {option.icon}
                   </div>
                   <StackLayout gap={0.2} style={{ alignItems: 'center', textAlign: 'center' }}>
-                    <Text styleAs="h4">{option.label}</Text>
+                    <Text styleAs="h4" style={{ fontSize: '1.5rem', fontWeight: 400, paddingBottom: 'var(--salt-spacing-100)' }}>{option.label}</Text>
                     <Text styleAs="label">{option.description}</Text>
                   </StackLayout>
                 </StackLayout>

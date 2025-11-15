@@ -238,7 +238,7 @@ const Accounts: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={1}>
+          <StackLayout className="salt-page-content" gap={0.5}>
             <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
                 <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
@@ -306,7 +306,7 @@ const Accounts: React.FC = () => {
 
                 {balanceItems.map(item => (
                   <div key={item.label} className="salt-balance-summary">
-                    <FlexLayout align="center" justify="space-between" className="salt-balance-row">
+                    <FlexLayout align="center" justify="space-between">
                       <FlexLayout align="center" gap={1}>
                         {item.icon}
                         <Text styleAs="label">{item.label}</Text>
@@ -320,7 +320,7 @@ const Accounts: React.FC = () => {
               </StackLayout>
             </Card>
 
-            <div className="salt-list-header">
+            <div>
               <Text styleAs="h3" className="salt-list-title">
                 Accounts
               </Text>
