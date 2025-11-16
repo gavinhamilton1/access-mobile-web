@@ -19,15 +19,17 @@ const Profile: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left" />
-            <div className="salt-header-center">
+        <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+              </div>
+              <div className="salt-toolbar-column-center">
               <Text styleAs="h4" className="salt-toolbar-title">
                 Profile
               </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+              </div>
             </div>
-            <div className="salt-header-right" />
-          </div>
         </IonToolbar>
       </IonHeader>
 

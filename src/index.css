@@ -41,7 +41,7 @@
   --salt-card-background: rgb(235, 235, 235);
 }
 .salt-theme[data-mode=dark] {
-  --salt-card-background: var(--salt-color-gray-900);
+  --salt-card-background: rgb(8, 8, 8);
 }
 
 

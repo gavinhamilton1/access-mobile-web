@@ -13,6 +13,7 @@
   border-bottom: none !important;
   box-shadow: none !important;
   padding: 0;
+  height: auto;
 }
 
 .salt-toolbar-content {
@@ -20,13 +21,73 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--salt-spacing-200);
-  padding: var(--salt-spacing-200) var(--salt-spacing-100) var(--salt-spacing-50) var(--salt-spacing-200);
+  padding: 0;
   height: 100%;
 }
 
 .salt-toolbar-title {
   font-weight: 600;
   letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Three-column toolbar layout: 20% | 60% | 20% */
+.salt-toolbar-3column {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  align-items: center;
+  width: 100%;
+  min-height: 60px;
+  height: auto;
+  padding: var(--salt-spacing-50);
+  padding-top: var(--salt-spacing-100);
+}
+
+.salt-toolbar-column-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-left > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salt-toolbar-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-center > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salt-toolbar-column-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-right > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .salt-home-header-actions {
@@ -88,7 +149,7 @@
 
 .salt-page-content-wide {
     padding: var(--salt-spacing-150) 0 var(--salt-spacing-150) 0;
-    gap: var(--salt-spacing-200);
+    gap: var(--salt-spacing-0.5);
 }
 
 .salt-card-section {
@@ -313,16 +374,19 @@
 }
 
 .salt-list-title {
+  padding: 0 var(--salt-spacing-50);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
 
-.salt-list {
-  gap: var(--salt-spacing-150);
+.salt-list-title-small {
+  padding: 0 var(--salt-spacing-150);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .salt-account-card {
-  background: var(--card-background, black);
+  background: var(--salt-card-background);
   border: 1px solid var(--salt-separable-secondary-borderColor);
   border-radius: 10px;
   padding: var(--salt-spacing-150);
@@ -385,6 +449,13 @@
   color: var(--salt-content-secondary-foreground);
 }
 
+.salt-dropdown {
+  width: auto;
+  flex-shrink: 0;
+  background: transparent;
+  padding: 5px;
+}
+
 /* Generic search input */
 .salt-search-input {
   flex: 1;
@@ -420,8 +491,9 @@
 
 /* Generic list item */
 .salt-list-item {
-  background: var(--salt-container-secondary-background);
+  background: var(--salt-card-background);
   border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
   padding: var(--salt-spacing-150);
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -430,7 +502,7 @@
 }
 
 .salt-list-item:hover {
-  background: var(--salt-container-primary-background);
+  background: var(--salt-card-background);
 }
 
 .salt-list-item-selected {

@@ -158,38 +158,44 @@ const Payments: React.FC = () => {
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
           <StackLayout gap={1} className="salt-toolbar-content">
-            <FlexLayout align="center" justify="space-between" gap={2}>
-              <Text styleAs="h4" className="salt-toolbar-title" style={{ flex: 1 }}>
-                Pending payments
-              </Text>
-              {!isSelectMode && (
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
                 <Button
                   appearance="transparent"
                   sentiment="neutral"
+                  onClick={handleSelectToggle}
                   style={{
                     padding: `0 var(--salt-spacing-100)`,
                     minWidth: 'auto',
                   }}
                 >
-                  <Text styleAs="label">History</Text>
+                  {isSelectMode ? (
+                    <Text styleAs="label">Cancel</Text>
+                  ) : (
+                    <ListCheck size={20} className="salt-inline-icon" />
+                  )}
                 </Button>
-              )}
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleSelectToggle}
-                style={{
-                  padding: `0 var(--salt-spacing-100)`,
-                  minWidth: 'auto',
-                }}
-              >
-                {isSelectMode ? (
-                  <Text styleAs="label">Cancel</Text>
-                ) : (
-                  <ListCheck size={20} className="salt-inline-icon" />
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                  Pending payments
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                {!isSelectMode && (
+                  <Button
+                    appearance="transparent"
+                    sentiment="neutral"
+                    style={{
+                      padding: `0 var(--salt-spacing-100)`,
+                      minWidth: 'auto',
+                    }}
+                  >
+                    <Text styleAs="label">History</Text>
+                  </Button>
                 )}
-              </Button>
-            </FlexLayout>
+              </div>
+            </div>
 
             <FlexLayout align="center" gap={1} style={{ width: '100%', padding: 'var(--salt-spacing-100) 0' }}>
               <FlexLayout align="center" gap={1} className="salt-search-input">
@@ -241,10 +247,10 @@ const Payments: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content-wide" gap={2}>
+          <StackLayout className="salt-page-content-wide" gap={1}>
             {groupedPayments.map(group => (
-              <StackLayout key={group.date} gap={1}>
-                <Text styleAs="label" className="salt-list-title">
+              <StackLayout key={group.date} gap={0.5}>
+                <Text styleAs="label" className="salt-list-title-small">
                   Value date {group.date}
                 </Text>
 

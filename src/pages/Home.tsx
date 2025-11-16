@@ -89,11 +89,9 @@ const Home: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <Text styleAs="h4" className="salt-toolbar-title">
-              Welcome.
-            </Text>
-            <div className="salt-home-header-actions">
+
+        <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
               <Button
                 appearance="transparent"
                 sentiment="neutral"
@@ -102,6 +100,16 @@ const Home: React.FC = () => {
               >
                 {mode === 'light' ? 'Dark mode' : 'Light mode'}
               </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                  Welcome
+                </Text>
+
+
+              </div>
+              <div className="salt-toolbar-column-right"  style={{ paddingTop: '5px', paddingRight: '20px' }}>
+              <div className="salt-home-header-actions">
               <Button
                 appearance="transparent"
                 sentiment="neutral"
@@ -112,7 +120,9 @@ const Home: React.FC = () => {
                 <Alert size={20} className="salt-home-alert-icon" />
               </Button>
             </div>
-          </div>
+
+              </div>
+            </div>
         </IonToolbar>
       </IonHeader>
 
@@ -137,8 +147,7 @@ const Home: React.FC = () => {
                   </StackLayout>
 
                   <Dropdown
-                    className="salt-currency-dropdown"
-                    style={{ width: 'auto', flexShrink: 0 }}
+                    className="salt-dropdown"
                     selected={[currency]}
                     onSelectionChange={(_, nextSelected) => {
                       if (nextSelected[0]) {

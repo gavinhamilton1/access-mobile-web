@@ -35,19 +35,17 @@ const Deposits: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left" />
-            <div className="salt-header-center">
-              <Text 
-                styleAs="h4" 
-                className="salt-toolbar-title"
-                style={{ paddingTop: 'var(--salt-spacing-200)' }}
-              >
+        <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+              </div>
+              <div className="salt-toolbar-column-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
                 Remote capture
               </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+              </div>
             </div>
-            <div className="salt-header-right" />
-          </div>
         </IonToolbar>
       </IonHeader>
 

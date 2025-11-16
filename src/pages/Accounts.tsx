@@ -192,15 +192,16 @@ const Accounts: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left" />
-            <div className="salt-header-center">
+
+        <div className="salt-toolbar-3column"  style={{ alignItems: 'flex-start' }}>
+              <div className="salt-toolbar-column-left">
+              </div>
+              <div className="salt-toolbar-column-center">
               <Text styleAs="h4" className="salt-toolbar-title">
                 Accounts
               </Text>
               <Dropdown
-                className="salt-period-dropdown"
-                style={{ width: 'auto' }}
+                className="salt-dropdown"
                 selected={[timePeriod]}
                 onSelectionChange={(_, nextSelected) => {
                   if (nextSelected[0]) {
@@ -208,7 +209,6 @@ const Accounts: React.FC = () => {
                   }
                 }}
                 valueToString={item => item}
-                variant="secondary"
               >
                 {timePeriods.map(period => (
                   <Option key={period} value={period}>
@@ -216,8 +216,9 @@ const Accounts: React.FC = () => {
                   </Option>
                 ))}
               </Dropdown>
-            </div>
-            <div className="salt-header-right">
+
+              </div>
+              <div className="salt-toolbar-column-right" style={{ paddingTop: '5px', paddingRight: '30px' }}>
               <Button
                 appearance="transparent"
                 sentiment="neutral"
@@ -231,8 +232,9 @@ const Accounts: React.FC = () => {
                   <SortUp size={20} className="salt-filter-icon" />
                 )}
               </Button>
+              </div>
             </div>
-          </div>
+                
         </IonToolbar>
       </IonHeader>
 
