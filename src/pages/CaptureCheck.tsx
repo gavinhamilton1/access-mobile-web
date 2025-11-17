@@ -1002,7 +1002,7 @@ const CaptureCheck: React.FC = () => {
 
   const getStepTitle = () => {
     if (isCheckCapture) {
-      if (currentStep === 'front') return 'Capture check front';
+      if (currentStep === 'front') return 'Capture check';
       if (currentStep === 'back') return 'Capture check back';
       return 'Review capture';
     }
@@ -1078,33 +1078,37 @@ const CaptureCheck: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleBack}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Back</Text>
-              </Button>
-            </div>
-            <div className="salt-header-center">
+        <div className="salt-toolbar-content">
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
               <Text styleAs="h4" className="salt-toolbar-title">
                 {getStepTitle()}
               </Text>
+
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="salt-header-right">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Cancel</Text>
-              </Button>
-            </div>
-          </div>
+          </div> 
+
         </IonToolbar>
       </IonHeader>
 

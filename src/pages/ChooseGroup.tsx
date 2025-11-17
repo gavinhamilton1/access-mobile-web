@@ -48,31 +48,33 @@ const ChooseGroup: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleBack}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <ArrowBack size={18} className="salt-inline-icon" />
-              </Button>
-            </div>
-            <div className="salt-header-center">
-              <Text styleAs="h4" className="salt-toolbar-title">
-                Choose a group
-              </Text>
-            </div>
-            <div className="salt-header-right">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Cancel</Text>
-              </Button>
+        <div className="salt-toolbar-content">
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                  Choose a group
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
           </div>
         </IonToolbar>
@@ -81,29 +83,6 @@ const ChooseGroup: React.FC = () => {
       <IonContent fullscreen>
         <div className="salt-page-shell">
           <StackLayout className="salt-page-content" gap={1}>
-            <Card className="salt-card">
-              <StackLayout gap={0.5} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
-                <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
-                  Program
-                </Text>
-                <Text styleAs="h4">{programName || 'Program selection'}</Text>
-                <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
-                  {selectedProgram || 'Choose a program to continue'}
-                </Text>
-              </StackLayout>
-            </Card>
-
-            <FlexLayout align="center" gap={1} className="salt-search-input">
-              <Search size={20} className="salt-icon-subtle salt-inline-icon" />
-              <input
-                type="search"
-                placeholder="Search groups"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                style={{ fontSize: '0.875rem' }}
-              />
-            </FlexLayout>
-
             <StackLayout gap={1}>
               {filteredGroups.map(group => (
                 <Card

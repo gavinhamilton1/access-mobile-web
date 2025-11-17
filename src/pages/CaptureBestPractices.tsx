@@ -42,6 +42,7 @@ const CaptureBestPractices: React.FC = () => {
   const programName = state?.programName || 'AUTOAL1 RDC PROGRAM 1 GROUPS';
 
   const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
 
   const handleStartCapture = () => {
     history.push('/deposits/capture-check', {
@@ -61,84 +62,79 @@ const CaptureBestPractices: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleBack}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <ArrowBack size={18} className="salt-inline-icon" />
-              </Button>
+        <div className="salt-toolbar-content">
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                  Remote capture tips
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="salt-header-center">
-              <Text styleAs="h4" className="salt-toolbar-title">
-                Remote capture tips
-              </Text>
-            </div>
-            <div className="salt-header-right" />
-          </div>
-        </IonToolbar>
+          </div>        
+          </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={2} style={{ alignItems: 'center', justifyContent: 'center', minHeight: '100%', paddingTop: 'var(--salt-spacing-300)' }}>
-            <Card className="salt-card" style={{ maxWidth: '512px', width: '100%' }}>
-              <StackLayout gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)' }}>
+              <StackLayout gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
                 <FlexLayout align="center" justify="center">
-                  <div style={{ 
-                    width: '64px', 
-                    height: '64px', 
-                    borderRadius: '999px', 
-                    background: 'var(--salt-status-success-background)', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                  }}>
-                    <Camera size={32} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />
-                  </div>
+                    <Camera size={32} className="salt-inline-icon"/>
                 </FlexLayout>
 
-                <Text styleAs="h2" style={{ textAlign: 'center' }}>
+                <Text styleAs="h4" style={{ textAlign: 'center' }}>
                   Remote capture best practices
                 </Text>
 
-                <StackLayout gap={1}>
+                <StackLayout gap={1.5}>
                   {tips.map(tip => (
-                    <Card key={tip.title} className="salt-card" style={{ background: 'var(--salt-container-secondary-background)' }}>
-                      <StackLayout gap={0.5} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)', textAlign: 'center' }}>
-                        <Text styleAs="h4">{tip.title}</Text>
-                        <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
-                          {tip.description}
-                        </Text>
-                      </StackLayout>
-                    </Card>
+                    <StackLayout key={tip.title} gap={0.5} >
+                      <Text styleAs="h4" style={{ textAlign: 'center' }}>{tip.title}</Text>
+                      <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)', textAlign: 'center' }}>
+                        {tip.description}
+                      </Text>
+                    </StackLayout>
                   ))}
                 </StackLayout>
 
-                <StackLayout gap={1}>
+                <StackLayout gap={1} style={{ paddingTop: 'var(--salt-spacing-250)' }}>
                   <Button
                     appearance="solid"
                     sentiment="accented"
                     onClick={handleStartCapture}
-                    style={{ borderRadius: '999px', width: '100%' }}
+                    className="salt-action-bar-button"
                   >
                     <Text styleAs="label">Start capture</Text>
                   </Button>
                   <Button
                     appearance="transparent"
                     sentiment="neutral"
-                    onClick={handleDoNotShowAgain}
+                    onClick={handleStartCapture}
                     style={{ width: '100%', textDecoration: 'underline' }}
                   >
                     <Text styleAs="label">Do not show again</Text>
                   </Button>
                 </StackLayout>
               </StackLayout>
-            </Card>
-          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

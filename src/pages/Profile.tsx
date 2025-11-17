@@ -12,7 +12,6 @@ const Profile: React.FC = () => {
     { label: 'Settings', icon: <Settings size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Settings') },
     { label: 'Support', icon: <Phone size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Support') },
     { label: 'Notifications', icon: <Alert size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Notifications') },
-    { label: 'App Experience', icon: <Apps size={20} className="salt-inline-icon" />, action: () => history.push('/app-experience') },
   ];
 
   return (
@@ -35,67 +34,63 @@ const Profile: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={2}>
-            <Card className="salt-card">
-              <FlexLayout align="center" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
-                <div style={{ 
-                  width: '48px', 
-                  height: '48px', 
-                  borderRadius: '999px', 
-                  background: 'var(--salt-status-success-background)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <ProfileIcon size={24} className="salt-inline-icon" color="var(--salt-status-success-foreground)" />
-                </div>
-                <StackLayout gap={0.2}>
-                  <Text styleAs="h4">test mobile</Text>
-                  <Text styleAs="label">Corporate banking</Text>
-                </StackLayout>
-              </FlexLayout>
-            </Card>
+          <StackLayout className="salt-page-content-wide" gap={2}>
 
-            <StackLayout gap={1}>
+
+            <StackLayout gap={0} className="salt-list">
+
+              <div className="salt-list-item-blank">
+                <FlexLayout align="start" justify="start" gap={1}>
+                    <ProfileIcon size={32} className="salt-inline-icon"/>
+                    <StackLayout gap={0.2}>
+                      <Text styleAs="h4">test mobile</Text>
+                      <Text styleAs="label">Corporate banking</Text>
+                    </StackLayout>
+                </FlexLayout>
+              </div>
+              
               {navigationOptions.map(option => (
-                <Card
-                  key={option.label}
-                  className="salt-card"
-                  onClick={option.action}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <FlexLayout align="center" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                <div key={option.label} className="salt-list-item">
+                    <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
                     {option.icon}
                     <Text styleAs="h4" style={{ flex: 1 }}>{option.label}</Text>
                     <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
                   </FlexLayout>
-                </Card>
+                </div>
               ))}
             </StackLayout>
 
-            <Text styleAs="label" style={{ textAlign: 'center', color: 'var(--salt-content-secondary-foreground)' }}>
-              Last login · 24-Oct-25 at 9:41 PM
-            </Text>
 
-            <StackLayout gap={1} className="salt-action-bar-buttons">
-              <Button
-                className="salt-action-bar-button"
-                appearance="bordered"
-                sentiment="neutral"
-                onClick={() => console.log('Give feedback')}
-              >
-                <Text styleAs="label">Give feedback</Text>
-              </Button>
-              <Button
-                className="salt-action-bar-button"
-                appearance="solid"
-                sentiment="neutral"
-                onClick={() => console.log('Log out')}
-              >
-                <Text styleAs="label">Log out</Text>
-              </Button>
-            </StackLayout>
+            <div className="salt-list-item-blank">
+                <StackLayout gap={1}>
+                  <Text styleAs="label" style={{ textAlign: 'center', color: 'var(--salt-content-secondary-foreground)' }}>
+                    Last login · 24-Oct-25 at 9:41 PM
+                  </Text>
+                  <StackLayout gap={1} className="salt-action-bar-buttons">
+                    <Button
+                      className="salt-action-bar-button"
+                      appearance="bordered"
+                      sentiment="neutral"
+                      onClick={() => console.log('Give feedback')}
+                    >
+                      <Text styleAs="label">Give feedback</Text>
+                    </Button>
+                    <Button
+                      className="salt-action-bar-button"
+                      appearance="solid"
+                      sentiment="accented"
+                      onClick={() => console.log('Log out')}
+                    >
+                      <Text styleAs="label">Log out</Text>
+                    </Button>
+                  </StackLayout>
+                </StackLayout>
+
+            </div>
+
+
+
+
           </StackLayout>
         </div>
       </IonContent>

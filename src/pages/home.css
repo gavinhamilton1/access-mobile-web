@@ -514,6 +514,15 @@
   width: 100%;
 }
 
+.salt-list-item-blank {
+  background: transparent;
+  padding: var(--salt-spacing-150);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+  width: 100%;
+}
+
 .salt-list-item:hover {
   background: var(--salt-card-background);
 }
