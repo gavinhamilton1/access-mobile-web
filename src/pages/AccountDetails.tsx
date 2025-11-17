@@ -96,7 +96,7 @@ const AccountDetails: React.FC = () => {
                 onClick={handleBackClick}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-toolbar-column-center">

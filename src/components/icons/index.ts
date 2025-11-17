@@ -11,6 +11,8 @@ export { ArrowForward } from './ArrowForward';
 export { ArrowUp } from './ArrowUp';
 export { Camera } from './Camera';
 export { Cash } from './Cash';
+export { ChevronDown } from './ChevronDown';
+export { ChevronUp } from './ChevronUp';
 export { Check } from './Check';
 export { Checkbook } from './Checkbook';
 export { CircleCheck } from './CircleCheck';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ArrowForward, Search } from '../components/icons';
+import { ArrowBack, ArrowForward, Search } from '../components/icons';
 import './home.css';
 
 interface LocationState {
@@ -32,7 +32,7 @@ const ChooseGroup: React.FC = () => {
   const handleCancel = () => history.push('/deposits');
 
   const handleGroupSelect = (groupName: string) => {
-    history.push('/choose-summary', {
+    history.push('/deposits/choose-summary', {
       captureType,
       selectedGroup: groupName,
       selectedProgram,
@@ -56,7 +56,7 @@ const ChooseGroup: React.FC = () => {
                 onClick={handleBack}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

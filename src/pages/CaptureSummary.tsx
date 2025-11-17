@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar, IonModal } from '@ionic/react';
 import { Button, Card, FlexLayout, Input, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Check, Close, Retake } from '../components/icons';
+import { ArrowBack, Check, Close, Retake } from '../components/icons';
 import './home.css';
 
 interface LocationState {
@@ -90,7 +90,7 @@ const CaptureSummary: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    history.push('/deposit-success', {
+    history.push('/deposits/deposit-success', {
       captureType,
       selectedGroup,
       selectedProgram,
@@ -153,7 +153,7 @@ const CaptureSummary: React.FC = () => {
                 onClick={handleBack}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

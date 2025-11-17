@@ -2,7 +2,7 @@ import React from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Camera } from '../components/icons';
+import { ArrowBack, Camera } from '../components/icons';
 import './home.css';
 
 interface LocationState {
@@ -44,7 +44,7 @@ const CaptureBestPractices: React.FC = () => {
   const handleBack = () => history.goBack();
 
   const handleStartCapture = () => {
-    history.push('/capture-check', {
+    history.push('/deposits/capture-check', {
       captureType,
       selectedGroup,
       selectedProgram,
@@ -69,7 +69,7 @@ const CaptureBestPractices: React.FC = () => {
                 onClick={handleBack}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

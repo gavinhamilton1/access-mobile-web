@@ -32,7 +32,7 @@ const DepositSuccess: React.FC = () => {
   ];
 
   const handleDone = () => history.push('/deposits');
-  const handleCaptureAnother = () => history.push('/deposit-to');
+  const handleCaptureAnother = () => history.push('/deposits/deposit-to');
 
   return (
     <IonPage>

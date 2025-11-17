@@ -2,7 +2,7 @@ import React from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ArrowForward } from '../components/icons';
+import { ArrowBack, ArrowForward } from '../components/icons';
 import './home.css';
 
 interface LocationState {
@@ -27,7 +27,7 @@ const RemoteCaptureType: React.FC = () => {
   const handleCancel = () => history.push('/deposits');
 
   const handleSelect = (captureType: string) => {
-    history.push('/choose-group', {
+    history.push('/deposits/choose-group', {
       captureType,
       selectedProgram,
       programName,
@@ -39,30 +39,32 @@ const RemoteCaptureType: React.FC = () => {
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
           <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleBack}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Back</Text>
-              </Button>
-            </div>
-            <div className="salt-header-center">
-              <Text styleAs="h4" className="salt-toolbar-title">
-                Choose capture type
-              </Text>
-            </div>
-            <div className="salt-header-right">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Cancel</Text>
-              </Button>
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                  Choose capture type
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
           </div>
         </IonToolbar>

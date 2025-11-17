@@ -10,7 +10,7 @@ import {
 } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Retake } from '../components/icons';
+import { ArrowBack, Retake } from '../components/icons';
 import '../capture-check.css';
 import './home.css';
 
@@ -146,7 +146,7 @@ const CaptureCheck: React.FC = () => {
   useEffect(() => {
     const unlisten = history.listen((location, action) => {
       console.log('Route change detected:', action, location.pathname);
-      if (location.pathname !== '/capture-check') {
+      if (location.pathname !== '/deposits/capture-check') {
         console.log('Leaving capture page, stopping camera');
         forceStopCamera();
       }
@@ -1013,7 +1013,7 @@ const CaptureCheck: React.FC = () => {
 
   const handleContinue = () => {
     if (isExtractionComplete) {
-      history.push('/capture-summary', {
+      history.push('/deposits/capture-summary', {
         captureType,
         selectedGroup,
         selectedProgram,

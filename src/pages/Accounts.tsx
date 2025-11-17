@@ -28,6 +28,7 @@ const timePeriods = ['Current day', 'Prior day', 'Last week'] as const;
 const Accounts: React.FC = () => {
   const history = useHistory();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [hasManualSort, setHasManualSort] = useState(false);
   const [currency, setCurrency] = useState<(typeof currencyCodes)[number]>('USD');
   const [timePeriod, setTimePeriod] = useState<(typeof timePeriods)[number]>('Current day');
   const [accounts, setAccounts] = useState<Record<string, Account>>(() => {
@@ -37,14 +38,16 @@ const Accounts: React.FC = () => {
   
   // Store the display order separately - only changes when sort button is clicked
   // Initialize with sorted order
-  const getSortedAccountIds = (accountsToSort: Record<string, Account>, order: 'asc' | 'desc') => {
+  const getSortedAccountIds = (accountsToSort: Record<string, Account>, order: 'asc' | 'desc', prioritizeStarred: boolean = false) => {
     const accountList = Object.values(accountsToSort);
     const sorted = [...accountList].sort((a, b) => {
-      // First, prioritize starred accounts (starred comes first)
-      if (a.isStarred && !b.isStarred) return -1;
-      if (!a.isStarred && b.isStarred) return 1;
+      // If prioritizing starred (initial load), group by starred status first
+      if (prioritizeStarred) {
+        if (a.isStarred && !b.isStarred) return -1;
+        if (!a.isStarred && b.isStarred) return 1;
+      }
       
-      // If both have the same starred status, sort alphabetically by name
+      // Sort alphabetically by name
       const nameA = a.name.trim().toLowerCase();
       const nameB = b.name.trim().toLowerCase();
       
@@ -56,12 +59,12 @@ const Accounts: React.FC = () => {
   };
   
   const [displayOrder, setDisplayOrder] = useState<string[]>(() => {
-    // Initialize with sorted order from initial accounts
+    // Initialize with starred accounts first, then alphabetical
     const initialAccounts = (() => {
       const savedAccounts = localStorage.getItem('accounts');
       return savedAccounts ? JSON.parse(savedAccounts) : mockAccounts;
     })();
-    return getSortedAccountIds(initialAccounts, 'asc');
+    return getSortedAccountIds(initialAccounts, 'asc', true);
   });
   
   // Track the latest accounts using a ref to avoid dependency issues
@@ -79,9 +82,10 @@ const Accounts: React.FC = () => {
     }
     
     // Re-sort and update display order
-    const newDisplayOrder = getSortedAccountIds(currentAccounts, sortOrder);
+    // After manual sort, prioritizeStarred is false (pure alphabetical)
+    const newDisplayOrder = getSortedAccountIds(currentAccounts, sortOrder, !hasManualSort);
     setDisplayOrder(newDisplayOrder);
-  }, [sortOrder]); // Only depend on sortOrder - not accounts
+  }, [sortOrder, hasManualSort]); // Only depend on sortOrder and hasManualSort - not accounts
   
   // Use displayOrder to maintain order when accounts change (e.g., star clicks)
   // This preserves the current display order even when account data changes
@@ -109,6 +113,8 @@ const Accounts: React.FC = () => {
 
   const handleSortClick = () => {
     // Trigger re-sort by changing sortOrder
+    // Mark that manual sort has been triggered (no longer prioritize starred)
+    setHasManualSort(true);
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
   };

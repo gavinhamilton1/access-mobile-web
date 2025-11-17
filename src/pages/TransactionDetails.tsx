@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ArrowBack, ArrowUp, Warning } from '../components/icons';
+import { ArrowBack, ChevronUp, Warning } from '../components/icons';
 import { paymentsData, type PaymentItem } from '../data/paymentsData';
 import { transactionsData, type Transaction } from '../data/transactionsData';
 import './home.css';
@@ -20,6 +20,8 @@ const TransactionDetails: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(true);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number | 'auto'>('auto');
 
   const state = location.state as LocationState;
   
@@ -73,6 +75,31 @@ const TransactionDetails: React.FC = () => {
 
   const amountParts = splitAmount(transaction.amount);
 
+  // Measure content height for smooth collapse animation
+  useEffect(() => {
+    if (contentRef.current) {
+      if (isExpanded) {
+        // Set to actual height when expanding
+        setContentHeight(contentRef.current.scrollHeight);
+      } else {
+        // Set to 0 when collapsing
+        setContentHeight(0);
+      }
+    }
+  }, [isExpanded]);
+
+  // Measure initial height on mount
+  useEffect(() => {
+    if (contentRef.current) {
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
+        if (contentRef.current) {
+          setContentHeight(contentRef.current.scrollHeight);
+        }
+      }, 0);
+    }
+  }, []);
+
   // Use transaction details from transaction data if available, otherwise use defaults
   const transactionDetails = {
     orderingAccountNumber: transaction.orderingAccountNumber || '000000777171554',
@@ -91,7 +118,7 @@ const TransactionDetails: React.FC = () => {
     <IonPage>
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
-          <div className="salt-toolbar-3column" style={{ alignItems: 'flex-start' }}>
+          <div className="salt-toolbar-3column">
             <div className="salt-toolbar-column-left">
               <Button
                 appearance="transparent"
@@ -99,7 +126,7 @@ const TransactionDetails: React.FC = () => {
                 onClick={handleBackClick}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-toolbar-column-center">
@@ -114,31 +141,32 @@ const TransactionDetails: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={1}>
+          <StackLayout gap={0.5}>
             {/* Transaction Summary Header */}
             <div style={{ padding: 'var(--salt-spacing-150) var(--salt-spacing-150) var(--salt-spacing-100)' }}>
-              <FlexLayout align="start" justify="space-between" gap={2}>
-                <StackLayout gap={0.2}>
-                  <div className="salt-amount" style={{ paddingTop: 0 }}>
-                    <Text className="salt-current-amount-value">
-                      {amountParts.value}
-                    </Text>
-                    {amountParts.decimals && (
-                      <Text className="salt-current-amount-decimals">
-                        {amountParts.decimals}
-                      </Text>
-                    )}
-                  </div>
-                  <Text styleAs="label">{amountParts.currency}</Text>
-                </StackLayout>
-                <StackLayout gap={0.2} align="end">
-                  <FlexLayout align="center" gap={1}>
-                    <Warning size={20} className="salt-inline-icon salt-icon-subtle salt-home-alert-icon" />
-                    <Text styleAs="label">{transaction.status}</Text>
+              <StackLayout gap={1}>
+                <FlexLayout align="center" justify="space-between" gap={2}>
+                  <FlexLayout align="center" gap={0.5} style={{ flexWrap: 'nowrap', minWidth: 0 }}>
+                    <div className="salt-amount" style={{ paddingTop: 0, flexShrink: 0 }}>
+                      <Text styleAs="h4">{amountParts.value}{amountParts.decimals}</Text>
+                    </div>
+                    <Text styleAs="label" style={{ whiteSpace: 'nowrap' }}>{amountParts.currency}</Text>
                   </FlexLayout>
-                  <Text styleAs="label">{transaction.cutOffDate}</Text>
-                </StackLayout>
-              </FlexLayout>
+                  <FlexLayout align="center" gap={0.5} style={{ flexShrink: 0 }}>
+                    <Warning size={24} className="salt-inline-icon salt-icon-subtle salt-home-alert-icon" color="var(--salt-status-warning-foreground)" />
+                    <Text styleAs="label" style={{ color: 'var(--salt-status-warning-foreground)' }}>{transaction.status}</Text>
+                  </FlexLayout>
+                </FlexLayout>
+
+                <FlexLayout align="center" justify="space-between" gap={2}>
+                  <FlexLayout align="center" gap={1} style={{ flexWrap: 'nowrap', minWidth: 0 }}>
+                    <Text styleAs="label">Value date</Text>
+                  </FlexLayout>
+                  <FlexLayout align="center" gap={1} style={{ flexShrink: 0 }}>
+                    <Text styleAs="label">{transaction.cutOffDate}</Text>
+                  </FlexLayout>
+                </FlexLayout>
+              </StackLayout>
             </div>
 
             {/* Transaction Information Header */}
@@ -150,70 +178,77 @@ const TransactionDetails: React.FC = () => {
               <FlexLayout align="center" justify="space-between" className="salt-list-item-content">
                 <Text styleAs="h4">Transaction information</Text>
                 <div style={{ transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                  <ArrowUp size={20} className="salt-inline-icon" />
+                  <ChevronUp size={20} className="salt-inline-icon" />
                 </div>
               </FlexLayout>
             </div>
 
             {/* Transaction Details (no card styling) */}
-            {isExpanded && (
-              <StackLayout gap={0} style={{ padding: '0 var(--salt-spacing-150)' }}>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Ordering/originating account number:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.orderingAccountNumber}</Text>
-                  </FlexLayout>
+            <div
+              ref={contentRef}
+              style={{
+                height: contentHeight === 'auto' ? 'auto' : `${contentHeight}px`,
+                overflow: 'hidden',
+                transition: 'height 0.3s ease-in-out',
+              }}
+            >
+              <StackLayout gap={0} style={{ padding: '0 var(--salt-spacing-150) 150px' }}>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Ordering/originating account number:</Text>
+                    <Text styleAs="label">{transactionDetails.orderingAccountNumber}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Ordering/originating account name:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.orderingAccountName}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Ordering/originating account name:</Text>
+                    <Text styleAs="label">{transactionDetails.orderingAccountName}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Branch location:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.branchLocation}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Branch location:</Text>
+                    <Text styleAs="label">{transactionDetails.branchLocation}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Bank name:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.bankName}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Bank name:</Text>
+                    <Text styleAs="label">{transactionDetails.bankName}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Bank ID:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.bankId}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Bank ID:</Text>
+                    <Text styleAs="label">{transactionDetails.bankId}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Company / entity name and ID:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.companyName} / {transactionDetails.companyId}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Company / entity name and ID:</Text>
+                    <Text styleAs="label">{transactionDetails.companyName} / {transactionDetails.companyId}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Value date:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.valueDate}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Value date:</Text>
+                    <Text styleAs="label">{transactionDetails.valueDate}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Payment method:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.paymentMethod}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Payment method:</Text>
+                    <Text styleAs="label">{transactionDetails.paymentMethod}</Text>
+                  </StackLayout>
                 </div>
-                <div className="salt-balance-summary">
-                  <FlexLayout align="start" justify="space-between" gap={2}>
-                    <Text styleAs="label">Payment amount:</Text>
-                    <Text styleAs="action" style={{ textAlign: 'right' }}>{transactionDetails.paymentAmount}</Text>
-                  </FlexLayout>
+                <div className="salt-transaction-row">
+                  <StackLayout gap={0.5}>
+                    <Text styleAs="h4">Payment amount:</Text>
+                    <Text styleAs="label">{transactionDetails.paymentAmount}</Text>
+                  </StackLayout>
                 </div>
               </StackLayout>
-            )}
+            </div>
           </StackLayout>
         </div>
 

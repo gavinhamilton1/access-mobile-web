@@ -2,7 +2,7 @@ import React from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
-import { AccessLineLogo, DigitalBankingLineLogo } from '../components/icons';
+import { AccessLineLogo, ArrowBack, DigitalBankingLineLogo } from '../components/icons';
 import './home.css';
 
 const experiences = [
@@ -35,7 +35,7 @@ const AppExperience: React.FC = () => {
                 onClick={handleBack}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

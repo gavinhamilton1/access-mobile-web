@@ -2,18 +2,9 @@ import React, { useState } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
-import { ArrowForward, Search } from '../components/icons';
+import { ArrowBack, ArrowForward, Search } from '../components/icons';
+import { programsData } from '../data/programsData';
 import './home.css';
-
-const programsData = [
-  { id: '15501', name: 'AUTOAL1 RDC PROGRAM 1 GROUPS' },
-  { id: '15502', name: 'AUTOAL1 RDC PROGRAM 2 OPT REF ITEMS' },
-  { id: '15503', name: 'AUTOAL1 RDC PROGRAM 3 REQ REF ITEMS' },
-  { id: '15504', name: 'AUTOAL1 RDC PROGRAM 4 OPT REF ITEMS' },
-  { id: '15505', name: 'AUTOAL1 RDC PROGRAM 5 NO REF ITEMS' },
-  { id: '931503601', name: 'CAD PROGRAM CA/CAD' },
-  { id: '931503602', name: 'CAD PROGRAM CA/USD' },
-];
 
 const DepositTo: React.FC = () => {
   const history = useHistory();
@@ -24,7 +15,7 @@ const DepositTo: React.FC = () => {
 
   const handleProgramSelect = (programId: string) => {
     const program = programsData.find(p => p.id === programId);
-    history.push('/remote-capture-type', {
+    history.push('/deposits/remote-capture-type', {
       selectedProgram: programId,
       programName: program?.name || '',
     });
@@ -40,31 +31,35 @@ const DepositTo: React.FC = () => {
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
           <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleBack}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Back</Text>
-              </Button>
-            </div>
-            <div className="salt-header-center">
-              <Text styleAs="h4" className="salt-toolbar-title">
+
+          <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
                 Deposit to
-              </Text>
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="salt-header-right">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Cancel</Text>
-              </Button>
-            </div>
+
           </div>
         </IonToolbar>
       </IonHeader>
@@ -83,7 +78,7 @@ const DepositTo: React.FC = () => {
               />
             </FlexLayout>
 
-            <StackLayout gap={1}>
+            <StackLayout gap={0.7}>
               {filteredPrograms.map(program => (
                 <Card
                   key={program.id}
@@ -91,12 +86,14 @@ const DepositTo: React.FC = () => {
                   onClick={() => handleProgramSelect(program.id)}
                   style={{ cursor: 'pointer' }}
                 >
-                  <FlexLayout align="center" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
-                    <StackLayout gap={0.2}>
-                      <Text styleAs="h4">{program.name}</Text>
+                  <FlexLayout align="center" justify="space-between" gap={0} className="salt-card-section-condensed">
+                    <StackLayout gap={0}>
+                      <Text styleAs="label">{program.name}</Text>
                       <Text styleAs="label">Program {program.id}</Text>
                     </StackLayout>
-                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                    <FlexLayout align="center" gap={0.5}>
+                      <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                    </FlexLayout>
                   </FlexLayout>
                 </Card>
               ))}

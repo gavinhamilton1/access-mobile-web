@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar, IonAlert, IonSpinner } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowBack } from '../components/icons';
 import './home.css';
 
 type PaymentSelection = {
@@ -61,7 +62,7 @@ const ApproveRelease: React.FC = () => {
                 onClick={handleCancel}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

@@ -82,7 +82,7 @@ const Home: React.FC = () => {
   );
 
   const handleCaptureDeposit = () => {
-    history.push('/deposit-to');
+    history.push('/deposits/deposit-to');
   };
 
   return (
@@ -129,7 +129,7 @@ const Home: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={0}>
+          <StackLayout className="salt-page-content" gap={1}>
             <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
                 <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">

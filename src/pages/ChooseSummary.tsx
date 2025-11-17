@@ -2,7 +2,7 @@ import React from 'react';
 import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ArrowForward } from '../components/icons';
+import { ArrowBack, ArrowForward } from '../components/icons';
 import './home.css';
 
 interface LocationState {
@@ -25,24 +25,24 @@ const ChooseSummary: React.FC = () => {
     {
       label: 'Deposit to',
       value: `${selectedProgram} ${programName}`.trim(),
-      action: () => history.push('/deposit-to'),
+      action: () => history.push('/deposits/deposit-to'),
     },
     {
       label: 'Capture type',
       value: captureType,
-      action: () => history.push('/remote-capture-type'),
+      action: () => history.push('/deposits/remote-capture-type'),
     },
     {
       label: 'Group',
       value: selectedGroup,
-      action: () => history.push('/choose-group', { captureType }),
+      action: () => history.push('/deposits/choose-group', { captureType }),
     },
   ];
 
   const handleBack = () => history.goBack();
   const handleCancel = () => history.push('/deposits');
   const handleStartCapture = () => {
-    history.push('/capture-best-practices', {
+    history.push('/deposits/capture-best-practices', {
       captureType,
       selectedGroup,
       selectedProgram,
@@ -62,7 +62,7 @@ const ChooseSummary: React.FC = () => {
                 onClick={handleBack}
                 style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <Text styleAs="label">Back</Text>
+                <ArrowBack size={18} className="salt-inline-icon" />
               </Button>
             </div>
             <div className="salt-header-center">

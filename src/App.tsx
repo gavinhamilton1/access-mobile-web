@@ -105,11 +105,11 @@ const TabBar: React.FC = () => {
       return false;
     }
     
-    // For home, check if path is exactly /home or /
-    if (path === '/home') {
-      return currentPath === '/home' || currentPath === '/';
+    // If we're on any deposits-related page, highlight the deposits tab
+    if (currentPath.startsWith('/deposits/') && path === '/deposits') {
+      return true;
     }
-    // For other tabs, check if path starts with the tab path
+    
     return currentPath === path || currentPath.startsWith(path + '/');
   };
 
@@ -191,34 +191,34 @@ const App: React.FC = () => (
           <Route exact path="/deposits">
             <Deposits />
           </Route>
-          <Route exact path="/deposit-to">
+          <Route exact path="/deposits/deposit-to">
             <DepositTo />
           </Route>
-          <Route exact path="/remote-capture-type">
+          <Route exact path="/deposits/remote-capture-type">
             <RemoteCaptureType />
           </Route>
-          <Route exact path="/choose-group">
+          <Route exact path="/deposits/choose-group">
             <ChooseGroup />
           </Route>
-          <Route exact path="/choose-summary">
+          <Route exact path="/deposits/choose-summary">
             <ChooseSummary />
           </Route>
-          <Route exact path="/capture-best-practices">
+          <Route exact path="/deposits/capture-best-practices">
             <CaptureBestPractices />
           </Route>
-          <Route exact path="/capture-check">
+          <Route exact path="/deposits/capture-check">
             <CaptureCheck />
           </Route>
-          <Route exact path="/capture-summary">
+          <Route exact path="/deposits/capture-summary">
             <CaptureSummary />
           </Route>
-          <Route exact path="/capture-history">
+          <Route exact path="/deposits/capture-history">
             <CaptureHistory />
           </Route>
-          <Route exact path="/daily-summary">
+          <Route exact path="/deposits/daily-summary">
             <DailySummary />
           </Route>
-          <Route exact path="/deposit-success">
+          <Route exact path="/deposits/deposit-success">
             <DepositSuccess />
           </Route>
           <Route exact path="/profile">
