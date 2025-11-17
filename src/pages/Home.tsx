@@ -93,9 +93,10 @@ const Home: React.FC = () => {
         <div className="salt-toolbar-3column">
               <div className="salt-toolbar-column-left">
               <Button
+                style={{ margin: '0' }}
                 appearance="transparent"
                 sentiment="neutral"
-                className="salt-home-mode-toggle"
+                className="salt-theme-mode-toggle"
                 onClick={toggleMode}
               >
                 {mode === 'light' ? 'Dark mode' : 'Light mode'}

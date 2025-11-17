@@ -78,20 +78,20 @@ const Profile: React.FC = () => {
               Last login · 24-Oct-25 at 9:41 PM
             </Text>
 
-            <StackLayout gap={1}>
+            <StackLayout gap={1} className="salt-action-bar-buttons">
               <Button
+                className="salt-action-bar-button"
                 appearance="bordered"
                 sentiment="neutral"
                 onClick={() => console.log('Give feedback')}
-                style={{ borderRadius: '999px', width: '100%' }}
               >
                 <Text styleAs="label">Give feedback</Text>
               </Button>
               <Button
+                className="salt-action-bar-button"
                 appearance="solid"
                 sentiment="neutral"
                 onClick={() => console.log('Log out')}
-                style={{ borderRadius: '999px', width: '100%' }}
               >
                 <Text styleAs="label">Log out</Text>
               </Button>

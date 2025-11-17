@@ -8,88 +8,8 @@ import {
   ListCheck,
   Search,
 } from '../components/icons';
+import { paymentsData, type PaymentItem } from '../data/paymentsData';
 import './home.css';
-
-const mockPayments = {
-  approve: [
-    {
-      id: 'Analytics03102025.230927',
-      from: 'From (..8488)',
-      type: 'Book transfer',
-      amount: 'USD 101,00',
-      status: 'Expired value date',
-      cutOffDate: '10/04/25',
-    },
-    {
-      id: 'Analytics05102025.194102',
-      from: 'From (..8488)',
-      type: 'Book transfer',
-      amount: 'USD 101,00',
-      status: 'Expired value date',
-      cutOffDate: '10/05/25',
-    },
-    {
-      id: 'Analytics06102025.193816',
-      from: 'From (..8488)',
-      type: 'Wire',
-      amount: 'USD 10,00',
-      status: 'Expired value date',
-      cutOffDate: '10/06/25',
-    },
-    {
-      id: 'Analytics07102025.193545',
-      from: 'From (..8488)',
-      type: 'Wire',
-      amount: 'USD 10,00',
-      status: 'Expired value date',
-      cutOffDate: '10/07/25',
-    },
-  ],
-  release: [
-    {
-      id: 'Analytics01102025.194659',
-      from: 'From (..8488)',
-      type: 'Wire',
-      amount: 'USD 1,12',
-      status: 'Expired value date',
-      cutOffDate: '10/01/25',
-    },
-    {
-      id: 'Analytics01102025.193752',
-      from: 'From (..8488)',
-      type: 'Wire',
-      amount: 'USD 1,12',
-      status: 'Expired value date',
-      cutOffDate: '10/01/25',
-    },
-    {
-      id: 'CSWIREAPI',
-      from: 'From (..8488)',
-      type: 'Wire',
-      amount: 'USD 1,12',
-      status: 'Expired value date',
-      cutOffDate: '10/01/25',
-    },
-    {
-      id: 'CSAutoACH Credit4792',
-      from: 'From (..8280)',
-      type: 'ACH Credit',
-      amount: 'USD 20,01',
-      status: 'Expired value date',
-      cutOffDate: '10/02/25',
-    },
-    {
-      id: 'CSITCAPI',
-      from: 'From (..8280)',
-      type: 'ACH Credit',
-      amount: 'USD 100,01',
-      status: 'Expired value date',
-      cutOffDate: '10/02/25',
-    },
-  ],
-};
-
-type PaymentItem = (typeof mockPayments)['approve'][number];
 
 type PaymentGroup = {
   date: string;
@@ -101,11 +21,21 @@ const Payments: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'approve' | 'release'>('approve');
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const currentPayments = activeTab === 'approve' ? mockPayments.approve : mockPayments.release;
+  const currentPayments = activeTab === 'approve' ? paymentsData.approve : paymentsData.release;
+
+  const filteredPayments = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return currentPayments;
+    return currentPayments.filter(p =>
+      [p.id, p.from, p.type, p.amount, p.status, p.cutOffDate]
+        .some(val => String(val).toLowerCase().includes(q))
+    );
+  }, [currentPayments, searchQuery]);
 
   const groupedPayments: PaymentGroup[] = useMemo(() => {
-    const groups = currentPayments.reduce<Record<string, PaymentItem[]>>((acc, payment) => {
+    const groups = filteredPayments.reduce<Record<string, PaymentItem[]>>((acc, payment) => {
       if (!acc[payment.cutOffDate]) {
         acc[payment.cutOffDate] = [];
       }
@@ -116,7 +46,7 @@ const Payments: React.FC = () => {
     return Object.entries(groups)
       .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
       .map(([date, payments]) => ({ date, payments }));
-  }, [currentPayments]);
+  }, [filteredPayments]);
 
   const clearSelection = () => {
     setIsSelectMode(false);
@@ -153,6 +83,16 @@ const Payments: React.FC = () => {
     });
   };
 
+  const handlePaymentClick = (payment: PaymentItem) => {
+    if (!isSelectMode) {
+      history.push('/transaction-details', {
+        transaction: payment,
+        actionType: activeTab,
+        source: 'payments',
+      });
+    }
+  };
+
   return (
     <IonPage>
       <IonHeader translucent={false}>
@@ -172,7 +112,7 @@ const Payments: React.FC = () => {
                   {isSelectMode ? (
                     <Text styleAs="label">Cancel</Text>
                   ) : (
-                    <ListCheck size={20} className="salt-inline-icon" />
+                    <Text styleAs="label">Select</Text>
                   )}
                 </Button>
               </div>
@@ -197,19 +137,21 @@ const Payments: React.FC = () => {
               </div>
             </div>
 
-            <FlexLayout align="center" gap={1} style={{ width: '100%', padding: 'var(--salt-spacing-100) 0' }}>
+            <FlexLayout align="center" gap={1} style={{ width: '100%', padding: 'var(--salt-spacing-50)' }}>
               <FlexLayout align="center" gap={1} className="salt-search-input">
                 <Search size={20} className="salt-icon-subtle salt-inline-icon" />
                 <input
                   type="search"
                   placeholder={activeTab === 'approve' ? 'Search approvals' : 'Search releases'}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery((e.target as HTMLInputElement).value)}
                 />
               </FlexLayout>
               <Button
                 appearance="bordered"
                 sentiment="neutral"
-                className="salt-icon-button-circular"
                 aria-label="Filter"
+                className="salt-filter-button"
               >
                 <Filter size={20} className="salt-filter-icon salt-inline-icon" />
               </Button>
@@ -261,7 +203,7 @@ const Payments: React.FC = () => {
                       <div
                         key={payment.id}
                         className={`salt-list-item ${isSelectMode ? 'salt-list-item-has-checkbox' : ''} ${isSelectMode && isSelected ? 'salt-list-item-selected' : ''}`}
-                        onClick={() => (isSelectMode ? handleItemSelect(payment.id) : undefined)}
+                        onClick={() => (isSelectMode ? handleItemSelect(payment.id) : handlePaymentClick(payment))}
                       >
                         {isSelectMode && (
                           <input
@@ -302,30 +244,30 @@ const Payments: React.FC = () => {
         </div>
       </IonContent>
 
-          {selectedItems.size > 0 && (
-            <div className="salt-action-bar">
-              <FlexLayout gap={1} className="salt-action-bar-buttons">
-                <Button
-                  appearance="bordered"
-                  sentiment="neutral"
-                  className="salt-action-bar-button salt-action-bar-button-reject"
-                  onClick={clearSelection}
-                >
-                  <Text styleAs="label">Reject ({selectedItems.size})</Text>
-                </Button>
-                <Button
-                  appearance="solid"
-                  sentiment="accented"
-                  className="salt-action-bar-button salt-action-bar-button-primary"
-                  onClick={() => handleActionClick(activeTab)}
-                >
-                  <Text styleAs="label">
-                    {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
-                  </Text>
-                </Button>
-              </FlexLayout>
-            </div>
-          )}
+      {selectedItems.size > 0 && (
+        <div className="salt-action-bar">
+          <FlexLayout gap={1} className="salt-action-bar-buttons">
+            <Button
+              appearance="bordered"
+              sentiment="neutral"
+              className="salt-action-bar-button"
+              onClick={clearSelection}
+            >
+              <Text styleAs="label">Reject ({selectedItems.size})</Text>
+            </Button>
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              className="salt-action-bar-button"
+              onClick={() => handleActionClick(activeTab)}
+            >
+              <Text styleAs="label">
+                {activeTab === 'approve' ? 'Approve' : 'Release'} ({selectedItems.size})
+              </Text>
+            </Button>
+          </FlexLayout>
+        </div>
+      )}
     </IonPage>
   );
 };

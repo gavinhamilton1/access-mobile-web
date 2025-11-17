@@ -227,9 +227,9 @@ const Accounts: React.FC = () => {
                 aria-label={`Sort ${sortOrder === 'asc' ? 'descending' : 'ascending'}`}
               >
                 {sortOrder === 'asc' ? (
-                  <SortDown size={20} className="salt-filter-icon" />
+                  <SortDown size={28} className="salt-filter-icon" />
                 ) : (
-                  <SortUp size={20} className="salt-filter-icon" />
+                  <SortUp size={28} className="salt-filter-icon" />
                 )}
               </Button>
               </div>
@@ -259,7 +259,7 @@ const Accounts: React.FC = () => {
                   </StackLayout>
 
                   <Dropdown
-                    className="salt-currency-dropdown"
+                    className="salt-dropdown"
                     style={{ width: 'auto', flexShrink: 0 }}
                     selected={[currency]}
                     onSelectionChange={(_, nextSelected) => {
@@ -278,10 +278,12 @@ const Accounts: React.FC = () => {
                   </Dropdown>
                 </FlexLayout>
 
-                <div className="salt-balance-row">
-                  <FlexLayout align="center" justify="space-between">
-                    <Text styleAs="label">Opening balance</Text>
-                    <div className="salt-amount">
+                <div className="salt-balance-summary">
+                    <FlexLayout align="center" justify="space-between">
+                      <FlexLayout align="center" gap={1}>
+                        <Text styleAs="label">Opening balance</Text>
+                      </FlexLayout>
+                      <div className="salt-amount">
                       <Text className="salt-balance-value">
                         {totals.openingBalance.value}
                       </Text>
@@ -289,13 +291,16 @@ const Accounts: React.FC = () => {
                         {totals.openingBalance.decimals}
                       </Text>
                     </div>
-                  </FlexLayout>
-                </div>
+                    </FlexLayout>
+                  </div>
 
-                <div className="salt-balance-row">
-                  <FlexLayout align="center" justify="space-between">
-                    <Text styleAs="label">Current balance</Text>
-                    <div className="salt-amount">
+
+                <div className="salt-balance-summary">
+                    <FlexLayout align="center" justify="space-between">
+                      <FlexLayout align="center" gap={1}>
+                        <Text styleAs="label">Current balance</Text>
+                      </FlexLayout>
+                      <div className="salt-amount">
                       <Text className="salt-balance-value">
                         {totals.currentBalance.value}
                       </Text>
@@ -303,8 +308,8 @@ const Accounts: React.FC = () => {
                         {totals.currentBalance.decimals}
                       </Text>
                     </div>
-                  </FlexLayout>
-                </div>
+                    </FlexLayout>
+                  </div>
 
                 {balanceItems.map(item => (
                   <div key={item.label} className="salt-balance-summary">
@@ -323,12 +328,12 @@ const Accounts: React.FC = () => {
             </Card>
 
             <div>
-              <Text styleAs="h3" className="salt-list-title">
+              <Text styleAs="h4" className="salt-list-title">
                 Accounts
               </Text>
             </div>
 
-            <StackLayout gap={1} className="salt-list">
+            <StackLayout gap={0.5} className="salt-list">
               {displayedAccounts.map((account: Account) => (
                 <Card
                   key={account.id}

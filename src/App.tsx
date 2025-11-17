@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useLocation } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -7,7 +7,8 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact
+  setupIonicReact,
+  useIonRouter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 // Using custom SVG icons from public/images directory
@@ -21,7 +22,9 @@ import {
 import Home from './pages/Home';
 import Accounts from './pages/Accounts';
 import AccountDetails from './pages/AccountDetails';
+import AccountDetailsTransaction from './pages/AccountDetailsTransaction';
 import Payments from './pages/Payments';
+import TransactionDetails from './pages/TransactionDetails';
 import ApproveRelease from './pages/ApproveRelease';
 import Deposits from './pages/Deposits';
 import RemoteCaptureType from './pages/RemoteCaptureType';
@@ -73,6 +76,89 @@ import './index.css';
 
 setupIonicReact();
 
+interface TabBarLocationState {
+  source?: 'payments' | 'accounts';
+}
+
+const TabBar: React.FC = () => {
+  const router = useIonRouter();
+  const location = useLocation();
+
+  const handleTabClick = (path: string) => {
+    // Use 'root' direction to reset navigation stack to the main tab page
+    // This ensures we always go to the main page, not a detail page
+    router.push(path, 'root', 'replace');
+  };
+
+  const isTabSelected = (path: string) => {
+    const currentPath = location.pathname;
+    const state = location.state as TabBarLocationState | undefined;
+    
+    // If we're on transaction-details page, use the source from state to determine which tab should be highlighted
+    if (currentPath === '/transaction-details' && state?.source) {
+      if (state.source === 'payments' && path === '/payments') {
+        return true;
+      }
+      if (state.source === 'accounts' && path === '/accounts') {
+        return true;
+      }
+      return false;
+    }
+    
+    // For home, check if path is exactly /home or /
+    if (path === '/home') {
+      return currentPath === '/home' || currentPath === '/';
+    }
+    // For other tabs, check if path starts with the tab path
+    return currentPath === path || currentPath.startsWith(path + '/');
+  };
+
+  return (
+    <IonTabBar slot="bottom">
+      <IonTabButton 
+        tab="home" 
+        selected={isTabSelected('/home')}
+        onClick={() => handleTabClick('/home')}
+      >
+        <HomeIcon size={30} className="tab-icon" />
+        <IonLabel>Home</IonLabel>
+      </IonTabButton>
+      <IonTabButton 
+        tab="accounts" 
+        selected={isTabSelected('/accounts')}
+        onClick={() => handleTabClick('/accounts')}
+      >
+        <AccountsIcon size={30} className="tab-icon" />
+        <IonLabel>Accounts</IonLabel>
+      </IonTabButton>
+      <IonTabButton 
+        tab="payments" 
+        selected={isTabSelected('/payments')}
+        onClick={() => handleTabClick('/payments')}
+      >
+        <PaymentsIcon size={30} className="tab-icon" />
+        <IonLabel>Payments</IonLabel>
+      </IonTabButton>
+      <IonTabButton 
+        tab="deposits" 
+        selected={isTabSelected('/deposits')}
+        onClick={() => handleTabClick('/deposits')}
+      >
+        <DepositsIcon size={30} className="tab-icon" />
+        <IonLabel>Deposits</IonLabel>
+      </IonTabButton>
+      <IonTabButton 
+        tab="profile" 
+        selected={isTabSelected('/profile')}
+        onClick={() => handleTabClick('/profile')}
+      >
+        <ProfileIcon size={30} className="tab-icon" />
+        <IonLabel>Profile</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  );
+};
+
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
@@ -90,8 +176,14 @@ const App: React.FC = () => (
           <Route path="/accounts/account-details/:accountId">
             <AccountDetails />
           </Route>
+          <Route path="/accounts/account-details/:accountId/transaction">
+            <AccountDetailsTransaction />
+          </Route>
           <Route exact path="/payments">
             <Payments />
+          </Route>
+          <Route exact path="/transaction-details">
+            <TransactionDetails />
           </Route>
           <Route exact path="/approve-release">
             <ApproveRelease />
@@ -136,28 +228,7 @@ const App: React.FC = () => (
             <AppExperience />
           </Route>
         </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="home" href="/home">
-            <HomeIcon size={20} className="tab-icon" />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="accounts" href="/accounts">
-            <AccountsIcon size={20} className="tab-icon" />
-            <IonLabel>Accounts</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="payments" href="/payments">
-            <PaymentsIcon size={20} className="tab-icon" />
-            <IonLabel>Payments</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="deposits" href="/deposits">
-            <DepositsIcon size={20} className="tab-icon" />
-            <IonLabel>Deposits</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="profile" href="/profile">
-            <ProfileIcon size={20} className="tab-icon" />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
+        <TabBar />
       </IonTabs>
       <PWAInstallPrompt />
     </IonReactRouter>

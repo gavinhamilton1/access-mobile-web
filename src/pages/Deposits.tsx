@@ -14,19 +14,19 @@ const Deposits: React.FC = () => {
     {
       label: 'Capture history',
       description: 'View a history of your deposits.',
-      icon: <DepositsIcon size={32} className="salt-inline-icon" color="#87CEEB" />,
+      icon: <DepositsIcon size={32} className="salt-inline-icon"/>,
       action: '/capture-history',
     },
     {
       label: 'Daily summary',
       description: 'See an overview of the deposits you made over the last two weeks.',
-      icon: <List size={32} className="salt-inline-icon" color="#87CEEB" />,
+      icon: <List size={32} className="salt-inline-icon"/>,
       action: '/daily-summary',
     },
     {
       label: 'Remote capture',
       description: 'Deposit checks and documents to your account.',
-      icon: <Camera size={32} className="salt-inline-icon" color="#87CEEB" />,
+      icon: <Camera size={32} className="salt-inline-icon"/>,
       action: '/deposit-to',
     },
   ];
@@ -73,6 +73,7 @@ const Deposits: React.FC = () => {
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
+                    color: 'var(--salt-deposit-icon-color)',
                   }}>
                     {option.icon}
                   </div>
