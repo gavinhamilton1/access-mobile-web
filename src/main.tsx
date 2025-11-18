@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import { SaltThemeProvider } from './theme/SaltThemeProvider';
+import { SaltThemeProviderNext } from './theme/SaltThemeProvider';
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {
@@ -20,8 +20,8 @@ const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
   <React.StrictMode>
-    <SaltThemeProvider>
+    <SaltThemeProviderNext>
       <App />
-    </SaltThemeProvider>
+    </SaltThemeProviderNext>
   </React.StrictMode>
 );

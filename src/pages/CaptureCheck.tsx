@@ -10,7 +10,7 @@ import {
 } from '@ionic/react';
 import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ArrowBack, Retake } from '../components/icons';
+import { ArrowBack, Retake, Camera } from '../components/icons';
 import '../capture-check.css';
 import './home.css';
 
@@ -1164,6 +1164,22 @@ const CaptureCheck: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {!isExtractionComplete && (
+            <div style={{ width: '100%', maxWidth: '480px', display: 'flex', justifyContent: 'center', padding: `var(--salt-spacing-150)`, marginTop: 'var(--salt-spacing-100)' }}>
+              <Button
+                appearance="solid"
+                sentiment="accented"
+                onClick={startCountdown}
+                disabled={isCountingDown || isProcessingOCR}
+                className="salt-button"
+                style={{ width: '100%' }}
+              >
+                <Camera size={24} className="salt-inline-icon" />
+                <Text styleAs="label" style={{ fontSize: '1rem', fontWeight: 600 }}>Capture Now</Text>
+              </Button>
             </div>
           )}
 

@@ -7,7 +7,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import { SaltProvider, type Mode } from '@salt-ds/core';
+import { SaltProviderNext, type Mode } from '@salt-ds/core';
 
 import '@salt-ds/core/css/salt-core.css';
 import '@salt-ds/theme/css/global.css';
@@ -35,7 +35,7 @@ type SaltThemeProviderProps = {
   children: ReactNode;
 };
 
-export const SaltThemeProvider: React.FC<SaltThemeProviderProps> = ({ children }) => {
+export const SaltThemeProviderNext: React.FC<SaltThemeProviderProps> = ({ children }) => {
   const [mode, setMode] = useState<Mode>('dark');
 
   useEffect(() => {
@@ -68,9 +68,9 @@ export const SaltThemeProvider: React.FC<SaltThemeProviderProps> = ({ children }
 
   return (
     <SaltThemeContext.Provider value={contextValue}>
-      <SaltProvider mode={mode} density="touch" applyClassesTo="root">
+      <SaltProviderNext mode={mode} density="touch" accent="teal">
         {children}
-      </SaltProvider>
+      </SaltProviderNext>
     </SaltThemeContext.Provider>
   );
 };

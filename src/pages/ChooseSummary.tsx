@@ -110,7 +110,7 @@ const ChooseSummary: React.FC = () => {
               appearance="solid"
               sentiment="accented"
               onClick={handleStartCapture}
-              style={{ borderRadius: '999px', width: '100%', marginTop: 'var(--salt-spacing-200)' }}
+              className="salt-button"
             >
               <Text styleAs="label">Continue</Text>
             </Button>

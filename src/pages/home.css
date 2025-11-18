@@ -1,6 +1,5 @@
 /* Generic page styles */
 .salt-page-shell {
-  min-height: 100%;
   background: var(--salt-container-primary-background);
 }
 
@@ -310,7 +309,7 @@
   justify-content: center;
 }
 
-.salt-primary-action {
+.xsalt-primary-action {
   max-width: 320px;
   width: 100%;
   border-radius: var(--sale-button-radius);
@@ -321,10 +320,6 @@
   font-size: 0.9rem;
   font-weight: 600;
   padding: var(--salt-spacing-100) var(--salt-spacing-300);
-  /* Ensure Salt button uses teal accent color */
-  --saltButton-background: var(--salt-actionable-accented-bold-background, #137e96);
-  --saltButton-borderColor: var(--salt-actionable-accented-bold-borderColor, #137e96);
-  --saltButton-foreground: var(--salt-actionable-accented-bold-foreground, #ffffff);
 }
 
 /* Accounts page specific styles */
@@ -570,6 +565,7 @@
   margin: 0 auto;
 }
 
+.salt-button,
 .salt-action-bar-button {
   flex: 1;
   border-radius: var(--sale-button-radius);

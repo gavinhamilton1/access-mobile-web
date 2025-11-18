@@ -8,30 +8,6 @@
   --teal-primary-rgb: 19, 126, 150;  
   /* Override Salt Design System accent colors to use teal/green */
   /* These variables control the accent color throughout Salt components */
-  --salt-palette-accent-background: #137e96;
-  --salt-palette-accent-foreground: #ffffff;
-  --salt-palette-accent-border: #137e96;
-  
-  /* Salt's accent color variables used throughout the system */
-  --salt-accent-background: #137e96;
-  --salt-accent-foreground: #ffffff;
-  --salt-accent-borderColor: #137e96;
-  
-  /* Salt's actionable accent colors for buttons with appearance="solid" and sentiment="accented" */
-  --salt-actionable-accented-bold-background: #137e96;
-  --salt-actionable-accented-bold-borderColor: #137e96;
-  --salt-actionable-accented-bold-foreground: #ffffff;
-  --salt-actionable-accented-bold-hover-background: #0f6b80;
-  --salt-actionable-accented-bold-hover-borderColor: #0f6b80;
-  --salt-actionable-accented-bold-hover-foreground: #ffffff;
-  --salt-actionable-accented-bold-active-background: #0a5768;
-  --salt-actionable-accented-bold-active-borderColor: #0a5768;
-  --salt-actionable-accented-bold-active-foreground: #ffffff;
-  
-  /* Button-specific CSS variables (if Salt uses these) */
-  --saltButton-accented-background: #137e96;
-  --saltButton-accented-borderColor: #137e96;
-  --saltButton-accented-foreground: #ffffff;
   
 }
 
