@@ -1167,15 +1167,14 @@ const CaptureCheck: React.FC = () => {
             </div>
           )}
 
-          {!isExtractionComplete && (
+          {currentStep !== 'complete' && (
             <div style={{ width: '100%', maxWidth: '480px', display: 'flex', justifyContent: 'center', padding: `var(--salt-spacing-150)`, marginTop: 'var(--salt-spacing-100)' }}>
               <Button
                 appearance="solid"
                 sentiment="accented"
                 onClick={startCountdown}
                 disabled={isCountingDown || isProcessingOCR}
-                className="salt-button"
-                style={{ width: '100%' }}
+                className="salt-primary-action"
               >
                 <Camera size={24} className="salt-inline-icon" />
                 <Text styleAs="label" style={{ fontSize: '1rem', fontWeight: 600 }}>Capture Now</Text>
@@ -1331,13 +1330,12 @@ const CaptureCheck: React.FC = () => {
           )}
 
           {currentStep === 'complete' && (
-            <div style={{ width: '100%', maxWidth: '768px', padding: `0 var(--salt-spacing-150)` }}>
+            <div className="salt-button-container">
               <Button
                 appearance="solid"
                 sentiment="accented"
                 onClick={handleContinue}
-                style={{ borderRadius: '999px', width: '100%' }}
-              >
+                className="salt-primary-action">
                 <Text styleAs="label">Continue</Text>
               </Button>
             </div>

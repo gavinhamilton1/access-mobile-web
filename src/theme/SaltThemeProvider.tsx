@@ -10,7 +10,7 @@ import React, {
 import { SaltProviderNext, type Mode } from '@salt-ds/core';
 
 import '@salt-ds/core/css/salt-core.css';
-import '@salt-ds/theme/css/global.css';
+import '@salt-ds/theme/css/theme-next.css';
 import '@salt-ds/theme/css/theme.css';
 
 type SaltThemeContextValue = {

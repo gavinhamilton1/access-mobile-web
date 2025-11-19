@@ -116,12 +116,12 @@ const CaptureBestPractices: React.FC = () => {
                   ))}
                 </StackLayout>
 
-                <StackLayout gap={1} style={{ paddingTop: 'var(--salt-spacing-250)' }}>
+                <StackLayout gap={1} style={{ paddingTop: 'var(--salt-spacing-250)', width: '100%', maxWidth: '480px', display: 'flex', justifyContent: 'center', padding: `var(--salt-spacing-150)`, marginTop: 'var(--salt-spacing-100)' }}>
                   <Button
                     appearance="solid"
                     sentiment="accented"
                     onClick={handleStartCapture}
-                    className="salt-action-bar-button"
+                    className="salt-primary-action"
                   >
                     <Text styleAs="label">Start capture</Text>
                   </Button>

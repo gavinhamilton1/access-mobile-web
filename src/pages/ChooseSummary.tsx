@@ -106,14 +106,17 @@ const ChooseSummary: React.FC = () => {
               </Card>
             ))}
 
+          <div className="salt-button-container">
+
             <Button
               appearance="solid"
               sentiment="accented"
               onClick={handleStartCapture}
-              className="salt-button"
-            >
+              className="salt-primary-action"
+              >
               <Text styleAs="label">Continue</Text>
             </Button>
+            </div>
           </StackLayout>
         </div>
       </IonContent>

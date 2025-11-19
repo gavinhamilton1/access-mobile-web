@@ -99,8 +99,8 @@
   --saltButton-margin: 0 var(--salt-spacing-100);
   --saltButton-height: 100%;
   --saltButton-text-color: var(--salt-content-secondary-foreground);
-  --saltButton-borderRadius: var(--sale-button-radius);
   --saltButton-borderColor: var(--salt-separable-secondary-borderColor);
+  border-radius: var(--saltButton-borderRadius);
   font-size: 0.8rem;
   letter-spacing: normal;
   text-transform: none;
@@ -309,7 +309,15 @@
   justify-content: center;
 }
 
-.xsalt-primary-action {
+.salt-button-container {
+  width: 100%;
+  padding: var(--salt-spacing-150);
+  margin-top: var(--salt-spacing-100);
+  display: flex;
+  justify-content: center;
+}
+
+.salt-primary-action {
   max-width: 320px;
   width: 100%;
   border-radius: var(--sale-button-radius);
@@ -551,11 +559,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--salt-container-primary-background);
-  border-top: 1px solid var(--salt-separable-secondary-borderColor);
   padding: var(--salt-spacing-150);
   padding-bottom: calc(var(--salt-spacing-150) + env(safe-area-inset-bottom));
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 

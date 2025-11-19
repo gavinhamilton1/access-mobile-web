@@ -55,31 +55,41 @@ const ApproveRelease: React.FC = () => {
       <IonHeader translucent={false}>
         <IonToolbar className="salt-toolbar">
           <div className="salt-toolbar-content">
-            <div className="salt-header-left">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <ArrowBack size={18} className="salt-inline-icon" />
-              </Button>
-            </div>
-            <div className="salt-header-center">
-              <Text styleAs="h4" className="salt-toolbar-title">
+
+
+
+          <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
                 {titleText}
-              </Text>
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="salt-header-right">
-              <Button
-                appearance="transparent"
-                sentiment="neutral"
-                onClick={handleCancel}
-                style={{ padding: `0 var(--salt-spacing-100)` }}
-              >
-                <Text styleAs="label">Cancel</Text>
-              </Button>
-            </div>
+
+
+
+
+
           </div>
         </IonToolbar>
       </IonHeader>
@@ -124,7 +134,7 @@ const ApproveRelease: React.FC = () => {
           </StackLayout>
         </div>
 
-        <div className="salt-action-bar" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 }}>
+        <div className="salt-action-bar">
           <div style={{ padding: 'var(--salt-spacing-150)' }}>
             <Button
               appearance="solid"
