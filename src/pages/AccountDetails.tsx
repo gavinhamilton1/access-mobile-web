@@ -73,8 +73,8 @@ const AccountDetails: React.FC = () => {
   );
 
   // Get transactions for the current account
-  const transactions = (accountId && accountId in transactionsData) 
-    ? transactionsData[accountId as keyof typeof transactionsData] 
+  const transactions = (accountId && accountId in transactionsData)
+    ? transactionsData[accountId as keyof typeof transactionsData]
     : [];
 
   const handleTransactionClick = (transaction: Transaction) => {
@@ -127,8 +127,8 @@ const AccountDetails: React.FC = () => {
 
       <IonContent fullscreen>
         <div className="salt-page-shell">
-          <StackLayout className="salt-page-content" gap={0.5}>
-            <Card className="salt-card">
+          <StackLayout className="salt-page-content-wide" gap={0.5}>
+            <Card className="salt-card" style={{ margin: 'var(--salt-spacing-150)' }}>
               <StackLayout gap={0} className="salt-card-section">
                 <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
                   <StackLayout gap={0.2}>
@@ -166,11 +166,11 @@ const AccountDetails: React.FC = () => {
                 </FlexLayout>
 
                 <div className="salt-balance-summary">
-                    <FlexLayout align="center" justify="space-between">
-                      <FlexLayout align="center" gap={1}>
-                        <Text styleAs="label">Opening balance</Text>
-                      </FlexLayout>
-                      <div className="salt-amount">
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={1}>
+                      <Text styleAs="label">Opening balance</Text>
+                    </FlexLayout>
+                    <div className="salt-amount">
                       <Text className="salt-balance-value">
                         {totals.openingBalance.value}
                       </Text>
@@ -178,16 +178,16 @@ const AccountDetails: React.FC = () => {
                         {totals.openingBalance.decimals}
                       </Text>
                     </div>
-                    </FlexLayout>
-                  </div>
+                  </FlexLayout>
+                </div>
 
 
                 <div className="salt-balance-summary">
-                    <FlexLayout align="center" justify="space-between">
-                      <FlexLayout align="center" gap={1}>
-                        <Text styleAs="label">Current balance</Text>
-                      </FlexLayout>
-                      <div className="salt-amount">
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={1}>
+                      <Text styleAs="label">Current balance</Text>
+                    </FlexLayout>
+                    <div className="salt-amount">
                       <Text className="salt-balance-value">
                         {totals.currentBalance.value}
                       </Text>
@@ -195,8 +195,8 @@ const AccountDetails: React.FC = () => {
                         {totals.currentBalance.decimals}
                       </Text>
                     </div>
-                    </FlexLayout>
-                  </div>
+                  </FlexLayout>
+                </div>
 
                 {balanceItems.map(item => (
                   <div key={item.label} className="salt-balance-summary">
@@ -214,8 +214,9 @@ const AccountDetails: React.FC = () => {
               </StackLayout>
             </Card>
 
-            <StackLayout gap={1}>
-              <FlexLayout align="center" justify="space-between">
+
+            <div>
+            <FlexLayout align="center" justify="space-between" style={{ margin: '0 var(--salt-spacing-150)' }}>
                 <Text styleAs="h4" className="salt-list-title">
                   Transactions
                 </Text>
@@ -227,38 +228,41 @@ const AccountDetails: React.FC = () => {
                   <Text styleAs="label">Export CSV</Text>
                 </Button>
               </FlexLayout>
+            </div>
+            
+            <StackLayout gap={1}>
               {transactions.length > 0 ? (
-                <StackLayout gap={0}>
-                  {transactions.map(transaction => (
-                    <div
-                      key={transaction.id}
-                      className="salt-list-item"
-                      onClick={() => handleTransactionClick(transaction)}
-                    >
-                      <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
-                        <StackLayout gap={0.2}>
-                          <Text styleAs="h4">
-                            {transaction.id}
-                          </Text>
-                          <Text styleAs="label">
-                            {transaction.from}
-                          </Text>
-                        </StackLayout>
-                        <StackLayout gap={0.5} align="end">
-                          <FlexLayout align="center" gap={1}>
-                            <Text styleAs="label">
-                              {transaction.type}
+                  <StackLayout gap={0} className="salt-list">
+                    {transactions.map(transaction => (
+                      <div
+                        key={transaction.id}
+                        className="salt-list-item"
+                        onClick={() => handleTransactionClick(transaction)}
+                      >
+                        <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
+                          <StackLayout gap={0.2}>
+                            <Text styleAs="h4">
+                              {transaction.id}
                             </Text>
-                            <ArrowForward size={16} className="salt-inline-icon" />
-                          </FlexLayout>
-                          <Text styleAs="h4">
-                            {transaction.amount}
-                          </Text>
-                        </StackLayout>
-                      </FlexLayout>
-                    </div>
-                  ))}
-                </StackLayout>
+                            <Text styleAs="label">
+                              {transaction.from}
+                            </Text>
+                          </StackLayout>
+                          <StackLayout gap={0.5} align="end">
+                            <FlexLayout align="center" gap={1}>
+                              <Text styleAs="label">
+                                {transaction.type}
+                              </Text>
+                              <ArrowForward size={16} className="salt-inline-icon" />
+                            </FlexLayout>
+                            <Text styleAs="h4">
+                              {transaction.amount}
+                            </Text>
+                          </StackLayout>
+                        </FlexLayout>
+                      </div>
+                    ))}
+                  </StackLayout>
               ) : (
                 <Card className="salt-card">
                   <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
