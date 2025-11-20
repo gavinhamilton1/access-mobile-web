@@ -93,7 +93,7 @@ const TabBar: React.FC = () => {
   const isTabSelected = (path: string) => {
     const currentPath = location.pathname;
     const state = location.state as TabBarLocationState | undefined;
-    
+
     // If we're on transaction-details page, use the source from state to determine which tab should be highlighted
     if (currentPath === '/transaction-details' && state?.source) {
       if (state.source === 'payments' && path === '/payments') {
@@ -104,51 +104,56 @@ const TabBar: React.FC = () => {
       }
       return false;
     }
-    
+
     // If we're on any deposits-related page, highlight the deposits tab
     if (currentPath.startsWith('/deposits/') && path === '/deposits') {
       return true;
     }
-    
+
+    // Special case for home tab to handle root path
+    if (path === '/home' && (currentPath === '/' || currentPath === '/home')) {
+      return true;
+    }
+
     return currentPath === path || currentPath.startsWith(path + '/');
   };
 
   return (
     <IonTabBar slot="bottom">
-      <IonTabButton 
-        tab="home" 
+      <IonTabButton
+        tab="home"
         selected={isTabSelected('/home')}
         onClick={() => handleTabClick('/home')}
       >
         <HomeIcon size={30} className="tab-icon" />
         <IonLabel>Home</IonLabel>
       </IonTabButton>
-      <IonTabButton 
-        tab="accounts" 
+      <IonTabButton
+        tab="accounts"
         selected={isTabSelected('/accounts')}
         onClick={() => handleTabClick('/accounts')}
       >
         <AccountsIcon size={30} className="tab-icon" />
         <IonLabel>Accounts</IonLabel>
       </IonTabButton>
-      <IonTabButton 
-        tab="payments" 
+      <IonTabButton
+        tab="payments"
         selected={isTabSelected('/payments')}
         onClick={() => handleTabClick('/payments')}
       >
         <PaymentsIcon size={30} className="tab-icon" />
         <IonLabel>Payments</IonLabel>
       </IonTabButton>
-      <IonTabButton 
-        tab="deposits" 
+      <IonTabButton
+        tab="deposits"
         selected={isTabSelected('/deposits')}
         onClick={() => handleTabClick('/deposits')}
       >
         <DepositsIcon size={30} className="tab-icon" />
         <IonLabel>Deposits</IonLabel>
       </IonTabButton>
-      <IonTabButton 
-        tab="profile" 
+      <IonTabButton
+        tab="profile"
         selected={isTabSelected('/profile')}
         onClick={() => handleTabClick('/profile')}
       >
@@ -164,7 +169,7 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-        <Route exact path="/">
+          <Route exact path="/">
             <Home />
           </Route>
           <Route exact path="/home">
