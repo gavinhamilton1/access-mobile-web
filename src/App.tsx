@@ -74,7 +74,9 @@ import './theme/variables.css';
 /* Tailwind + global styles */
 import './index.css';
 
-setupIonicReact();
+setupIonicReact({
+  mode: 'ios'
+});
 
 interface TabBarLocationState {
   source?: 'payments' | 'accounts';
