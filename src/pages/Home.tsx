@@ -132,7 +132,7 @@ const Home: React.FC = () => {
           <StackLayout className="salt-page-content" gap={1}>
             <Card className="salt-card">
               <StackLayout gap={0} className="salt-card-section">
-                <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
+                <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row" gap={2}>
                   <StackLayout gap={0.2}>
                     <Text styleAs="label">
                       {balance.current.label}
