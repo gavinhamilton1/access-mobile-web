@@ -36,20 +36,58 @@ type SaltThemeProviderProps = {
 };
 
 export const SaltThemeProviderNext: React.FC<SaltThemeProviderProps> = ({ children }) => {
-  const [mode, setMode] = useState<Mode>('dark');
-
-  useEffect(() => {
+  // Initialize mode from localStorage or default to 'dark'
+  const [mode, setMode] = useState<Mode>(() => {
     if (typeof window !== 'undefined') {
       const storedMode = window.localStorage.getItem(SALT_THEME_STORAGE_KEY) as Mode | null;
       if (storedMode === 'light' || storedMode === 'dark') {
-        setMode(storedMode);
+        return storedMode;
       }
     }
-  }, []);
+    return 'dark';
+  });
 
+  // Save mode to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.localStorage.setItem(SALT_THEME_STORAGE_KEY, mode);
+    }
+  }, [mode]);
+
+  // Update iOS PWA status bar style and theme-color based on mode
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const isLightMode = mode === 'light';
+    const backgroundColor = isLightMode ? '#fafafa' : '#171e26';
+    
+    // Update apple-mobile-web-app-status-bar-style for iOS PWA
+    // 'black' = black text/icons (for light backgrounds)
+    // 'black-translucent' = white text/icons, translucent bar (for dark backgrounds)
+    // 'default' = white text/icons (for dark backgrounds, non-translucent)
+    const statusBarMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (statusBarMeta) {
+      // Use 'black' for light mode (black text on light bg) and 'black-translucent' for dark mode (white text on dark bg)
+      statusBarMeta.setAttribute('content', isLightMode ? 'black' : 'black-translucent');
+    }
+
+    // Update main theme-color meta tag (the one without media query)
+    // This is the primary one that iOS PWA uses
+    const mainThemeColor = document.getElementById('theme-color-main') || 
+      document.querySelector('meta[name="theme-color"]:not([media])');
+    if (mainThemeColor) {
+      mainThemeColor.setAttribute('content', backgroundColor);
+    }
+
+    // Also update the media query variants for browser support
+    const themeColorDark = document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]');
+    const themeColorLight = document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]');
+    
+    if (themeColorDark) {
+      themeColorDark.setAttribute('content', '#171e26');
+    }
+    if (themeColorLight) {
+      themeColorLight.setAttribute('content', '#fafafa');
     }
   }, [mode]);
 
