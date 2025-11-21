@@ -1,90 +1,89 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-  IonIcon
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { AccessLineLogo, ArrowBack, DigitalBankingLineLogo } from '../components/icons';
+import './home.css';
+
+const experiences = [
+  {
+    label: 'Access',
+    icon: <AccessLineLogo size={96} className="salt-inline-icon" />,
+    action: (history: ReturnType<typeof useHistory>) => history.push('/home'),
+  },
+  {
+    label: 'Digital Banking',
+    icon: <DigitalBankingLineLogo size={96} className="salt-inline-icon" />,
+    action: () => (window.location.href = 'https://digital-banking-fac4.onrender.com/'),
+  },
+];
 
 const AppExperience: React.FC = () => {
   const history = useHistory();
 
-  const handleAccess = () => {
-    console.log('Navigate to Access experience');
-    history.push('/home');
-  };
-
-  const handleDigitalBanking = () => {
-    console.log('Navigate to Digital Banking experience');
-    window.location.href = 'https://digital-banking-fac4.onrender.com/';
-  };
-
-  const handleBack = () => {
-    history.goBack();
-  };
+  const handleBack = () => history.goBack();
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton 
-                fill="clear" 
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
                 onClick={handleBack}
-                className="back-button"
+                style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <IonIcon icon="/images/ArrowBack.svg" />
-              </IonButton>
+                <ArrowBack size={18} className="salt-inline-icon" />
+              </Button>
             </div>
-            <div className="header-center">
-              <IonTitle>App Experience</IonTitle>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                App experience
+              </Text>
             </div>
-            <div className="header-right">
-            </div>
+            <div className="salt-header-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="app-experience-container">
-          {/* Header Section */}
-          <div className="app-experience-header">
-            <IonText>
-              <h1 className="brand-title">J.P. Morgan Payments</h1>
-            </IonText>
-            <IonText>
-              <p className="instruction-text">Choose your experience</p>
-            </IonText>
-          </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2} style={{ alignItems: 'center', justifyContent: 'center', minHeight: '100%', paddingTop: 'var(--salt-spacing-300)' }}>
+            <StackLayout gap={0.5} style={{ textAlign: 'center' }}>
+              <Text styleAs="h2">J.P. Morgan Payments</Text>
+              <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                Choose your experience
+              </Text>
+            </StackLayout>
 
-          {/* Experience Options */}
-          <div className="experience-options">
-            {/* Access Option */}
-            <div className="experience-card" onClick={handleAccess}>
-              <div className="experience-icon">
-                <IonIcon icon="/images/AccessLineLogo.svg" className="experience-icon-svg" />
-              </div>
-              <IonText>
-                <p className="experience-label">Access</p>
-              </IonText>
-            </div>
-
-            {/* Digital Banking Option */}
-            <div className="experience-card" onClick={handleDigitalBanking}>
-              <div className="experience-icon">
-                <IonIcon icon="/images/DigitalBankingLineLogo.svg" className="experience-icon-svg" />
-              </div>
-              <IonText>
-                <p className="experience-label">Digital Banking</p>
-              </IonText>
-            </div>
-          </div>
+            <FlexLayout align="center" justify="center" gap={2} style={{ flexWrap: 'wrap' }}>
+              {experiences.map(exp => (
+                <Card
+                  key={exp.label}
+                  className="salt-card"
+                  onClick={() => exp.action(history)}
+                  style={{ cursor: 'pointer', width: '160px', padding: 'var(--salt-spacing-200)' }}
+                >
+                  <StackLayout gap={1} align="center" className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                    <div style={{ 
+                      width: '96px', 
+                      height: '96px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                    }}>
+                      {exp.icon}
+                    </div>
+                    <Text styleAs="h4" style={{ color: 'var(--salt-accent-foreground)' }}>
+                      {exp.label}
+                    </Text>
+                  </StackLayout>
+                </Card>
+              ))}
+            </FlexLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

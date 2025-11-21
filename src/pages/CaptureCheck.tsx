@@ -3,15 +3,16 @@ import {
   IonContent,
   IonHeader,
   IonPage,
-  IonTitle,
   IonToolbar,
   IonButton,
-  IonText,
-  IonIcon,
   IonSpinner,
   IonModal
 } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowBack, Retake, Camera } from '../components/icons';
+import '../capture-check.css';
+import './home.css';
 
 // TypeScript declarations for external libraries
 declare global {
@@ -145,7 +146,7 @@ const CaptureCheck: React.FC = () => {
   useEffect(() => {
     const unlisten = history.listen((location, action) => {
       console.log('Route change detected:', action, location.pathname);
-      if (location.pathname !== '/capture-check') {
+      if (location.pathname !== '/deposits/capture-check') {
         console.log('Leaving capture page, stopping camera');
         forceStopCamera();
       }
@@ -946,31 +947,9 @@ const CaptureCheck: React.FC = () => {
     }
   };
 
-  const handleContinue = () => {
-    if (currentStep === 'complete') {
-      // Stop camera before navigating
-      stopCamera();
-      // Clear status after processing is complete
-      setDetectionStatus('');
-      
-      // Navigate to capture summary with captured images
-      history.push('/capture-summary', {
-        captureType,
-        selectedGroup,
-        selectedProgram,
-        programName,
-        frontImage,
-        backImage: isCheckCapture ? backImage : null,
-        frontCheckDetails: isCheckCapture ? frontCheckDetails : null,
-        backCheckDetails: isCheckCapture ? backCheckDetails : null
-      });
-    }
-  };
-
   const handleRetakeCapture = async (imageType: 'front' | 'back') => {
     console.log(`Retaking ${imageType} capture`);
     
-    // Stop current camera first
     stopCamera();
     
     if (imageType === 'front') {
@@ -981,7 +960,6 @@ const CaptureCheck: React.FC = () => {
       setCurrentStep('back');
     }
     
-    // Reset detection status
     setDetectionStatus('Position document within frame');
     setIsAutoDetecting(false);
     setIsProcessingOCR(false);
@@ -996,10 +974,6 @@ const CaptureCheck: React.FC = () => {
       countdownIntervalRef.current = null;
     }
     
-    // Force detection to restart by clearing any existing detection state
-    
-    
-    // Clear any existing check details for the specific image
     if (imageType === 'front') {
       setFrontCheckDetails({});
     } else if (imageType === 'back') {
@@ -1007,12 +981,10 @@ const CaptureCheck: React.FC = () => {
     }
     setExtractedText('');
     
-    // Reinitialize camera after a short delay
     setTimeout(async () => {
       try {
         console.log('Reinitializing camera for retake...');
         await initializeCamera();
-        // Force detection to start by triggering a manual detection check once camera reports ready
         const waitForReady = setInterval(() => {
           if (isCameraReady) {
             clearInterval(waitForReady);
@@ -1030,247 +1002,376 @@ const CaptureCheck: React.FC = () => {
 
   const getStepTitle = () => {
     if (isCheckCapture) {
-      return currentStep === 'front' ? 'Capture check front' : 'Capture check back';
+      if (currentStep === 'front') return 'Capture check';
+      if (currentStep === 'back') return 'Capture check back';
+      return 'Review capture';
     }
-    return 'Capture document';
+    if (currentStep === 'front') return 'Capture document';
+    if (currentStep === 'back') return 'Capture document back';
+    return 'Review capture';
   };
 
+  const handleContinue = () => {
+    if (isExtractionComplete) {
+      history.push('/deposits/capture-summary', {
+        captureType,
+        selectedGroup,
+        selectedProgram,
+        programName,
+        frontImage,
+        backImage: isCheckCapture ? backImage : null,
+        frontCheckDetails: isCheckCapture ? frontCheckDetails : null,
+        backCheckDetails: isCheckCapture ? backCheckDetails : null
+      });
+    }
+  };
+
+  const frontDetailEntries = [
+    frontCheckDetails?.routingNumber
+      ? { label: 'Routing Number', value: frontCheckDetails.routingNumber }
+      : null,
+    frontCheckDetails?.accountNumber
+      ? { label: 'Account Number', value: frontCheckDetails.accountNumber }
+      : null,
+    frontCheckDetails?.checkNumber
+      ? { label: 'Check Number', value: frontCheckDetails.checkNumber }
+      : null,
+    frontCheckDetails?.amount
+      ? { label: 'Amount', value: `$${frontCheckDetails.amount}` }
+      : null,
+    frontCheckDetails?.date
+      ? { label: 'Date', value: frontCheckDetails.date }
+      : null,
+    frontCheckDetails?.payee
+      ? { label: 'Payee', value: frontCheckDetails.payee }
+      : null,
+    frontCheckDetails?.memo
+      ? { label: 'Memo', value: frontCheckDetails.memo }
+      : null,
+  ].filter((detail): detail is { label: string; value: string } => Boolean(detail?.value));
+
+  const backDetailEntries = [
+    backCheckDetails?.routingNumber
+      ? { label: 'Routing Number', value: backCheckDetails.routingNumber }
+      : null,
+    backCheckDetails?.accountNumber
+      ? { label: 'Account Number', value: backCheckDetails.accountNumber }
+      : null,
+    backCheckDetails?.checkNumber
+      ? { label: 'Check Number', value: backCheckDetails.checkNumber }
+      : null,
+    backCheckDetails?.amount
+      ? { label: 'Amount', value: `$${backCheckDetails.amount}` }
+      : null,
+    backCheckDetails?.date
+      ? { label: 'Date', value: backCheckDetails.date }
+      : null,
+    backCheckDetails?.payee
+      ? { label: 'Payee', value: backCheckDetails.payee }
+      : null,
+    backCheckDetails?.memo
+      ? { label: 'Memo', value: backCheckDetails.memo }
+      : null,
+  ].filter((detail): detail is { label: string; value: string } => Boolean(detail?.value));
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+        <div className="salt-toolbar-content">
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                {getStepTitle()}
+              </Text>
+
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="header-center">
-              <IonTitle>{getStepTitle()}</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
-          </div>
+          </div> 
+
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen className="capture-content">
-        <div className="capture-container">
-
-
-          {/* Camera Preview Pane */}
+      <IonContent fullscreen className="bg-slate-100">
+        <div className="flex min-h-full flex-col items-center gap-6 pb-20">
           {!isExtractionComplete && (
-          <div className="camera-preview-pane">
-            <div className="camera-view">
-              {/* Always render video element */}
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                webkit-playsinline="true"
-                className="camera-video"
-                onLoadStart={() => console.log('Video load started')}
-                onLoadedData={() => console.log('Video data loaded')}
-                onCanPlay={() => console.log('Video can play')}
-                style={{ display: isVideoFrozen ? 'none' : 'block' }}
-              />
-              
-              {/* Frozen frame overlay during processing */}
-              {isVideoFrozen && frozenFrameData && (
-                <img 
-                  src={frozenFrameData} 
-                  alt="Frozen frame" 
-                  className="camera-video-frozen"
+            <div className="camera-preview-pane mt-6">
+              <div className="camera-view">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  webkit-playsinline="true"
+                  className={`camera-video ${isVideoFrozen ? 'hidden' : 'block'}`}
+                  onLoadStart={() => console.log('Video load started')}
+                  onLoadedData={() => console.log('Video data loaded')}
+                  onCanPlay={() => console.log('Video can play')}
                 />
-              )}
-              
-              {/* Loading overlay */}
-              {!isCameraReady && (
-                <div className="camera-loading">
-                  <IonText>
-                    <p className="loading-text">Initializing camera...</p>
-                  </IonText>
-                </div>
-              )}
-              
-              {/* Framing Mask */}
-              <div className="framing-mask">
-                <div className="mask-overlay">
-                  <div className="mask-top"></div>
-                  <div className="mask-middle">
-                    <div className="mask-left"></div>
-                    <div className="capture-frame">
-                      <div className="frame-corners">
-                        <div className="corner top-left"></div>
-                        <div className="corner top-right"></div>
-                        <div className="corner bottom-left"></div>
-                        <div className="corner bottom-right"></div>
-                      </div>
-                      <div className="frame-guidelines">
-                        <div className="guideline horizontal top"></div>
-                        <div className="guideline horizontal bottom"></div>
-                        <div className="guideline vertical left"></div>
-                        <div className="guideline vertical right"></div>
-                      </div>
-                    </div>
-                    <div className="mask-right"></div>
+
+                {isVideoFrozen && frozenFrameData && (
+                  <img src={frozenFrameData} alt="Frozen frame" className="camera-video-frozen" />
+                )}
+
+                {!isCameraReady && (
+                  <div className="camera-loading">
+                    <p className="text-lg font-semibold text-white">Initializing camera...</p>
                   </div>
-                  <div className="mask-bottom"></div>
+                )}
+
+                <div className="framing-mask">
+                  <div className="mask-overlay">
+                    <div className="mask-top"></div>
+                    <div className="mask-middle">
+                      <div className="mask-left"></div>
+                      <div className="capture-frame">
+                        <div className="frame-corners">
+                          <div className="corner top-left"></div>
+                          <div className="corner top-right"></div>
+                          <div className="corner bottom-left"></div>
+                          <div className="corner bottom-right"></div>
+                        </div>
+                        <div className="frame-guidelines">
+                          <div className="guideline horizontal top"></div>
+                          <div className="guideline horizontal bottom"></div>
+                          <div className="guideline vertical left"></div>
+                          <div className="guideline vertical right"></div>
+                        </div>
+                      </div>
+                      <div className="mask-right"></div>
+                    </div>
+                    <div className="mask-bottom"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           )}
 
-          {/* Detection Status - moved below camera preview */}
-          {detectionStatus && !isExtractionComplete && (
-            <div className="detection-status">
-              <IonText>
-                <p className="status-text">
-                  {isAutoDetecting && <IonSpinner name="crescent" />}
-                  {isProcessingOCR && <IonSpinner name="crescent" />}
-                  {isCountingDown && (
-                    <span className="countdown-display">
-                      {countdown}
-                    </span>
-                  )}
-                  {detectionStatus}
-                </p>
-              </IonText>
-            </div>
-          )}
-
-          {/* Captured Images Preview */}
-          {isExtractionComplete && frontImage && (
-            <div className="captured-preview">
-              <IonText>
-                <h3 className="preview-title">Captured Images</h3>
-              </IonText>
-              {frontImage && (
-                <div className="preview-item">
-                  <div className="preview-header">
-                    <IonText>
-                      <p className="preview-label">Front</p>
-                    </IonText>
-                    <div className="preview-actions">
-                      <IonButton 
-                        fill="outline" 
-                        size="small" 
-                        className="action-button retake-button"
-                        onClick={() => handleRetakeCapture('front')}
-                      >
-                        <img src="/images/Retake.svg" alt="Retake" className="retake-icon" slot="start" />
-                        Retake
-                      </IonButton>
-                    </div>
-                  </div>
-                  <img src={frontImage} alt="Front" className="preview-image" onClick={() => setIsPreviewModalOpen(true)} />
-                </div>
-              )}
-              
-              
-              {/* Front Image MICR Details */}
-              {frontImage && (
-                <div className="check-details front-ocr-details">
-                  <IonText>
-                    <h3 className="details-title">Front - MICR Details:</h3>
-                  </IonText>
-                  <div className="details-grid">
-                    {frontCheckDetails?.routingNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Routing Number:</span>
-                        <span className="detail-value">{frontCheckDetails.routingNumber}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.accountNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Account Number:</span>
-                        <span className="detail-value">{frontCheckDetails.accountNumber}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.checkNumber && (
-                      <div className="detail-item">
-                        <span className="detail-label">Check Number:</span>
-                        <span className="detail-value">{frontCheckDetails.checkNumber}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.amount && (
-                      <div className="detail-item">
-                        <span className="detail-label">Amount:</span>
-                        <span className="detail-value">${frontCheckDetails.amount}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.date && (
-                      <div className="detail-item">
-                        <span className="detail-label">Date:</span>
-                        <span className="detail-value">{frontCheckDetails.date}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.payee && (
-                      <div className="detail-item">
-                        <span className="detail-label">Payee:</span>
-                        <span className="detail-value">{frontCheckDetails.payee}</span>
-                      </div>
-                    )}
-                    {frontCheckDetails?.memo && (
-                      <div className="detail-item">
-                        <span className="detail-label">Memo:</span>
-                        <span className="detail-value">{frontCheckDetails.memo}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-            </div>
-          )}
-
-          {/* Continue Button - only show when capture is complete */}
-          {currentStep === 'complete' && (
-            <div className="continue-section">
-              <IonButton 
-                expand="block" 
-                className="continue-button"
-                onClick={handleContinue}
+          {currentStep !== 'complete' && (
+            <div style={{ width: '100%', maxWidth: '480px', display: 'flex', justifyContent: 'center', padding: `var(--salt-spacing-150)`, marginTop: 'var(--salt-spacing-100)' }}>
+              <Button
+                appearance="solid"
+                sentiment="accented"
+                onClick={startCountdown}
+                disabled={isCountingDown || isProcessingOCR}
+                className="salt-primary-action"
               >
-                Continue
-              </IonButton>
+                <Camera size={24} className="salt-inline-icon" />
+                <Text styleAs="label" style={{ fontSize: '1rem', fontWeight: 600 }}>Capture Now</Text>
+              </Button>
             </div>
           )}
-          
-          {/* Fullscreen Preview Modal */}
-          <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)} className="image-preview-modal">
-            <IonHeader className="standard-header">
-              <IonToolbar>
-                <div className="header-content">
-                  <div className="header-left">
-                    <IonButton fill="clear" className="header-button" onClick={() => setIsPreviewModalOpen(false)}>
-                      <IonText>Close</IonText>
-                    </IonButton>
+
+          {detectionStatus && !isExtractionComplete && (
+            <Card className="salt-card" style={{ margin: '0 var(--salt-spacing-150)', marginTop: 'var(--salt-spacing-100)' }}>
+              <FlexLayout align="center" gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                {(isAutoDetecting || isProcessingOCR) && <IonSpinner name="crescent" />}
+                {isCountingDown && (
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '999px',
+                    background: 'var(--salt-status-warning-foreground)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                  }}>
+                    {countdown}
                   </div>
-                  <div className="header-center">
-                    <IonTitle>Preview</IonTitle>
+                )}
+                <Text styleAs="label" style={{ fontWeight: 600 }}>{detectionStatus}</Text>
+              </FlexLayout>
+            </Card>
+          )}
+
+          {isExtractionComplete && frontImage && (
+            <Card className="salt-card" style={{ maxWidth: '768px', width: '100%' }}>
+              <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                <Text styleAs="h3" style={{ textAlign: 'center' }}>Captured images</Text>
+
+                <FlexLayout gap={2} justify="center" style={{ flexWrap: 'wrap' }}>
+                  <Card className="salt-card" style={{ flex: '1 1 300px', maxWidth: '384px', background: 'var(--salt-container-secondary-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <FlexLayout align="center" justify="space-between">
+                        <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>Front</Text>
+                        <Button
+                          appearance="bordered"
+                          sentiment="neutral"
+                          onClick={() => handleRetakeCapture('front')}
+                          style={{ borderRadius: '999px', padding: `var(--salt-spacing-50) var(--salt-spacing-150)`, fontSize: '0.75rem' }}
+                        >
+                          <Retake size={16} className="salt-inline-icon" />
+                          <Text styleAs="label" style={{ fontSize: '0.75rem' }}>Retake</Text>
+                        </Button>
+                      </FlexLayout>
+                      <button
+                        type="button"
+                        onClick={() => setIsPreviewModalOpen(true)}
+                        style={{
+                          height: '144px',
+                          width: '100%',
+                          borderRadius: '8px',
+                          border: '1px solid var(--salt-separable-secondary-borderColor)',
+                          background: 'var(--salt-container-primary-background)',
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          padding: 0,
+                        }}
+                      >
+                        <img src={frontImage} alt="Front" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </button>
+                    </StackLayout>
+                  </Card>
+
+                  {backImage && (
+                    <Card className="salt-card" style={{ flex: '1 1 300px', maxWidth: '384px', background: 'var(--salt-container-secondary-background)' }}>
+                      <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                        <FlexLayout align="center" justify="space-between">
+                          <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>Back</Text>
+                          <Button
+                            appearance="bordered"
+                            sentiment="neutral"
+                            onClick={() => handleRetakeCapture('back')}
+                            style={{ borderRadius: '999px', padding: `var(--salt-spacing-50) var(--salt-spacing-150)`, fontSize: '0.75rem' }}
+                          >
+                            <Retake size={16} className="salt-inline-icon" />
+                            <Text styleAs="label" style={{ fontSize: '0.75rem' }}>Retake</Text>
+                          </Button>
+                        </FlexLayout>
+                        <button
+                          type="button"
+                          onClick={() => setIsPreviewModalOpen(true)}
+                          style={{
+                            height: '144px',
+                            width: '100%',
+                            borderRadius: '8px',
+                            border: '1px solid var(--salt-separable-secondary-borderColor)',
+                            background: 'var(--salt-container-primary-background)',
+                            cursor: 'pointer',
+                            overflow: 'hidden',
+                            padding: 0,
+                          }}
+                        >
+                          <img src={backImage} alt="Back" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </button>
+                      </StackLayout>
+                    </Card>
+                  )}
+                </FlexLayout>
+
+                {frontDetailEntries.length > 0 && (
+                  <Card className="salt-card" style={{ borderLeft: '4px solid var(--salt-status-info-background)', background: 'var(--salt-status-info-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem', color: 'var(--salt-status-info-foreground)' }}>
+                        Front – MICR details
+                      </Text>
+                      <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                        {frontDetailEntries.map(detail => (
+                          <Card key={detail.label} className="salt-card" style={{ flex: '1 1 200px', minWidth: '200px', background: 'var(--salt-container-primary-background)' }}>
+                            <StackLayout gap={0.2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-100) var(--salt-spacing-150)' }}>
+                              <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                                {detail.label}
+                              </Text>
+                              <Text styleAs="h4" style={{ fontSize: '0.875rem', wordBreak: 'break-word' }}>{detail.value}</Text>
+                            </StackLayout>
+                          </Card>
+                        ))}
+                      </FlexLayout>
+                    </StackLayout>
+                  </Card>
+                )}
+
+                {backDetailEntries.length > 0 && (
+                  <Card className="salt-card" style={{ borderLeft: '4px solid var(--salt-status-success-background)', background: 'var(--salt-status-success-background)' }}>
+                    <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem', color: 'var(--salt-status-success-foreground)' }}>
+                        Back – MICR details
+                      </Text>
+                      <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                        {backDetailEntries.map(detail => (
+                          <Card key={detail.label} className="salt-card" style={{ flex: '1 1 200px', minWidth: '200px', background: 'var(--salt-container-primary-background)' }}>
+                            <StackLayout gap={0.2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-100) var(--salt-spacing-150)' }}>
+                              <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                                {detail.label}
+                              </Text>
+                              <Text styleAs="h4" style={{ fontSize: '0.875rem', wordBreak: 'break-word' }}>{detail.value}</Text>
+                            </StackLayout>
+                          </Card>
+                        ))}
+                      </FlexLayout>
+                    </StackLayout>
+                  </Card>
+                )}
+              </StackLayout>
+            </Card>
+          )}
+
+          {currentStep === 'complete' && (
+            <div className="salt-button-container">
+              <Button
+                appearance="solid"
+                sentiment="accented"
+                onClick={handleContinue}
+                className="salt-primary-action">
+                <Text styleAs="label">Continue</Text>
+              </Button>
+            </div>
+          )}
+
+          <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
+            <IonHeader translucent={false}>
+              <IonToolbar className="salt-toolbar">
+                <div className="salt-toolbar-content">
+                  <div className="salt-header-left" />
+                  <div className="salt-header-center">
+                    <Text styleAs="h4" className="salt-toolbar-title">
+                      Preview
+                    </Text>
                   </div>
-                  <div className="header-right"></div>
+                  <div className="salt-header-right">
+                    <Button
+                      appearance="transparent"
+                      sentiment="neutral"
+                      onClick={() => setIsPreviewModalOpen(false)}
+                      style={{ padding: `0 var(--salt-spacing-100)` }}
+                    >
+                      <Text styleAs="label">Close</Text>
+                    </Button>
+                  </div>
                 </div>
               </IonToolbar>
             </IonHeader>
-            <IonContent className="image-preview-content">
+            <IonContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
               {frontImage && (
-                <div className="image-preview-wrapper">
-                  <img src={frontImage} alt="Captured" className="image-preview-full" />
-                </div>
+                <img src={frontImage} alt="Captured" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
               )}
             </IonContent>
           </IonModal>
         </div>
 
-        {/* Hidden canvas for image capture */}
         <canvas ref={canvasRef} style={{ display: 'none' }} />
       </IonContent>
     </IonPage>

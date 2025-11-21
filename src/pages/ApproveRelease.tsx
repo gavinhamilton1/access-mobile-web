@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonButton,
-  IonText,
-  IonCard,
-  IonCardContent,
-  IonSpinner,
-  IonAlert
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar, IonAlert, IonSpinner } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowBack } from '../components/icons';
+import './home.css';
+
+type PaymentSelection = {
+  id: string;
+  from: string;
+  type: string;
+  amount: string;
+};
 
 interface LocationState {
-  selectedItems?: any[];
+  selectedItems?: PaymentSelection[];
   actionType?: 'approve' | 'release';
 }
 
@@ -23,18 +21,14 @@ const ApproveRelease: React.FC = () => {
   const history = useHistory();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = useState<PaymentSelection[]>([]);
   const [actionType, setActionType] = useState<'approve' | 'release'>('approve');
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    // Get selected items from location state
+    const timer = setTimeout(() => setIsLoading(false), 800);
     const state = location.state as LocationState;
+
     if (state?.selectedItems) {
       setSelectedItems(state.selectedItems);
     }
@@ -45,88 +39,113 @@ const ApproveRelease: React.FC = () => {
     return () => clearTimeout(timer);
   }, [location.state]);
 
-  const handleConfirm = () => {
-    setShowAlert(true);
-  };
+  const handleConfirm = () => setShowAlert(true);
 
   const handleAlertDismiss = () => {
     setShowAlert(false);
     history.goBack();
   };
 
-  const handleCancel = () => {
-    history.goBack();
-  };
+  const handleCancel = () => history.goBack();
+
+  const titleText = actionType === 'approve' ? 'Approve' : 'Release';
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="approve-release-header">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Back</IonText>
-              </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+
+
+
+          <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                {titleText}
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="header-center">
-              <IonTitle>{actionType === 'approve' ? 'Approve' : 'Release'}</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+
+
+
+
+
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          {isLoading ? (
-            <div className="loading-container">
-              <IonSpinner name="crescent" />
-            </div>
-          ) : (
-            <div className="approve-release-content">
-              {selectedItems.map((item, index) => (
-                <div key={index} className="approval-item-wrapper">
-                  <div className="approval-item">
-                    <div className="approval-left">
-                      <IonText>
-                        <h3 className="approval-id">{item.id}</h3>
-                      </IonText>
-                      <IonText color="medium">
-                        <p className="approval-from">{item.from}</p>
-                      </IonText>
-                    </div>
-                    
-                    <div className="approval-right">
-                      <div className="approval-type-section">
-                        <IonText color="medium">
-                          <p className="approval-type">{item.type}</p>
-                        </IonText>
-                        <IonText>
-                          <p className="approval-amount">{item.amount}</p>
-                        </IonText>
-                      </div>
-                    </div>
-                  </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            {isLoading ? (
+              <Card className="salt-card">
+                <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '192px' }}>
+                  <IonSpinner name="crescent" />
                 </div>
-              ))}
-            </div>
-          )}
+              </Card>
+            ) : selectedItems.length > 0 ? (
+              selectedItems.map(item => (
+                <Card key={item.id} className="salt-card">
+                  <FlexLayout align="start" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                    <StackLayout gap={0.2}>
+                      <Text styleAs="h4" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {item.id}
+                      </Text>
+                      <Text styleAs="label" style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                        {item.from}
+                      </Text>
+                    </StackLayout>
+                    <StackLayout gap={0.2} align="end">
+                      <Text styleAs="label">{item.type}</Text>
+                      <Text styleAs="h4">{item.amount}</Text>
+                    </StackLayout>
+                  </FlexLayout>
+                </Card>
+              ))
+            ) : (
+              <Card className="salt-card">
+                <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', textAlign: 'center' }}>
+                  <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                    No payments selected.
+                  </Text>
+                </div>
+              </Card>
+            )}
+          </StackLayout>
         </div>
 
-        {/* Confirm Button */}
-        <div className="confirm-button-container">
-          <IonButton 
-            fill="solid" 
-            className="confirm-button"
-            onClick={handleConfirm}
-            disabled={isLoading}
-          >
-            Confirm
-          </IonButton>
+        <div className="salt-action-bar">
+          <div style={{ padding: 'var(--salt-spacing-150)' }}>
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              onClick={handleConfirm}
+              disabled={isLoading || selectedItems.length === 0}
+              style={{ borderRadius: '999px', width: '100%' }}
+            >
+              <Text styleAs="label">Confirm</Text>
+            </Button>
+          </div>
         </div>
       </IonContent>
 
@@ -134,9 +153,8 @@ const ApproveRelease: React.FC = () => {
         isOpen={showAlert}
         onDidDismiss={handleAlertDismiss}
         header="Confirmation"
-        message={`${actionType === 'approve' ? 'Approve' : 'Release'} Confirmed`}
+        message={`${titleText} confirmed`}
         buttons={['OK']}
-        cssClass="light-alert"
       />
     </IonPage>
   );

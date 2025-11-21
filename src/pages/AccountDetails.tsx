@@ -1,182 +1,29 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonSelect,
-  IonSelectOption,
-  IonButton,
-  IonIcon,
-  IonInput,
-  IonList,
-  IonItem
-} from '@ionic/react';
+import React, { useMemo, useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, Dropdown, FlexLayout, Option, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useParams } from 'react-router-dom';
+import { accountsData } from '../data/accountsData';
+import { transactionsData, type Transaction } from '../data/transactionsData';
+import { ArrowBack, ArrowForward, Cash, Filter, PiggyBank, Search, StarBlank, StarFilled } from '../components/icons';
+import './home.css';
 
-// Mock account data
-const mockAccounts = {
-  'ACCT-0016710022006603': {
-    id: 'ACCT-0016710022006603',
-    name: 'ACCT-0016710022006603-TITLE.1',
-    number: '(...2252)',
-    currency: 'BHD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: true
-  },
-  'ONE-OAKRIDGE-6603': {
-    id: 'ONE-OAKRIDGE-6603',
-    name: 'ONE OAKRIDGE LLC',
-    number: '(...6603)',
-    currency: 'USD',
-    currentBalance: '1,250.50',
-    openingBalance: '1,200.00',
-    credits: '150.50',
-    debits: '(100.00)',
-    isStarred: true
-  },
-  'RAINBOW-LAKE-7437': {
-    id: 'RAINBOW-LAKE-7437',
-    name: 'RAINBOW LAKE, LLC',
-    number: '(...7437)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: true
-  },
-  'RAINBOW-LAKE-9842': {
-    id: 'RAINBOW-LAKE-9842',
-    name: 'RAINBOW LAKE, LLC',
-    number: '(...9842)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'GENERIC-USD': {
-    id: 'GENERIC-USD',
-    name: 'Generic Account',
-    number: '(...0000)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'JAMES-C-EDWARDS-6085': {
-    id: 'JAMES-C-EDWARDS-6085',
-    name: 'JAMES C EDWARDS + CO INC',
-    number: '(...6085)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'KT-2-LLC-6055': {
-    id: 'KT-2-LLC-6055',
-    name: 'K.T. 2 LLC',
-    number: '(...6055)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'US-USD-8280': {
-    id: 'US-USD-8280',
-    name: 'US USD',
-    number: '(...8280)',
-    currency: 'USD',
-    currentBalance: '3 798,02',
-    openingBalance: '3 500,00',
-    credits: '500,00',
-    debits: '(201,98)',
-    isStarred: true
-  },
-  'H-CONSTRUCTION-8478': {
-    id: 'H-CONSTRUCTION-8478',
-    name: 'H CONSTRUCTION INC',
-    number: '(...8478)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'FEDERAL-FEE-RECOVERY-9251': {
-    id: 'FEDERAL-FEE-RECOVERY-9251',
-    name: 'FEDERAL FEE RECOVERY LLC',
-    number: '(...9251)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'JSN-AAK-ENTERPRISES-0404': {
-    id: 'JSN-AAK-ENTERPRISES-0404',
-    name: 'JSN-AAK ENTERPRISES',
-    number: '(...0404)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'ACS-INC-4644': {
-    id: 'ACS-INC-4644',
-    name: 'ACS INC DBA #1 COMPUTER TROU...',
-    number: '(...4644)',
-    currency: 'USD',
-    currentBalance: '0,00',
-    openingBalance: '0,00',
-    credits: '0,00',
-    debits: '(0,00)',
-    isStarred: false
-  },
-  'ACCT-0019311000891101': {
-    id: 'ACCT-0019311000891101',
-    name: 'ACCT-0019311000891101-TITLE.1',
-    number: '(...1101)',
-    currency: 'CAD',
-    currentBalance: '763,10',
-    openingBalance: '700,00',
-    credits: '100,00',
-    debits: '(36,90)',
-    isStarred: true
-  }
-};
+type Account = (typeof accountsData)[keyof typeof accountsData];
+
+const currencyCodes = ['USD', 'EUR', 'GBP', 'AUD'] as const;
+const timePeriods = ['Current day', 'Prior day', 'Last week'] as const;
 
 const AccountDetails: React.FC = () => {
   const history = useHistory();
   const { accountId } = useParams<{ accountId: string }>();
-  
-  // Load accounts from localStorage or use mock data
-  const [accounts, setAccounts] = useState(() => {
+  const [timePeriod, setTimePeriod] = useState<(typeof timePeriods)[number]>('Current day');
+  const [currency, setCurrency] = useState<(typeof currencyCodes)[number]>('USD');
+
+  const [accounts, setAccounts] = useState<Record<string, Account>>(() => {
     const savedAccounts = localStorage.getItem('accounts');
-    return savedAccounts ? JSON.parse(savedAccounts) : mockAccounts;
+    return savedAccounts ? JSON.parse(savedAccounts) : accountsData;
   });
-  
-  // Get account data or use default
-  const account = accounts[accountId as keyof typeof accounts] || accounts['ACCT-0016710022006603'];
+
+  const currentAccount = accounts[accountId] ?? accounts['ACCT-0016710022006603'];
 
   const handleBackClick = () => {
     history.goBack();
@@ -186,144 +33,256 @@ const AccountDetails: React.FC = () => {
     event.stopPropagation();
     const updatedAccounts = {
       ...accounts,
-      [accountId]: {
-        ...accounts[accountId],
-        isStarred: !accounts[accountId].isStarred
-      }
+      [currentAccount.id]: {
+        ...currentAccount,
+        isStarred: !currentAccount.isStarred,
+      },
     };
     setAccounts(updatedAccounts);
     localStorage.setItem('accounts', JSON.stringify(updatedAccounts));
   };
 
+  const totals = useMemo(() => {
+    const currentAvailable = currentAccount.currentBalance;
+    const openingBalance = currentAccount.openingBalance;
+    const currentBalance = currentAvailable;
+
+    const splitAmount = (amount: string) => {
+      const parts = amount.replace(',', '.').split('.');
+      return {
+        value: parts[0],
+        decimals: parts[1] ? '.' + parts[1] : '.00',
+      };
+    };
+
+    return {
+      currentAvailable: splitAmount(currentAvailable),
+      openingBalance: splitAmount(openingBalance),
+      currentBalance: splitAmount(currentBalance),
+      credits: currentAccount.credits,
+      debits: currentAccount.debits,
+    };
+  }, [currentAccount]);
+
+  const balanceItems = useMemo(
+    () => [
+      { icon: <PiggyBank size={24} className="salt-inline-icon" />, label: 'Credits', value: totals.credits },
+      { icon: <Cash size={24} className="salt-inline-icon" />, label: 'Debits', value: totals.debits },
+    ],
+    [totals.credits, totals.debits],
+  );
+
+  // Get transactions for the current account
+  const transactions = (accountId && accountId in transactionsData)
+    ? transactionsData[accountId as keyof typeof transactionsData]
+    : [];
+
+  const handleTransactionClick = (transaction: Transaction) => {
+    history.push('/transaction-details', {
+      transaction,
+      source: 'accounts',
+    });
+  };
+
   return (
     <IonPage>
-
-<IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-            <IonButton fill="clear" className="back-button" onClick={handleBackClick}>
-                <img src="/images/ArrowUp.svg" alt="Back" className="icon-small" style={{transform: 'rotate(-90deg)'}} />
-                <span>Back</span>
-              </IonButton>
-
-            </div>
-            <div className="header-center">
-              <IonTitle>
-                <div className="account-title-constrained">{account.name}</div>
-              </IonTitle>
-              <IonSelect
-                value="Current day"
-                interface="popover"
-                className="currency-select-inline"
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-3column" style={{ alignItems: 'flex-start' }}>
+            <div className="salt-toolbar-column-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBackClick}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
               >
-                <IonSelectOption value="Current day">Current day</IonSelectOption>
-                <IonSelectOption value="Prior day">Prior day</IonSelectOption>
-                <IonSelectOption value="Last week">Last week</IonSelectOption>
-              </IonSelect>
+                <ArrowBack size={18} className="salt-inline-icon" />
+              </Button>
             </div>
-            <div className="header-right">
+            <div className="salt-toolbar-column-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                {currentAccount.name}
+              </Text>
+              <Dropdown
+                className="salt-dropdown"
+                selected={[timePeriod]}
+                onSelectionChange={(_, nextSelected) => {
+                  if (nextSelected[0]) {
+                    setTimePeriod(nextSelected[0] as (typeof timePeriods)[number]);
+                  }
+                }}
+                valueToString={item => item}
+              >
+                {timePeriods.map(period => (
+                  <Option key={period} value={period}>
+                    {period}
+                  </Option>
+                ))}
+              </Dropdown>
             </div>
+            <div className="salt-toolbar-column-right" />
           </div>
         </IonToolbar>
       </IonHeader>
 
-
-
-
-
-
       <IonContent fullscreen>
-        <div className="page-content">
-          {/* Account Summary Card */}
-          <IonCard className="card balance-card">
-            <IonCardContent className="card-content">
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <IonText color="medium">
-                    <p className="text-small">Current available</p>
-                  </IonText>
-                  <IonText>
-                    <h2 className="text-large">{account.currency} {account.currentBalance}</h2>
-                  </IonText>
-                </div>
-                <div className="balance-amount-section">
-                  <img 
-                    src={account.isStarred ? "/images/StarFilled.svg" : "/images/StarBlank.svg"} 
-                    alt="Star" 
-                    className="icon-small account-star" 
-                    onClick={handleStarClick}
-                    style={{ cursor: 'pointer' }}
-                  />
-                </div>
-              </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content-wide" gap={0.5}>
+            <Card className="salt-card" style={{ margin: 'var(--salt-spacing-150)' }}>
+              <StackLayout gap={0} className="salt-card-section">
+                <FlexLayout align="start" justify="space-between" className="salt-card-section-top-row">
+                  <StackLayout gap={0.2}>
+                    <Text styleAs="label">
+                      Current available
+                    </Text>
+                    <div className="salt-amount">
+                      <Text className="salt-current-amount-value">
+                        {totals.currentAvailable.value}
+                      </Text>
+                      <Text className="salt-current-amount-decimals">
+                        {totals.currentAvailable.decimals}
+                      </Text>
+                    </div>
+                  </StackLayout>
 
-              <div className="balance-divider"></div>
+                  <Dropdown
+                    className="salt-dropdown"
+                    style={{ width: 'auto', flexShrink: 0 }}
+                    selected={[currency]}
+                    onSelectionChange={(_, nextSelected) => {
+                      if (nextSelected[0]) {
+                        setCurrency(nextSelected[0] as (typeof currencyCodes)[number]);
+                      }
+                    }}
+                    valueToString={item => item}
+                    variant="secondary"
+                  >
+                    {currencyCodes.map(code => (
+                      <Option key={code} value={code}>
+                        {code}
+                      </Option>
+                    ))}
+                  </Dropdown>
+                </FlexLayout>
 
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <span>Opening balance</span>
+                <div className="salt-balance-summary">
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={1}>
+                      <Text styleAs="label">Opening balance</Text>
+                    </FlexLayout>
+                    <div className="salt-amount">
+                      <Text className="salt-balance-value">
+                        {totals.openingBalance.value}
+                      </Text>
+                      <Text className="salt-balance-decimals">
+                        {totals.openingBalance.decimals}
+                      </Text>
+                    </div>
+                  </FlexLayout>
                 </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">{account.openingBalance}</span>
+
+
+                <div className="salt-balance-summary">
+                  <FlexLayout align="center" justify="space-between">
+                    <FlexLayout align="center" gap={1}>
+                      <Text styleAs="label">Current balance</Text>
+                    </FlexLayout>
+                    <div className="salt-amount">
+                      <Text className="salt-balance-value">
+                        {totals.currentBalance.value}
+                      </Text>
+                      <Text className="salt-balance-decimals">
+                        {totals.currentBalance.decimals}
+                      </Text>
+                    </div>
+                  </FlexLayout>
                 </div>
-              </div>
 
-              <div className="balance-divider"></div>
-
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <span>Current balance</span>
-                </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">{account.currentBalance}</span>
-                </div>
-              </div>
-
-              <div className="balance-divider"></div>
-
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <div className="credit-debit-left">
-                    <img src="/images/PiggyBank.svg" alt="Credits" className="icon-small" />
-                    <span>Credits</span>
+                {balanceItems.map(item => (
+                  <div key={item.label} className="salt-balance-summary">
+                    <FlexLayout align="center" justify="space-between">
+                      <FlexLayout align="center" gap={1}>
+                        {item.icon}
+                        <Text styleAs="label">{item.label}</Text>
+                      </FlexLayout>
+                      <Text styleAs="action">
+                        {item.value}
+                      </Text>
+                    </FlexLayout>
                   </div>
-                </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">{account.credits}</span>
-                </div>
-              </div>
+                ))}
+              </StackLayout>
+            </Card>
 
-              <div className="balance-divider"></div>
 
-              <div className="balance-row">
-                <div className="balance-label-section">
-                  <div className="credit-debit-left">
-                    <img src="/images/VisibilityOn.svg" alt="Debits" className="icon-small" />
-                    <span>Debits</span>
-                  </div>
-                </div>
-                <div className="balance-amount-section">
-                  <span className="text-bold">{account.debits}</span>
-                </div>
-              </div>
-            </IonCardContent>
-          </IonCard>
-
-          {/* Transaction Search Section */}
-          <div className="transaction-search-section">
-            <div className="search-handle"></div>
-              <IonCardContent className="card-content">
-                <div className="search-container">
-                  <img src="/images/Search.svg" alt="Search" className="search-icon" />
-                  <IonInput
-                    placeholder="Search transactions"
-                    className="search-input"
-                  />
-                  <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
-                </div>
-              </IonCardContent>
-          </div>
+            <div>
+            <FlexLayout align="center" justify="space-between" style={{ margin: '0 var(--salt-spacing-150)' }}>
+                <Text styleAs="h4" className="salt-list-title">
+                  Transactions
+                </Text>
+                <Button
+                  appearance="bordered"
+                  sentiment="neutral"
+                  className="salt-action-bar-button "
+                >
+                  <Text styleAs="label">Export CSV</Text>
+                </Button>
+              </FlexLayout>
+            </div>
+            
+            <StackLayout gap={1}>
+              {transactions.length > 0 ? (
+                  <StackLayout gap={0} className="salt-list">
+                    {transactions.map(transaction => (
+                      <div
+                        key={transaction.id}
+                        className="salt-list-item"
+                        onClick={() => handleTransactionClick(transaction)}
+                      >
+                        <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
+                          <StackLayout gap={0.2}>
+                            <Text styleAs="h4">
+                              {transaction.id}
+                            </Text>
+                            <Text styleAs="label">
+                              {transaction.from}
+                            </Text>
+                          </StackLayout>
+                          <StackLayout gap={0.5} align="end">
+                            <FlexLayout align="center" gap={1}>
+                              <Text styleAs="label">
+                                {transaction.type}
+                              </Text>
+                              <ArrowForward size={16} className="salt-inline-icon" />
+                            </FlexLayout>
+                            <Text styleAs="h4">
+                              {transaction.amount}
+                            </Text>
+                          </StackLayout>
+                        </FlexLayout>
+                      </div>
+                    ))}
+                  </StackLayout>
+              ) : (
+                <Card className="salt-card">
+                  <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)' }}>
+                    <FlexLayout align="center" gap={1} className="salt-search-input">
+                      <Search size={20} className="salt-icon-subtle salt-inline-icon" />
+                      <input
+                        type="search"
+                        placeholder="Search transactions"
+                        style={{ fontSize: '0.875rem' }}
+                      />
+                      <Filter size={20} className="salt-filter-icon salt-inline-icon" />
+                    </FlexLayout>
+                    <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)', fontSize: '0.75rem' }}>
+                      Recent activity will appear here once transactions are available.
+                    </Text>
+                  </StackLayout>
+                </Card>
+              )}
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

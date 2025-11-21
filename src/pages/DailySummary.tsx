@@ -1,160 +1,82 @@
-import React, { useState } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonButton,
-  IonIcon
-} from '@ionic/react';
+import React from 'react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
-
-interface DailySummaryItem {
-  id: string;
-  date: string;
-  depositsCount: number;
-  totalValue: string;
-}
+import { ArrowBack, ArrowForward } from '../components/icons';
+import { dailySummaryData, type DailySummaryItem } from '../data/dailySummaryData';
+import './home.css';
 
 const DailySummary: React.FC = () => {
   const history = useHistory();
 
-  // Mock data based on the image
-  const mockDailyData: DailySummaryItem[] = [
-    {
-      id: '1',
-      date: '10/15/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    },
-    {
-      id: '2',
-      date: '10/14/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    },
-    {
-      id: '3',
-      date: '10/13/25',
-      depositsCount: 1,
-      totalValue: '$10,11'
-    },
-    {
-      id: '4',
-      date: '10/12/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    },
-    {
-      id: '5',
-      date: '10/11/25',
-      depositsCount: 2,
-      totalValue: '$388,12'
-    },
-    {
-      id: '6',
-      date: '10/10/25',
-      depositsCount: 1,
-      totalValue: '$2,00'
-    },
-    {
-      id: '7',
-      date: '10/09/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    },
-    {
-      id: '8',
-      date: '10/08/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    },
-    {
-      id: '9',
-      date: '10/07/25',
-      depositsCount: 0,
-      totalValue: '$0,00'
-    }
-  ];
-
-  const handleBack = () => {
-    history.goBack();
-  };
-
+  const handleBack = () => history.goBack();
   const handleDayClick = (item: DailySummaryItem) => {
     console.log('Navigate to day details:', item.date);
-    // TODO: Navigate to day details page
   };
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Daily summary</IonTitle>
-            </div>
-            <div className="header-right">
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+
+          <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                Daily summary
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+
+              </div>
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="daily-summary-container">
-            {/* Daily Summary List */}
-            <div className="daily-summary-list">
-              {mockDailyData.map((item) => (
-                <IonCard 
-                  key={item.id} 
-                  className="card daily-summary-card"
-                  onClick={() => handleDayClick(item)}
-                >
-                  <IonCardContent className="card-content">
-                    <div className="daily-summary-item">
-                      <div className="daily-summary-left">
-                        <IonText>
-                          <p className="deposits-label">Deposits</p>
-                        </IonText>
-                        <IonText>
-                          <p className="deposits-count">{item.depositsCount}</p>
-                        </IonText>
-                      </div>
-                      
-                      <div className="daily-summary-center">
-                        <IonText>
-                          <p className="total-value-label">Total Value</p>
-                        </IonText>
-                        <IonText>
-                          <p className="total-value-amount">{item.totalValue}</p>
-                        </IonText>
-                      </div>
-                      
-                      <div className="daily-summary-right">
-                        <IonText>
-                          <p className="summary-date">{item.date}</p>
-                        </IonText>
-                        <IonIcon 
-                          icon="/images/ArrowForward.svg" 
-                          className="summary-arrow"
-                        />
-                      </div>
-                    </div>
-                  </IonCardContent>
-                </IonCard>
-              ))}
-            </div>
-          </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={0.7}>
+            {dailySummaryData.map(item => (
+              <Card
+                key={item.id}
+                className="salt-card"
+                onClick={() => handleDayClick(item)}
+                style={{ cursor: 'pointer' }}
+              >
+                <FlexLayout align="center" justify="space-between" gap={0} className="salt-card-section-condensed">
+                  <StackLayout gap={0}>
+                    <Text styleAs="label">
+                      Deposits
+                    </Text>
+                    <Text styleAs="label">{item.depositsCount}</Text>
+                  </StackLayout>
+                  <StackLayout gap={0.2} align="center">
+                    <Text styleAs="label">
+                      Total value
+                    </Text>
+                    <Text styleAs="label">{item.currency} {item.totalValue}</Text>
+                  </StackLayout>
+                  <FlexLayout align="center" gap={0.5}>
+                    <StackLayout gap={0.2} align="end">
+                      <Text styleAs="label">{item.date}</Text>
+                    </StackLayout>
+                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                  </FlexLayout>
+                </FlexLayout>
+              </Card>
+            ))}
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

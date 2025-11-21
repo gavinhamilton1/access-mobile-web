@@ -1,51 +1,26 @@
 import React, { useState } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-  IonInput,
-  IonIcon,
-  IonCard,
-  IonCardContent
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { ArrowBack, ArrowForward, Search } from '../components/icons';
+import { programsData } from '../data/programsData';
+import './home.css';
 
 const DepositTo: React.FC = () => {
   const history = useHistory();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Program data matching the image description
-  const programsData = [
-    { id: '15501', name: 'AUTOAL1 RDC PROGRAM 1 GROUPS' },
-    { id: '15502', name: 'AUTOAL1 RDC PROGRAM 2 OPT REF ITEMS' },
-    { id: '15503', name: 'AUTOAL1 RDC PROGRAM 3 REQ REF ITEMS' },
-    { id: '15504', name: 'AUTOAL1 RDC PROGRAM 4 OPT REF ITEMS' },
-    { id: '15505', name: 'AUTOAL1 RDC PROGRAM 5 NO REF ITEMS' },
-    { id: '931503601', name: 'CAD PROGRAM CA/CAD' },
-    { id: '931503602', name: 'CAD PROGRAM CA/USD' }
-  ];
-
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
 
   const handleProgramSelect = (programId: string) => {
     const program = programsData.find(p => p.id === programId);
-    history.push('/remote-capture-type', {
+    history.push('/deposits/remote-capture-type', {
       selectedProgram: programId,
-      programName: program?.name || ''
+      programName: program?.name || '',
     });
   };
 
-  // Filter programs based on search term
   const filteredPrograms = programsData.filter(program =>
     program.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     program.id.toLowerCase().includes(searchTerm.toLowerCase())
@@ -53,63 +28,87 @@ const DepositTo: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+
+          <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                Deposit to
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
-            <div className="header-center">
-              <IonTitle>Deposit to</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
-            </div>
+
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          {/* Search Bar */}
-          <div className="payments-search-header">
-                  <div className="search-wrapper">
-                    <div className="search-container">
-                      <img src="/images/Search.svg" alt="Search" className="search-icon" />
-                      <IonInput
-                        placeholder="Search accounts"
-                        className="search-input"
-                      />
-                    </div>
-                    <IonButton fill="clear" className="filter-button">
-                      <img src="/images/Filter.svg" alt="Filter" className="filter-icon" />
-                    </IonButton>
-                  </div>
-                </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            <FlexLayout align="center" gap={1} className="salt-search-input">
+              <Search size={20} className="salt-icon-subtle salt-inline-icon" />
+              <input
+                type="search"
+                placeholder="Search programs"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                style={{ fontSize: '0.875rem' }}
+              />
+            </FlexLayout>
 
+            <StackLayout gap={0.7}>
+              {filteredPrograms.map(program => (
+                <Card
+                  key={program.id}
+                  className="salt-card"
+                  onClick={() => handleProgramSelect(program.id)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <FlexLayout align="center" justify="space-between" gap={0} className="salt-card-section-condensed">
+                    <StackLayout gap={0}>
+                      <Text styleAs="label">{program.name}</Text>
+                      <Text styleAs="label">Program {program.id}</Text>
+                    </StackLayout>
+                    <FlexLayout align="center" gap={0.5}>
+                      <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                    </FlexLayout>
+                  </FlexLayout>
+                </Card>
+              ))}
 
-          {/* Programs List */}
-          <div className="programs-list">
-            {filteredPrograms.map((program) => (
-              <IonCard 
-                key={program.id} 
-                className="program-card"
-                onClick={() => handleProgramSelect(program.id)}
-              >
-                <IonCardContent className="program-card-content">
-                  <div className="program-info">
-                    <div className="program-name">{program.name}</div>
-                    <div className="program-id">Program {program.id}</div>
+              {filteredPrograms.length === 0 && (
+                <Card className="salt-card">
+                  <div className="salt-card-section" style={{ padding: 'var(--salt-spacing-300)', textAlign: 'center' }}>
+                    <Text styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                      No programs match that search.
+                    </Text>
                   </div>
-                  <IonIcon name="chevron-forward" className="program-arrow" />
-                </IonCardContent>
-              </IonCard>
-            ))}
-          </div>
+                </Card>
+              )}
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

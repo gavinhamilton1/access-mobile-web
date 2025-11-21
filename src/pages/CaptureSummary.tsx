@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-  IonInput,
-  IonItem,
-  IonLabel,
-  IonCard,
-  IonCardContent,
-  IonModal,
-  IonIcon
-} from '@ionic/react';
-import { copyOutline, eyeOutline } from 'ionicons/icons';
+import { IonContent, IonHeader, IonPage, IonToolbar, IonModal } from '@ionic/react';
+import { Button, Card, FlexLayout, Input, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowBack, Check, Close, Retake } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   captureType?: string;
@@ -56,7 +43,6 @@ const CaptureSummary: React.FC = () => {
   const frontImage = state?.frontImage;
   const backImage = state?.backImage;
   const frontCheckDetails = state?.frontCheckDetails;
-  const backCheckDetails = state?.backCheckDetails;
 
   const [amount, setAmount] = useState('3 000 000,00');
   const [paymentNumber, setPaymentNumber] = useState('');
@@ -70,7 +56,6 @@ const CaptureSummary: React.FC = () => {
 
   const isCheckCapture = captureType.includes('Check');
 
-  // Auto-populate fields from extracted check details
   useEffect(() => {
     if (frontCheckDetails) {
       if (frontCheckDetails.routingNumber) {
@@ -85,17 +70,9 @@ const CaptureSummary: React.FC = () => {
     }
   }, [frontCheckDetails]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
-
-  const handleAmountConfirmation = (confirmed: boolean) => {
-    setIsAmountConfirmed(confirmed);
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
+  const handleAmountConfirmation = (confirmed: boolean) => setIsAmountConfirmed(confirmed);
 
   const handleCopyToClipboard = async (text: string, fieldName: string) => {
     try {
@@ -113,235 +90,244 @@ const CaptureSummary: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Submitting deposit:', {
-      amount,
-      paymentNumber,
-      routingNumber,
-      accountNumber,
-      controlNumber,
-      captureType,
-      selectedGroup,
-      selectedProgram,
-      programName
-    });
-    // Navigate to success page with deposit details
-    history.push('/deposit-success', {
+    history.push('/deposits/deposit-success', {
       captureType,
       selectedGroup,
       selectedProgram,
       programName,
-      amount
+      amount,
     });
   };
 
+  const summaryCards = [
+    {
+      title: selectedProgram,
+      details: ['AUTOAL1 RDC', 'PROGRAM 1', 'GROUPS'],
+    },
+    {
+      title: 'Group',
+      details: ['Maintenance', 'Orders'],
+    },
+  ];
+
+  const inputFields = [
+    {
+      label: 'Payment/serial number',
+      value: paymentNumber,
+      placeholder: 'Enter payment/serial number',
+      setValue: setPaymentNumber,
+    },
+    {
+      label: 'Routing number',
+      value: routingNumber,
+      placeholder: 'Enter routing number',
+      setValue: setRoutingNumber,
+      copyValue: frontCheckDetails?.routingNumber,
+      copyField: 'routing',
+    },
+    {
+      label: 'Account number',
+      value: accountNumber,
+      placeholder: 'Enter account number',
+      setValue: setAccountNumber,
+      copyValue: frontCheckDetails?.accountNumber,
+      copyField: 'account',
+    },
+    {
+      label: 'Control number',
+      value: controlNumber,
+      placeholder: 'Enter control number',
+      setValue: setControlNumber,
+    },
+  ];
+
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-header-left">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleBack}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <ArrowBack size={18} className="salt-inline-icon" />
+              </Button>
             </div>
-            <div className="header-center">
-              <IonTitle>Deposit check</IonTitle>
+            <div className="salt-header-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Deposit check
+              </Text>
             </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
+            <div className="salt-header-right">
+              <Button
+                appearance="transparent"
+                sentiment="neutral"
+                onClick={handleCancel}
+                style={{ padding: `0 var(--salt-spacing-100)` }}
+              >
+                <Text styleAs="label">Cancel</Text>
+              </Button>
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="deposit-summary-container">
-            {/* Summary Cards */}
-            <div className="summary-cards">
-              <IonCard className="summary-card">
-                <IonCardContent className="summary-card-content">
-                  <div className="summary-main">{selectedProgram}</div>
-                  <div className="summary-details">
-                    <div>AUTOAL1 RDC</div>
-                    <div>PROGRAM 1</div>
-                    <div>GROUPS</div>
-                  </div>
-                </IonCardContent>
-              </IonCard>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={2}>
+            <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+              {summaryCards.map(card => (
+                <Card key={card.title} className="salt-card" style={{ flex: 1, minWidth: '200px' }}>
+                  <StackLayout gap={0.5} align="center" className="salt-card-section" style={{ padding: 'var(--salt-spacing-150)', textAlign: 'center' }}>
+                    <Text styleAs="h4">{card.title}</Text>
+                    <StackLayout gap={0.2}>
+                      {card.details.map(line => (
+                        <Text key={line} styleAs="label" style={{ color: 'var(--salt-content-secondary-foreground)' }}>
+                          {line}
+                        </Text>
+                      ))}
+                    </StackLayout>
+                  </StackLayout>
+                </Card>
+              ))}
+            </FlexLayout>
 
-              <IonCard className="summary-card">
-                <IonCardContent className="summary-card-content">
-                  <div className="summary-main">Group</div>
-                  <div className="summary-details">
-                    <div>Maintenance</div>
-                    <div>Orders</div>
-                  </div>
-                </IonCardContent>
-              </IonCard>
-            </div>
-
-            {/* Amount Display */}
-            <div className="amount-display">
-              <IonText>
-                <h1 className="amount-text">USD {amount}</h1>
-              </IonText>
-            </div>
-
-            {/* Check Images */}
-            <div className="check-images">
-              {frontImage && (
-                <div className="image-section">
-                  <IonText>
-                    <h3 className="image-label">Front</h3>
-                  </IonText>
-                  <div className="image-container" onClick={() => handleImagePreview(frontImage)}>
-                    <img src={frontImage} alt="Check Front" className="check-image" />
-                    <div className="image-overlay">
-                      <IonIcon icon={eyeOutline} className="preview-icon" />
-                    </div>
-                  </div>
-                </div>
+            <StackLayout gap={0.5} style={{ textAlign: 'center' }}>
+              <Text styleAs="h1">USD {amount}</Text>
+              {!isAmountConfirmed && (
+                <Text styleAs="label" style={{ color: 'var(--salt-status-warning-foreground)', fontSize: '0.75rem' }}>
+                  Confirm the amount before submitting.
+                </Text>
               )}
+            </StackLayout>
 
-              {backImage && (
-                <div className="image-section">
-                  <IonText>
-                    <h3 className="image-label">Back</h3>
-                  </IonText>
-                  <div className="image-container" onClick={() => handleImagePreview(backImage)}>
-                    <img src={backImage} alt="Check Back" className="check-image" />
-                    <div className="image-overlay">
-                      <IonIcon icon={eyeOutline} className="preview-icon" />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {isCheckCapture && (
+              <FlexLayout gap={1} style={{ flexWrap: 'wrap' }}>
+                {[{ label: 'Front', image: frontImage }, { label: 'Back', image: backImage }]
+                  .filter(item => Boolean(item.image))
+                  .map(item => (
+                    <StackLayout key={item.label} gap={0.5} style={{ flex: 1, minWidth: '200px' }}>
+                      <Text styleAs="h4" style={{ fontSize: '0.875rem' }}>{item.label}</Text>
+                      <button
+                        type="button"
+                        onClick={() => handleImagePreview(item.image as string)}
+                        style={{
+                          height: '128px',
+                          width: '100%',
+                          borderRadius: '12px',
+                          border: '1px solid var(--salt-separable-secondary-borderColor)',
+                          background: 'var(--salt-container-primary-background)',
+                          cursor: 'pointer',
+                          overflow: 'hidden',
+                          padding: 0,
+                        }}
+                      >
+                        <img
+                          src={item.image as string}
+                          alt={`${item.label} of check`}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </button>
+                    </StackLayout>
+                  ))}
+              </FlexLayout>
+            )}
 
-            {/* Amount Confirmation */}
-            <div className="amount-confirmation">
-              <IonText>
-                <p className="confirmation-question">
-                  Are you sure USD {amount} is the correct amount?
-                </p>
-              </IonText>
-              <div className="confirmation-buttons">
-                <IonButton 
-                  fill="outline" 
-                  className="confirmation-button"
-                  onClick={() => handleAmountConfirmation(false)}
-                >
-                  No
-                </IonButton>
-                <IonButton 
-                  fill="solid" 
-                  className="confirmation-button"
-                  onClick={() => handleAmountConfirmation(true)}
-                >
-                  Yes
-                </IonButton>
-              </div>
-            </div>
-
-            {/* Input Fields */}
-            <div className="input-fields">
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Payment/serial number</IonLabel>
-                <IonInput
-                  value={paymentNumber}
-                  onIonInput={(e) => setPaymentNumber(e.detail.value!)}
-                  placeholder="Enter payment/serial number"
-                />
-              </IonItem>
-
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Routing number</IonLabel>
-                <IonInput
-                  value={routingNumber}
-                  onIonInput={(e) => setRoutingNumber(e.detail.value!)}
-                  placeholder="Enter routing number"
-                />
-                {frontCheckDetails?.routingNumber && (
-                  <IonButton 
-                    fill="clear" 
-                    size="small" 
-                    onClick={() => handleCopyToClipboard(frontCheckDetails.routingNumber!, 'routing')}
-                    className="copy-button"
+            <Card className="salt-card">
+              <StackLayout gap={1} className="salt-card-section" style={{ padding: 'var(--salt-spacing-200)' }}>
+                <Text styleAs="label">Are you sure USD {amount} is the correct amount?</Text>
+                <FlexLayout gap={1}>
+                  <Button
+                    appearance="bordered"
+                    sentiment="neutral"
+                    onClick={() => handleAmountConfirmation(false)}
+                    style={{ flex: 1, borderRadius: '999px' }}
                   >
-                    <IonIcon icon={copyOutline} />
-                    {copySuccess === 'routing' ? 'Copied!' : 'Copy'}
-                  </IonButton>
-                )}
-              </IonItem>
-
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Account number</IonLabel>
-                <IonInput
-                  value={accountNumber}
-                  onIonInput={(e) => setAccountNumber(e.detail.value!)}
-                  placeholder="Enter account number"
-                />
-                {frontCheckDetails?.accountNumber && (
-                  <IonButton 
-                    fill="clear" 
-                    size="small" 
-                    onClick={() => handleCopyToClipboard(frontCheckDetails.accountNumber!, 'account')}
-                    className="copy-button"
+                    <Text styleAs="label">No</Text>
+                  </Button>
+                  <Button
+                    appearance="solid"
+                    sentiment="accented"
+                    onClick={() => handleAmountConfirmation(true)}
+                    style={{ flex: 1, borderRadius: '999px' }}
                   >
-                    <IonIcon icon={copyOutline} />
-                    {copySuccess === 'account' ? 'Copied!' : 'Copy'}
-                  </IonButton>
-                )}
-              </IonItem>
+                    <Text styleAs="label">Yes</Text>
+                  </Button>
+                </FlexLayout>
+              </StackLayout>
+            </Card>
 
-              <IonItem className="input-item">
-                <IonLabel position="stacked">Control number</IonLabel>
-                <IonInput
-                  value={controlNumber}
-                  onIonInput={(e) => setControlNumber(e.detail.value!)}
-                  placeholder="Enter control number"
-                />
-              </IonItem>
-            </div>
+            <StackLayout gap={1}>
+              {inputFields.map(field => (
+                <StackLayout key={field.label} gap={0.5}>
+                  <Text styleAs="label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--salt-content-secondary-foreground)' }}>
+                    {field.label}
+                  </Text>
+                  <FlexLayout gap={1}>
+                    <Input
+                      value={field.value}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.setValue(e.target.value)}
+                      placeholder={field.placeholder}
+                      style={{ flex: 1, fontSize: '0.875rem' }}
+                    />
+                    {field.copyValue && (
+                      <Button
+                        appearance="bordered"
+                        sentiment="neutral"
+                        onClick={() => handleCopyToClipboard(field.copyValue!, field.copyField as string)}
+                        style={{ borderRadius: '999px', whiteSpace: 'nowrap' }}
+                      >
+                        <Text styleAs="label">
+                          {copySuccess === field.copyField ? 'Copied!' : 'Copy'}
+                        </Text>
+                      </Button>
+                    )}
+                  </FlexLayout>
+                </StackLayout>
+              ))}
+            </StackLayout>
 
-            {/* Submit Button */}
-            <div className="submit-container">
-              <IonButton 
-                expand="block" 
-                className="submit-button"
-                onClick={handleSubmit}
-              >
-                Submit
-              </IonButton>
-            </div>
-          </div>
+            <Button
+              appearance="solid"
+              sentiment="accented"
+              onClick={handleSubmit}
+              disabled={!isAmountConfirmed}
+              style={{ borderRadius: '999px', width: '100%' }}
+            >
+              <Text styleAs="label">Submit</Text>
+            </Button>
+          </StackLayout>
         </div>
 
-        {/* Image Preview Modal */}
-        <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)} className="image-preview-modal">
-          <IonHeader className="standard-header">
-            <IonToolbar>
-              <div className="header-content">
-                <div className="header-left">
-                  <IonButton fill="clear" className="header-button" onClick={() => setIsPreviewModalOpen(false)}>
-                    <IonText>Close</IonText>
-                  </IonButton>
+        <IonModal isOpen={isPreviewModalOpen} onDidDismiss={() => setIsPreviewModalOpen(false)}>
+          <IonHeader translucent={false}>
+            <IonToolbar className="salt-toolbar">
+              <div className="salt-toolbar-content">
+                <div className="salt-header-left" />
+                <div className="salt-header-center">
+                  <Text styleAs="h4" className="salt-toolbar-title">
+                    Image Preview
+                  </Text>
                 </div>
-                <div className="header-center">
-                  <IonTitle>Image Preview</IonTitle>
+                <div className="salt-header-right">
+                  <Button
+                    appearance="transparent"
+                    sentiment="neutral"
+                    onClick={() => setIsPreviewModalOpen(false)}
+                    style={{ padding: `0 var(--salt-spacing-100)` }}
+                  >
+                    <Close size={20} className="salt-inline-icon" />
+                  </Button>
                 </div>
-                <div className="header-right"></div>
               </div>
             </IonToolbar>
           </IonHeader>
-          <IonContent className="image-preview-content">
+          <IonContent style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
             {previewImage && (
-              <div className="image-preview-wrapper">
-                <img src={previewImage} alt="Preview" className="image-preview-full" />
-              </div>
+              <img src={previewImage} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
             )}
           </IonContent>
         </IonModal>

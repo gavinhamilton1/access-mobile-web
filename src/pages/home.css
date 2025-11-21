@@ -1,0 +1,633 @@
+/* Generic page styles */
+.salt-page-shell {
+  background: var(--salt-container-primary-background);
+}
+
+.salt-toolbar {
+  --background: var(--salt-container-primary-background);
+  --color: var(--salt-content-primary-foreground);
+  --border-width: 0;
+  --border-style: none;
+  --box-shadow: none;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  height: auto;
+}
+
+.salt-toolbar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  height: 100%;
+  gap: 5px;
+}
+
+.salt-toolbar-title {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Three-column toolbar layout: 20% | 60% | 20% */
+.salt-toolbar-3column {
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  align-items: center;
+  width: 100%;
+  min-height: 60px;
+  height: auto;
+  padding: var(--salt-spacing-50);
+  padding-top: var(--salt-spacing-100);
+}
+
+.salt-toolbar-column-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-left > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salt-toolbar-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-center > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salt-toolbar-column-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.salt-toolbar-column-right > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salt-home-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.salt-theme-mode-toggle {
+  --saltButton-margin: 0 var(--salt-spacing-100);
+  --saltButton-height: 100%;
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+  --saltButton-borderColor: var(--salt-separable-secondary-borderColor);
+  border-radius: var(--saltButton-borderRadius);
+  font-size: 0.8rem;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 3px var(--salt-spacing-100);
+}
+
+.salt-home-notification-button {
+  position: relative;
+  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-height: 100%;
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 0;
+}
+
+.salt-home-notification-dot {
+  position: absolute;
+  right: 2px;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--salt-status-warning-foreground);
+  box-shadow: 0 0 0 2px var(--salt-container-primary-background);
+  
+}
+
+.salt-home-alert-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.salt-page-content {
+  padding: var(--salt-spacing-150);
+  padding-bottom: var(--salt-spacing-300);
+  
+}
+
+.salt-page-content-wide {
+    padding: var(--salt-spacing-150) 0 var(--salt-spacing-150) 0;
+    gap: var(--salt-spacing-0.5);
+}
+
+.salt-card-section-condensed   {
+  padding: var(--salt-spacing-50) var(--salt-spacing-100) var(--salt-spacing-50) var(--salt-spacing-100);
+}
+
+.salt-card-section {
+    padding: var(--salt-spacing-150);
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.salt-card-section-top-row {
+    padding-top: var(--salt-spacing-100);
+    padding-bottom: var(--salt-spacing-100);
+}
+.salt-card {
+  background: var(--salt-card-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: var(--sale-button-radius);
+  padding: 0px;
+}
+
+.salt-balance-section {
+  padding-top: 4px;
+  padding-bottom: var(--salt-spacing-100);
+}
+
+.salt-amount {
+  display: flex;
+  align-items: baseline;
+  padding-top: 4px;
+}
+
+.salt-current-amount-value {
+  font-size: 1.8rem;
+}
+
+.salt-current-amount-decimals {
+  font-size: 0.8rem;
+}
+
+.salt-prior-amount-value {
+  font-size: 1.2rem;
+}
+
+.salt-prior-amount-decimals {
+  font-size: 0.8rem;
+}
+
+.salt-balance-value {
+  font-size: 1rem;
+}
+
+.salt-balance-decimals {
+  font-size: 0.8rem;
+}
+
+.salt-balance-summary {
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+  margin-left: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
+  margin-right: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
+  padding: var(--salt-spacing-100) var(--salt-spacing-150);
+}
+
+.salt-transaction-row {
+  margin-left: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
+  margin-right: calc(var(--saltCard-padding, var(--salt-spacing-150)) * -1);
+  padding: var(--salt-spacing-100) var(--salt-spacing-150);
+}
+
+.salt-inline-icon {
+  /* Size is controlled by the size prop on the icon component */
+  flex-shrink: 0;
+}
+
+.salt-icon-subtle {
+  opacity: 0.7;
+}
+
+.salt-home-number-positive {
+  color: var(--salt-status-success-foreground);
+  font-weight: 600;
+}
+
+.salt-home-number-negative {
+  color: var(--salt-status-error-foreground);
+  font-weight: 600;
+}
+
+.salt-card-row {
+  padding: var(--salt-spacing-100) 0;
+}
+
+.salt-card .salt-card-row + .salt-card-row {
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+  margin-left: calc(var(--salt-spacing-150) * -1);
+  margin-right: calc(var(--salt-spacing-150) * -1);
+  padding-left: var(--salt-spacing-150);
+  padding-right: var(--salt-spacing-150);
+}
+
+.salt-balance-row {
+  padding-top: 0px;
+  padding-bottom: var(--salt-spacing-100);
+}
+
+.salt-home-dot {
+  width: var(--salt-spacing-50);
+  height: var(--salt-spacing-50);
+  border-radius: 999px;
+}
+
+.salt-home-dot--accent {
+  background: var(--salt-accent-background);
+}
+
+.salt-home-card-heading {
+  font-weight: 600;
+}
+
+.salt-home-pill {
+  min-width: 26px;
+  height: 22px;
+  border-radius: var(--sale-button-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0 var(--salt-spacing-100);
+}
+
+.salt-home-pill--positive {
+  background: var(--salt-status-success-background);
+  color: var(--salt-status-success-foreground);
+}
+
+.salt-home-pill--accent {
+  background: var(--salt-accent-background);
+  color: var(--salt-accent-foreground);
+}
+
+.salt-home-pill--negative {
+  background: var(--salt-status-error-background);
+  color: var(--salt-status-error-foreground);
+}
+
+.salt-home-pill--warning {
+  background: var(--salt-status-warning-background);
+  color: var(--salt-status-warning-foreground);
+}
+
+.salt-home-fab {
+  position: sticky;
+  bottom: var(--salt-spacing-100);
+  display: flex;
+  justify-content: center;
+}
+
+.salt-button-container {
+  width: 100%;
+  padding: var(--salt-spacing-150);
+  margin-top: var(--salt-spacing-100);
+  display: flex;
+  justify-content: center;
+}
+
+.salt-primary-action {
+  max-width: 320px;
+  width: 100%;
+  border-radius: var(--sale-button-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--salt-spacing-100);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: var(--salt-spacing-100) var(--salt-spacing-300);
+}
+
+/* Accounts page specific styles */
+.salt-header-left {
+  min-width: 64px;
+}
+
+.salt-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--salt-spacing-100);
+  flex: 1;
+}
+
+.salt-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 64px;
+}
+
+.salt-period-dropdown {
+  font-size: 0.8rem;
+  min-width: fit-content;
+}
+
+.salt-period-dropdown .saltDropdown {
+  justify-content: center;
+  min-height: auto;
+  height: auto;
+  font-size: 0.75rem;
+  width: auto;
+  min-width: auto;
+  padding: var(--salt-spacing-50) var(--salt-spacing-100);
+  line-height: 1.2;
+}
+
+.salt-filter-button {
+  --saltButton-padding: 0 var(--salt-spacing-150);
+  --saltButton-height: 100%;
+  --saltButton-text-color: var(--salt-content-secondary-foreground);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--salt-spacing-50);
+  border-radius: var(--sale-button-radius);
+  height: auto;
+}
+
+.salt-filter-icon,
+.salt-alert-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--salt-content-primary-foreground);
+}
+
+.salt-list-header {
+  padding: var(--salt-spacing-100) 0;
+}
+
+.salt-list-title {
+  padding: 0 var(--salt-spacing-50);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.salt-list-title-small {
+  padding: 0 var(--salt-spacing-150);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.salt-account-card {
+  background: var(--salt-card-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: var(--sale-button-radius);
+  padding: var(--salt-spacing-100);
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.salt-account-card:hover {
+  border-color: var(--salt-accent-background);
+}
+
+.salt-account-row {
+  align-items: center;
+  gap: var(--salt-spacing-50);
+}
+
+.salt-star-button {
+  --saltButton-padding: 0;
+  --saltButton-height: auto;
+  flex-shrink: 0;
+  padding: 0;
+  min-width: auto;
+  width: auto;
+}
+
+.salt-star-icon,
+.salt-arrow-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--salt-content-primary-foreground);
+  flex-shrink: 0;
+}
+
+.salt-star-icon-filled {
+  color: var(--salt-status-warning-foreground);
+}
+
+.salt-account-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--salt-spacing-50);
+}
+
+.salt-account-name {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.salt-account-number {
+  font-weight: 500;
+  color: var(--salt-content-secondary-foreground);
+}
+
+.salt-account-balance {
+  color: var(--salt-content-secondary-foreground);
+}
+
+.salt-dropdown {
+  width: auto;
+  flex-shrink: 0;
+  background: transparent;
+  padding: 5px;
+}
+
+/* Generic search input */
+.salt-search-input {
+  flex: 1;
+  align-items: center;
+  gap: var(--salt-spacing-100);
+  background: var(--salt-container-secondary-background);
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  border-radius: var(--sale-button-radius);
+  padding: var(--salt-spacing-50);
+}
+
+.salt-search-input input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: var(--salt-content-primary-foreground);
+  font-family: inherit;
+}
+
+.salt-search-input input::placeholder {
+  color: var(--salt-content-secondary-foreground);
+}
+
+/* Generic circular icon button */
+.salt-icon-button-circular {
+  --saltButton-padding: var(--salt-spacing-100);
+  --saltButton-height: auto;
+  min-width: auto;
+  border-radius: 999px;
+}
+
+/* Generic list item */
+.salt-list-item {
+  background: var(--salt-card-background);
+  border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+  border-top: 1px solid var(--salt-separable-secondary-borderColor);
+  padding: var(--salt-spacing-150);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+  width: 100%;
+}
+
+.salt-list-item-blank {
+  background: transparent;
+  padding: var(--salt-spacing-150);
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  position: relative;
+  width: 100%;
+}
+
+.salt-list-item:hover {
+  background: var(--salt-card-background);
+}
+
+.salt-list-item-selected {
+  background: color-mix(in srgb, var(--salt-accent-background) 10%, var(--salt-container-secondary-background));
+}
+
+/* Generic checkbox for list items */
+.salt-list-item-checkbox {
+  position: absolute;
+  top: 50%;
+  left: var(--salt-spacing-150);
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--salt-separable-secondary-borderColor);
+  accent-color: var(--salt-accent-background);
+  cursor: pointer;
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.salt-list-item-has-checkbox .salt-list-item-content {
+  padding-left: calc(16px + var(--salt-spacing-100));
+}
+
+/* Generic fixed bottom action bar */
+.salt-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--salt-spacing-150);
+  padding-bottom: calc(var(--salt-spacing-150) + env(safe-area-inset-bottom));
+  z-index: 1000;
+}
+
+.salt-action-bar-buttons {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.salt-button,
+.salt-action-bar-button {
+  flex: 1;
+  border-radius: var(--sale-button-radius);
+  padding: var(--salt-spacing-50);
+}
+
+.salt-action-bar-button-reject {
+  --saltButton-background: transparent;
+  --saltButton-borderColor: var(--salt-accent-background);
+  --saltButton-foreground: var(--salt-accent-foreground);
+}
+
+.salt-action-bar-button-primary {
+  --saltButton-background: var(--salt-actionable-accented-bold-background);
+  --saltButton-borderColor: var(--salt-actionable-accented-bold-borderColor);
+  --saltButton-foreground: var(--salt-actionable-accented-bold-foreground);
+}
+
+/* Payments page specific styles - tabs only */
+
+.salt-payments-tabs {
+  display: flex;
+  width: 100%;
+  gap: var(--salt-spacing-200);
+  border-bottom: 1px solid var(--salt-separable-secondary-borderColor);
+}
+
+.salt-payments-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--salt-spacing-100) 0;
+  cursor: pointer;
+  color: var(--salt-content-secondary-foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  text-align: center;
+}
+
+.salt-payments-tab:hover {
+  color: var(--salt-content-primary-foreground);
+}
+
+.salt-payments-tab-active {
+  color: var(--salt-accent-foreground);
+  border-bottom-color: var(--salt-accent-background);
+  font-weight: 600;
+}
+
+.salt-payments-tab .saltText {
+  pointer-events: none;
+}
+
+
+
+
+

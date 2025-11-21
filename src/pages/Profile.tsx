@@ -1,152 +1,97 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonText,
-  IonButton,
-  IonIcon,
-  IonItem,
-  IonLabel
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory } from 'react-router-dom';
+import { Alert, Apps, ArrowForward, Phone, Profile as ProfileIcon, Settings } from '../components/icons';
+import './home.css';
 
 const Profile: React.FC = () => {
   const history = useHistory();
 
-  const handleSettings = () => {
-    console.log('Navigate to Settings');
-  };
-
-  const handleSupport = () => {
-    console.log('Navigate to Support');
-  };
-
-  const handleNotifications = () => {
-    console.log('Navigate to Notifications');
-  };
-
-  const handleAppExperience = () => {
-    history.push('/app-experience');
-  };
-
-  const handleGiveFeedback = () => {
-    console.log('Give feedback');
-  };
-
-  const handleLogout = () => {
-    console.log('Log out');
-  };
+  const navigationOptions = [
+    { label: 'Settings', icon: <Settings size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Settings') },
+    { label: 'Support', icon: <Phone size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Support') },
+    { label: 'Notifications', icon: <Alert size={20} className="salt-inline-icon" />, action: () => console.log('Navigate to Notifications') },
+  ];
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="header-content">
-            <div className="header-left">
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+        <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+              </div>
+              <div className="salt-toolbar-column-center">
+              <Text styleAs="h4" className="salt-toolbar-title">
+                Profile
+              </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+              </div>
             </div>
-            <div className="header-center">
-              <IonTitle>Profile</IonTitle>
-            </div>
-            <div className="header-right">
-            </div>
-          </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="profile-container">
-            {/* User Information */}
-            <div className="user-info-section">
-              <IonCard className="user-info-card">
-                <IonCardContent className="user-info-content">
-                  <div className="user-info">
-                    <IonIcon icon="/images/Profile.svg" className="user-avatar" />
-                    <IonText>
-                      <h2 className="user-name">test mobile</h2>
-                    </IonText>
-                  </div>
-                </IonCardContent>
-              </IonCard>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content-wide" gap={2}>
+
+
+            <StackLayout gap={0} className="salt-list">
+
+              <div className="salt-list-item-blank">
+                <FlexLayout align="start" justify="start" gap={1}>
+                    <ProfileIcon size={32} className="salt-inline-icon"/>
+                    <StackLayout gap={0.2}>
+                      <Text styleAs="h4">test mobile</Text>
+                      <Text styleAs="label">Corporate banking</Text>
+                    </StackLayout>
+                </FlexLayout>
+              </div>
+              
+              {navigationOptions.map(option => (
+                <div key={option.label} className="salt-list-item">
+                    <FlexLayout align="start" justify="space-between" className="salt-list-item-content" gap={2}>
+                    {option.icon}
+                    <Text styleAs="h4" style={{ flex: 1 }}>{option.label}</Text>
+                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                  </FlexLayout>
+                </div>
+              ))}
+            </StackLayout>
+
+
+            <div className="salt-list-item-blank">
+                <StackLayout gap={1}>
+                  <Text styleAs="label" style={{ textAlign: 'center', color: 'var(--salt-content-secondary-foreground)' }}>
+                    Last login · 24-Oct-25 at 9:41 PM
+                  </Text>
+                  <StackLayout gap={1} className="salt-action-bar-buttons">
+                    <Button
+                      className="salt-action-bar-button"
+                      appearance="bordered"
+                      sentiment="neutral"
+                      onClick={() => console.log('Give feedback')}
+                    >
+                      <Text styleAs="label">Give feedback</Text>
+                    </Button>
+                    <Button
+                      className="salt-action-bar-button"
+                      appearance="solid"
+                      sentiment="accented"
+                      onClick={() => console.log('Log out')}
+                    >
+                      <Text styleAs="label">Log out</Text>
+                    </Button>
+                  </StackLayout>
+                </StackLayout>
+
             </div>
 
-            {/* Navigation Items */}
-            <div className="profile-options">
-              <IonCard className="profile-option-card" onClick={handleSettings}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Settings.svg" slot="start" className="option-icon" />
-                    <IonLabel>Settings</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
 
-              <IonCard className="profile-option-card" onClick={handleSupport}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Phone.svg" slot="start" className="option-icon" />
-                    <IonLabel>Support</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
 
-              <IonCard className="profile-option-card" onClick={handleNotifications}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Alert.svg" slot="start" className="option-icon" />
-                    <IonLabel>Notifications</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
 
-              <IonCard className="profile-option-card" onClick={handleAppExperience}>
-                <IonCardContent className="profile-option-content">
-                  <IonItem className="profile-option-item">
-                    <IonIcon icon="/images/Apps.svg" slot="start" className="option-icon" />
-                    <IonLabel>App Experience</IonLabel>
-                    <IonIcon icon="/images/ArrowForward.svg" slot="end" className="option-arrow" />
-                  </IonItem>
-                </IonCardContent>
-              </IonCard>
-            </div>
-
-            {/* Last Login */}
-            <div className="last-login-section">
-              <IonText>
-                <p className="last-login-label">Last login</p>
-              </IonText>
-              <IonText color="medium">
-                <p className="last-login-time">24-Oct-25 at 9:41 PM</p>
-              </IonText>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="profile-actions">
-              <IonButton 
-                fill="outline" 
-                className="feedback-button"
-                onClick={handleGiveFeedback}
-              >
-                <IonText>Give feedback</IonText>
-              </IonButton>
-
-              <IonButton 
-                fill="solid" 
-                className="logout-button"
-                onClick={handleLogout}
-              >
-                <IonText>Log out</IonText>
-              </IonButton>
-            </div>
-          </div>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>

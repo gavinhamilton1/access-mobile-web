@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useLocation } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -7,14 +7,24 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  setupIonicReact
+  setupIonicReact,
+  useIonRouter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 // Using custom SVG icons from public/images directory
+import {
+  Accounts as AccountsIcon,
+  Deposits as DepositsIcon,
+  Home as HomeIcon,
+  Payments as PaymentsIcon,
+  Profile as ProfileIcon,
+} from './components/icons';
 import Home from './pages/Home';
 import Accounts from './pages/Accounts';
 import AccountDetails from './pages/AccountDetails';
+import AccountDetailsTransaction from './pages/AccountDetailsTransaction';
 import Payments from './pages/Payments';
+import TransactionDetails from './pages/TransactionDetails';
 import ApproveRelease from './pages/ApproveRelease';
 import Deposits from './pages/Deposits';
 import RemoteCaptureType from './pages/RemoteCaptureType';
@@ -61,17 +71,105 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 
-/* Global styles */
-import './styles.css';
+/* Tailwind + global styles */
+import './index.css';
 
 setupIonicReact();
+
+interface TabBarLocationState {
+  source?: 'payments' | 'accounts';
+}
+
+const TabBar: React.FC = () => {
+  const router = useIonRouter();
+  const location = useLocation();
+
+  const handleTabClick = (path: string) => {
+    // Use 'root' direction to reset navigation stack to the main tab page
+    // This ensures we always go to the main page, not a detail page
+    router.push(path, 'root', 'replace');
+  };
+
+  const isTabSelected = (path: string) => {
+    const currentPath = location.pathname;
+    const state = location.state as TabBarLocationState | undefined;
+
+    // If we're on transaction-details page, use the source from state to determine which tab should be highlighted
+    if (currentPath === '/transaction-details' && state?.source) {
+      if (state.source === 'payments' && path === '/payments') {
+        return true;
+      }
+      if (state.source === 'accounts' && path === '/accounts') {
+        return true;
+      }
+      return false;
+    }
+
+    // If we're on any deposits-related page, highlight the deposits tab
+    if (currentPath.startsWith('/deposits/') && path === '/deposits') {
+      return true;
+    }
+
+    // Special case for home tab to handle root path
+    if (path === '/home' && (currentPath === '/' || currentPath === '/home')) {
+      return true;
+    }
+
+    return currentPath === path || currentPath.startsWith(path + '/');
+  };
+
+  return (
+    <IonTabBar slot="bottom">
+      <IonTabButton
+        tab="home"
+        selected={isTabSelected('/home')}
+        onClick={() => handleTabClick('/home')}
+      >
+        <HomeIcon size={30} className="tab-icon" />
+        <IonLabel>Home</IonLabel>
+      </IonTabButton>
+      <IonTabButton
+        tab="accounts"
+        selected={isTabSelected('/accounts')}
+        onClick={() => handleTabClick('/accounts')}
+      >
+        <AccountsIcon size={30} className="tab-icon" />
+        <IonLabel>Accounts</IonLabel>
+      </IonTabButton>
+      <IonTabButton
+        tab="payments"
+        selected={isTabSelected('/payments')}
+        onClick={() => handleTabClick('/payments')}
+      >
+        <PaymentsIcon size={30} className="tab-icon" />
+        <IonLabel>Payments</IonLabel>
+      </IonTabButton>
+      <IonTabButton
+        tab="deposits"
+        selected={isTabSelected('/deposits')}
+        onClick={() => handleTabClick('/deposits')}
+      >
+        <DepositsIcon size={30} className="tab-icon" />
+        <IonLabel>Deposits</IonLabel>
+      </IonTabButton>
+      <IonTabButton
+        tab="profile"
+        selected={isTabSelected('/profile')}
+        onClick={() => handleTabClick('/profile')}
+      >
+        <ProfileIcon size={30} className="tab-icon" />
+        <IonLabel>Profile</IonLabel>
+      </IonTabButton>
+    </IonTabBar>
+  );
+};
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-        <Route exact path="/">
+          <Route exact path="/">
             <Home />
           </Route>
           <Route exact path="/home">
@@ -83,8 +181,14 @@ const App: React.FC = () => (
           <Route path="/accounts/account-details/:accountId">
             <AccountDetails />
           </Route>
+          <Route path="/accounts/account-details/:accountId/transaction">
+            <AccountDetailsTransaction />
+          </Route>
           <Route exact path="/payments">
             <Payments />
+          </Route>
+          <Route exact path="/transaction-details">
+            <TransactionDetails />
           </Route>
           <Route exact path="/approve-release">
             <ApproveRelease />
@@ -92,34 +196,34 @@ const App: React.FC = () => (
           <Route exact path="/deposits">
             <Deposits />
           </Route>
-          <Route exact path="/deposit-to">
+          <Route exact path="/deposits/deposit-to">
             <DepositTo />
           </Route>
-          <Route exact path="/remote-capture-type">
+          <Route exact path="/deposits/remote-capture-type">
             <RemoteCaptureType />
           </Route>
-          <Route exact path="/choose-group">
+          <Route exact path="/deposits/choose-group">
             <ChooseGroup />
           </Route>
-          <Route exact path="/choose-summary">
+          <Route exact path="/deposits/choose-summary">
             <ChooseSummary />
           </Route>
-          <Route exact path="/capture-best-practices">
+          <Route exact path="/deposits/capture-best-practices">
             <CaptureBestPractices />
           </Route>
-          <Route exact path="/capture-check">
+          <Route exact path="/deposits/capture-check">
             <CaptureCheck />
           </Route>
-          <Route exact path="/capture-summary">
+          <Route exact path="/deposits/capture-summary">
             <CaptureSummary />
           </Route>
-          <Route exact path="/capture-history">
+          <Route exact path="/deposits/capture-history">
             <CaptureHistory />
           </Route>
-          <Route exact path="/daily-summary">
+          <Route exact path="/deposits/daily-summary">
             <DailySummary />
           </Route>
-          <Route exact path="/deposit-success">
+          <Route exact path="/deposits/deposit-success">
             <DepositSuccess />
           </Route>
           <Route exact path="/profile">
@@ -129,28 +233,7 @@ const App: React.FC = () => (
             <AppExperience />
           </Route>
         </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="home" href="/home">
-            <img src="/images/Home.svg" alt="Home" className="tab-icon" />
-            <IonLabel>Home</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="accounts" href="/accounts">
-            <img src="/images/Accounts.svg" alt="Accounts" className="tab-icon" />
-            <IonLabel>Accounts</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="payments" href="/payments">
-            <img src="/images/Payments.svg" alt="Payments" className="tab-icon" />
-            <IonLabel>Payments</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="deposits" href="/deposits">
-            <img src="/images/Deposits.svg" alt="Deposits" className="tab-icon" />
-            <IonLabel>Deposits</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="profile" href="/profile">
-            <img src="/images/Profile.svg" alt="Profile" className="tab-icon" />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
+        <TabBar />
       </IonTabs>
       <PWAInstallPrompt />
     </IonReactRouter>

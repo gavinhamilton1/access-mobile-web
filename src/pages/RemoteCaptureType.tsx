@@ -1,20 +1,20 @@
 import React from 'react';
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonButton,
-  IonText,
-  IonIcon
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonToolbar } from '@ionic/react';
+import { Button, Card, FlexLayout, StackLayout, Text } from '@salt-ds/core';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ArrowBack, ArrowForward } from '../components/icons';
+import './home.css';
 
 interface LocationState {
   selectedProgram?: string;
   programName?: string;
 }
+
+const captureOptions = [
+  { label: 'Check and document(s)', value: 'Check and document(s)' },
+  { label: 'Check only', value: 'Check only' },
+  { label: 'Document(s) only', value: 'Document(s) only' },
+];
 
 const RemoteCaptureType: React.FC = () => {
   const history = useHistory();
@@ -23,102 +23,72 @@ const RemoteCaptureType: React.FC = () => {
   const selectedProgram = state?.selectedProgram || '';
   const programName = state?.programName || '';
 
-  const handleBack = () => {
-    history.goBack();
-  };
+  const handleBack = () => history.goBack();
+  const handleCancel = () => history.push('/deposits');
 
-  const handleCancel = () => {
-    history.push('/deposits');
-  };
-
-  const handleCheckAndDocuments = () => {
-    history.push('/choose-group', {
-      captureType: 'Check and document(s)',
-      selectedProgram: selectedProgram,
-      programName: programName
-    });
-  };
-
-  const handleCheckOnly = () => {
-    history.push('/choose-group', {
-      captureType: 'Check only',
-      selectedProgram: selectedProgram,
-      programName: programName
-    });
-  };
-
-  const handleDocumentsOnly = () => {
-    history.push('/choose-group', {
-      captureType: 'Document(s) only',
-      selectedProgram: selectedProgram,
-      programName: programName
+  const handleSelect = (captureType: string) => {
+    history.push('/deposits/choose-group', {
+      captureType,
+      selectedProgram,
+      programName,
     });
   };
 
   return (
     <IonPage>
-      <IonHeader className="standard-header">
-        <IonToolbar>
-          <div className="remote-capture-header">
-            <div className="header-left">
-              <IonButton fill="clear" className="header-button" onClick={handleBack}>
-                <IonText>Back</IonText>
-              </IonButton>
-            </div>
-            <div className="header-center">
-              <IonTitle>Choose capture type</IonTitle>
-            </div>
-            <div className="header-right">
-              <IonButton fill="clear" className="header-button" onClick={handleCancel}>
-                <IonText>Cancel</IonText>
-              </IonButton>
+      <IonHeader translucent={false}>
+        <IonToolbar className="salt-toolbar">
+          <div className="salt-toolbar-content">
+            <div className="salt-toolbar-3column">
+              <div className="salt-toolbar-column-left">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleBack}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <ArrowBack size={18} className="salt-inline-icon" />
+                </Button>
+              </div>
+              <div className="salt-toolbar-column-center">
+                <Text styleAs="h4" className="salt-toolbar-title">
+                  Choose capture type
+                </Text>
+              </div>
+              <div className="salt-toolbar-column-right">
+                <Button
+                  appearance="transparent"
+                  sentiment="neutral"
+                  onClick={handleCancel}
+                  style={{ padding: `0 var(--salt-spacing-100)` }}
+                >
+                  <Text styleAs="label">Cancel</Text>
+                </Button>
+              </div>
             </div>
           </div>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div className="page-content">
-          <div className="capture-type-container">
-            {/* Check and Documents Option */}
-            <div className="capture-type-option" onClick={handleCheckAndDocuments}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Check and document(s)</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
-
-            {/* Check Only Option */}
-            <div className="capture-type-option" onClick={handleCheckOnly}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Check only</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
-
-            {/* Documents Only Option */}
-            <div className="capture-type-option" onClick={handleDocumentsOnly}>
-              <div className="capture-type-content">
-                <IonText>
-                  <h3 className="capture-type-title">Document(s) only</h3>
-                </IonText>
-                <IonIcon 
-                  icon="/images/ArrowForward.svg" 
-                  className="capture-type-arrow"
-                />
-              </div>
-            </div>
-          </div>
+        <div className="salt-page-shell">
+          <StackLayout className="salt-page-content" gap={1}>
+            <StackLayout gap={1}>
+              {captureOptions.map(option => (
+                <Card
+                  key={option.value}
+                  className="salt-card"
+                  onClick={() => handleSelect(option.value)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <FlexLayout align="center" justify="space-between" gap={2} className="salt-card-section" style={{ padding: 'var(--salt-spacing-150) var(--salt-spacing-200)' }}>
+                    <Text styleAs="h4">{option.label}</Text>
+                    <ArrowForward size={20} className="salt-inline-icon" color="var(--salt-content-secondary-foreground)" />
+                  </FlexLayout>
+                </Card>
+              ))}
+            </StackLayout>
+          </StackLayout>
         </div>
       </IonContent>
     </IonPage>
