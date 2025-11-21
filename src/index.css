@@ -9,6 +9,8 @@
   /* Override Salt Design System accent colors to use teal/green */
   /* These variables control the accent color throughout Salt components */
   
+  /* Override Salt's default font from Open Sans to Amplitude for Safari compatibility */
+  --salt-palette-text-fontFamily: "Amplitude", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 /* Fix font rendering on iOS/iPhone */
@@ -39,11 +41,15 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Override Salt's default font from Open Sans to Amplitude */
+/* Applied to multiple selectors with !important for Safari compatibility */
+:root.salt-theme,
+html.salt-theme,
 .salt-theme {
   --sale-button-radius: 10px;
   --saltButton-borderRadius: 10px;
-  /* Override Salt's default font from Open Sans to Amplitude */
-  --salt-palette-text-fontFamily: var(--salt-typography-fontFamily-amplitude);
+  /* Use direct value with !important for Safari - ensures override of Salt's default */
+  --salt-palette-text-fontFamily: "Amplitude", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 .salt-theme[data-mode=light] {
