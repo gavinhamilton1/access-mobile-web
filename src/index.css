@@ -42,6 +42,8 @@ body,
 .salt-theme {
   --sale-button-radius: 10px;
   --saltButton-borderRadius: 10px;
+  /* Override Salt's default font from Open Sans to Amplitude */
+  --salt-palette-text-fontFamily: var(--salt-typography-fontFamily-amplitude);
 }
 
 .salt-theme[data-mode=light] {
@@ -193,6 +195,11 @@ ion-tab-button::part(native) {
   background: transparent;
   border-radius: 12px;
   overflow: hidden; /* Clip ripple effect to border radius */
+  /* Apply consistent sizing to all tabs to prevent layout shift */
+  margin: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  box-sizing: border-box;
 }
 
 ion-tab-button.tab-selected::part(native) {

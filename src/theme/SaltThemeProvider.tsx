@@ -106,7 +106,13 @@ export const SaltThemeProviderNext: React.FC<SaltThemeProviderProps> = ({ childr
 
   return (
     <SaltThemeContext.Provider value={contextValue}>
-      <SaltProviderNext mode={mode} density="touch" accent="teal">
+      <SaltProviderNext 
+        mode={mode} 
+        density="touch" 
+        accent="teal"
+        headingFont="Amplitude"
+        actionFont="Amplitude"
+      >
         {children}
       </SaltProviderNext>
     </SaltThemeContext.Provider>
