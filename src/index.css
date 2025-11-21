@@ -41,6 +41,21 @@ body,
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Brute force Amplitude font across entire site for Safari compatibility */
+/* Apply to all elements with !important to override any other font declarations */
+*,
+*::before,
+*::after {
+  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
+/* Additional specific selectors for common elements and Salt components */
+div, span, p, h1, h2, h3, h4, h5, h6, a, button, input, textarea, select, label,
+[class*="salt-"], [class^="salt-"],
+ion-label, ion-text, ion-title, ion-button, ion-item, ion-content, ion-page {
+  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+}
+
 /* Override Salt's default font from Open Sans to Amplitude */
 /* Applied to multiple selectors with !important for Safari compatibility */
 :root.salt-theme,
@@ -67,7 +82,7 @@ html.salt-theme,
 ion-app {
   --background: var(--salt-container-primary-background);
   --color: #333;
-  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
@@ -144,7 +159,7 @@ ion-toolbar {
 
 html,
 body {
-  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Amplitude', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
